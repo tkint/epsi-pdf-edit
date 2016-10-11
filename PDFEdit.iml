@@ -11,6 +11,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="org.apache.pdfbox:pdfbox-app:2.0.3" level="project" />
+    <orderEntry type="library" exported="" name="org.apache.pdfbox:pdfbox-app:2.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pdfbox:pdfbox-app:2.0.3" level="project" />
   </component>
 </module>
