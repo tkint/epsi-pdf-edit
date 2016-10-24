@@ -9,40 +9,11 @@ package model.table;
  * Created by Thomas on 21/10/2016.
  * @author t.kint
  */
-public class Cell implements Cloneable {
-    private int id;
-    private int width;
-    private int height;
+public class Cell extends TableObject implements Cloneable {
     private String content;
 
-    public Cell(int id, int width, int height) {
-        this.id = id;
-        this.width = width;
-        this.height = height;
-    }
-    
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
+    public Cell(int id, float posX, float posY, float width, float height) {
+        super(id, posX, posY, width, height);
     }
 
     public String getContent() {
@@ -55,7 +26,7 @@ public class Cell implements Cloneable {
 
     @Override
     public String toString() {
-        return "Cell{" + "id=" + id + ", width=" + width + ", height=" + height + ", content=" + content + '}';
+        return "Cell{" + "id=" + id + ", posX=" + posX + ", posY=" + posY + ", width=" + width + ", height=" + height + ", content=" + content + '}';
     }
     
     public Cell clone() {

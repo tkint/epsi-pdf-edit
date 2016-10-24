@@ -12,40 +12,11 @@ import java.util.List;
  * Created by Thomas on 21/10/2016.
  * @author t.kint
  */
-public class Table {
-    private int id;
-    private int width;
-    private int height;
+public class Table extends TableObject {
     private List<Row> rows = new ArrayList<Row>();
 
-    public Table(int id, int width, int height) {
-        this.id = id;
-        this.width = width;
-        this.height = height;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
+    public Table(int id, float posX, float posY, float width, float height) {
+        super(id, posX, posY, width, height);
     }
 
     public List<Row> getRows() {
@@ -76,18 +47,25 @@ public class Table {
     
     /**
      * Génère la table avec le nombre de lignes et de cellules défini
-     * @param numberRows
      * @param numberCells
-     * @return 
+     * @param numberRows
+     * @return Table
      */
-    public Table generateTable(int numberRows, int numberCells) {
-        for (int i = 0; i < numberCells; i++) {
-            Row row = new Row(i, this.width, this.height / numberRows);
-            for (int j = 0; j < numberRows; j++) {
-                Cell cell = new Cell(j + i * numberCells, this.width / numberRows, this.height / numberCells);
+    public Table generateTable(int numberCells, int numberRows) {
+        float cellWidth = this.width / numberCells;
+        float cellHeight = this.height / numberRows;
+        float posX = this.posX;
+        float posY = this.posY;
+        for (int i = 0; i < numberRows; i++) {
+            Row row = new Row(i, posX, posY, this.width, cellHeight);
+            for (int j = 0; j < numberCells; j++) {
+                Cell cell = new Cell(j + i * numberCells, posX, posY, cellWidth, cellHeight);
                 row.addCell(cell);
+                posX += cellWidth;
             }
             this.addRow(row);
+            posY -= cellHeight;
+            posX = this.posX;
         }
         return this;
     }
@@ -164,16 +142,17 @@ public class Table {
 
     @Override
     public String toString() {
-        String s = "Table{" + "id=" + id + ", rows={";
+        String s = "Table{" + "id=" + id + ", width=" + width + ", height=" + height + ", rows={";
         
         for (Row row : rows) {
             s += '\n' + row.toString();
             if (row.getId() != rows.get(rows.size() - 1).getId()) {
-                s += ", ";
+                s += ", " + '\n';
             }
         }
         
         s += '\n' + "}}";
+        
         return s;
     }
 }

@@ -19,19 +19,19 @@ import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
  * @author t.kint
  */
 public class TableController {
-    public void drawTable(PDDocument document, PDPage page, Table table, int posX, int posY) {
+    public void drawTable(PDDocument document, PDPage page, Table table) {
         try {
             PDPageContentStream content = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
             
-            int x = posX;
-            int y = posY;
+            float x = table.getPosX();
+            float y = table.getPosY();
             for (Row row : table.getRows()) {
                 for (Cell cell : row.getCells()) {
                     drawRectangle(content, x, y, cell.getWidth(), cell.getHeight());
                     x += cell.getWidth();
                 }
                 y -= row.getHeight();
-                x = posX;
+                x = table.getPosX();
             }
 
             content.close();
@@ -40,7 +40,7 @@ public class TableController {
         }
     }
     
-    private void drawRectangle(PDPageContentStream content, int posX, int posY, int width, int height) {
+    private void drawRectangle(PDPageContentStream content, float posX, float posY, float width, float height) {
         try {
             drawLine(content, posX, posY, posX + width, posY);
             drawLine(content, posX, posY, posX, posY - height);
@@ -51,7 +51,7 @@ public class TableController {
         }
     }
     
-    private void drawLine(PDPageContentStream content, int posX, int posY, int posLastX, int posLastY) {
+    private void drawLine(PDPageContentStream content, float posX, float posY, float posLastX, float posLastY) {
         try {
             content.moveTo(posX, posY);
             content.lineTo(posLastX, posLastY);

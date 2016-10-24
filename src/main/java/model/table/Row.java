@@ -12,40 +12,11 @@ import java.util.List;
  *
  * @author t.kint
  */
-public class Row implements Cloneable {
-    private int id;
-    private int width;
-    private int height;
+public class Row extends TableObject implements Cloneable {
     private List<Cell> cells = new ArrayList<Cell>();
 
-    public Row(int id, int width, int height) {
-        this.id = id;
-        this.width = width;
-        this.height = height;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
+    public Row(int id, float posX, float posY, float width, float height) {
+        super(id, posX, posY, width, height);
     }
 
     public List<Cell> getCells() {
@@ -62,6 +33,18 @@ public class Row implements Cloneable {
      */
     public void addCell(Cell cell) {
         this.cells.add(cell);
+    }
+    
+    public int getCellIndex(int id) {
+        int i = 0;
+        boolean finished=  false;
+        while (i < this.cells.size() && !finished) {
+            if (this.cells.get(i).getId() == id) {
+                finished = true;
+            }
+            i++;
+        }
+        return i;
     }
     
     /**
@@ -107,10 +90,10 @@ public class Row implements Cloneable {
 
     @Override
     public String toString() {
-        String s = "Row{" + "id=" + id + ", cells={";
+        String s = "Row{" + "id=" + id + ", width=" + width + ", height=" + height + ", cells={";
         
         for (Cell cell : cells) {
-            s += cell.toString();
+            s += '\n' + cell.toString();
             if (cell.getId() != cells.get(cells.size() - 1).getId()) {
                 s += ", ";
             }

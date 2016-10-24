@@ -25,10 +25,10 @@ public class TextController {
      * @param fontSize
      * @param font 
      */
-    public void addText(PDDocument document, PDPage page, String text, int posX, int posY, int fontSize, PDType1Font font) {
+    public void addText(PDDocument document, PDPage page, String text, float posX, float posY, int fontSize, PDType1Font font) {
         try
         {
-            PDPageContentStream contents = new PDPageContentStream(document, page);
+            PDPageContentStream contents = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
             contents.beginText();
             contents.setFont(font, fontSize);
             contents.newLineAtOffset(posX, posY);
