@@ -5,8 +5,7 @@
  */
 package controller;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
+import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
@@ -16,27 +15,24 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
  */
 public class TextController {
     /**
-     * Ajoute du texte dans le document à la page et position spécifiée
-     * @param document
-     * @param page
+     * Ajoute du texte dans le contentStream spécifié
+     * @param contentStream
      * @param text
      * @param posX
      * @param posY
      * @param fontSize
      * @param font 
      */
-    public void addText(PDDocument document, PDPage page, String text, float posX, float posY, int fontSize, PDType1Font font) {
+    public void addText(PDPageContentStream contentStream, String text, float posX, float posY, int fontSize, PDType1Font font) {
         try
         {
-            PDPageContentStream contents = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
-            contents.beginText();
-            contents.setFont(font, fontSize);
-            contents.newLineAtOffset(posX, posY);
-            contents.showText(text);
-            contents.endText();
-            contents.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            contentStream.beginText();
+            contentStream.setFont(font, fontSize);
+            contentStream.newLineAtOffset(posX, posY);
+            contentStream.showText(text);
+            contentStream.endText();
+        } catch(IOException e) {
+            System.out.println(e.toString());
         }
     }
 }

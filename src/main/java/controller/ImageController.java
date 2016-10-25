@@ -2,6 +2,7 @@ package controller;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -19,22 +20,19 @@ public class ImageController {
     /**
      * Ajoute une image à la page et à la position spécifiée.
      * @param document
-     * @param page
+     * @param contentStream
      * @param imagePath
      * @param posX
      * @param posY
      * @param scale 
      */
-    public void addImage(PDDocument document, PDPage page, String imagePath, int posX, int posY, float scale) {
+    public void addImage(PDDocument document, PDPageContentStream contentStream, String imagePath, int posX, int posY, float scale) {
         try {
-            PDPageContentStream content = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
-            
             PDImageXObject image = PDImageXObject.createFromFile(imagePath, document);
 
-            content.drawImage(image, posX, posY, image.getWidth() * scale, image.getHeight() * scale);
-            content.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            contentStream.drawImage(image, posX, posY, image.getWidth() * scale, image.getHeight() * scale);
+        } catch(IOException e) {
+            System.out.println(e.toString());
         }
     }
     
@@ -59,8 +57,8 @@ public class ImageController {
                 }
                 i++;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch(IOException e) {
+            System.out.println(e.toString());
         }
         return image;
     }
@@ -80,8 +78,8 @@ public class ImageController {
             } else {
                 ImageIO.write(image, imageType, file);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch(IOException e) {
+            System.out.println(e.toString());
         }
     }
 }
