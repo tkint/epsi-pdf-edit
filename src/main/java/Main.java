@@ -1,13 +1,21 @@
 import controller.ImageController;
 import controller.TableController;
-import controller.TextController;
 import java.io.File;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Application;
+import static javafx.application.Application.launch;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import model.table.Cell;
 import model.table.Table;
 
@@ -15,30 +23,76 @@ import model.table.Table;
  * Created by Thomas on 10/10/2016.
  * @author Thomas Kint
  */
-public class Main {
+public class Main extends Application {
     public static String docTitle = "test";
     public static String text = "Hello World!";
     public static String img = "./img/poros.jpg";
-
-    public static void main(String[] args) throws IOException
-    {
+    
+    @Override
+    public void start(Stage primaryStage) {
         // Instanciation du programme
         Main main = new Main();
         
-        try
-        {
-            // Instanciation du document à créer
-            PDDocument document = new PDDocument();
+        Button btnGenerate = new Button();
+        btnGenerate.setLayoutX(90);
+        btnGenerate.setLayoutY(10);
+        btnGenerate.setText("Générer document");
+        btnGenerate.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    PDDocument document = new PDDocument();
+                    document.save(docTitle + ".pdf");
+                    document.close();
+                    System.out.println("Document généré");
+                } catch (IOException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        Button btnAddImage = new Button();
+        btnAddImage.setLayoutX(100);
+        btnAddImage.setLayoutY(60);
+        btnAddImage.setText("Ajouter image");
+        btnAddImage.setOnAction(new EventHandler<ActionEvent>() {
             
-            // Sauvegarde du document
-            document.save(docTitle + ".pdf");
+            @Override
+            public void handle(ActionEvent event) {
+                main.testAddImage();
+                System.out.println("Image ajoutée");
+            }
+        });
+        
+        Button btnExtractImage = new Button();
+        btnExtractImage.setLayoutX(100);
+        btnExtractImage.setLayoutY(110);
+        btnExtractImage.setText("Extraire image");
+        btnExtractImage.setOnAction(new EventHandler<ActionEvent>() {
             
-            //main.testAddImage();
-            //main.testExtractImage();
-            main.testAddTable();
-        } catch(IOException e) {
-            System.out.println(e.toString());
-        }
+            @Override
+            public void handle(ActionEvent event) {
+                main.testExtractImage();
+                System.out.println("Image extraite");
+            }
+        });
+        
+        Pane root = new Pane();
+        
+        root.getChildren().add(btnGenerate);
+        root.getChildren().add(btnAddImage);
+        root.getChildren().add(btnExtractImage);
+        
+        Scene scene = new Scene(root, 300, 200);
+        
+        primaryStage.setTitle(text);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+    
+    
+    public static void main(String[] args) throws IOException {
+        launch(args);
     }
     
     private void testAddImage() {
@@ -59,6 +113,7 @@ public class Main {
             contentStream.close();
             
             document.save(docTitle + ".pdf");
+            document.close();
         } catch(IOException e) {
             System.out.println(e.toString());
         }

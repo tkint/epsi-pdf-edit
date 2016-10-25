@@ -100,6 +100,10 @@ public class Table extends TableObject {
         this.updateIds();
     }
     
+    /**
+     * Ajoute autant de lignes que défini
+     * @param number 
+     */
     public void addRows(int number) {
         for (int i = 0; i < number; i++) {
             Row lastRow = this.getLastRow();
