@@ -1,4 +1,4 @@
-package controller;
+package src.controller;
 
 import java.awt.image.RenderedImage;
 import java.io.File;

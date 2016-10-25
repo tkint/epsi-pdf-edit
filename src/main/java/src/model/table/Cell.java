@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.table;
+package src.model.table;
 
 /**
  * Created by Thomas on 21/10/2016.

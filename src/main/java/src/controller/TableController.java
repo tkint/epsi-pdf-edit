@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | TemplatesDavid SERVANT <david.servant@appartcity.com>
  * and open the template in the editor.
  */
-package controller;
+package src.controller;
 
 import java.io.IOException;
-import model.table.Cell;
-import model.table.Row;
-import model.table.Table;
+import src.model.table.Cell;
+import src.model.table.Row;
+import src.model.table.Table;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
