@@ -45,6 +45,19 @@ public class Table extends TableObject {
         return cell;
     }
     
+    public void updateIds() {
+        int i = 0;
+        int id = 0;
+        for (Row row : this.rows) {
+            row.setId(i);
+            for (Cell cell : row.getCells()) {
+                cell.setId(id);
+                id++;
+            }
+            i++;
+        }
+    }
+    
     /**
      * Génère la table avec le nombre de lignes et de cellules défini
      * @param numberCells
@@ -63,7 +76,7 @@ public class Table extends TableObject {
                 row.addCell(cell);
                 posX += cellWidth;
             }
-            this.addRow(row);
+            this.rows.add(row);
             posY -= cellHeight;
             posX = this.posX;
         }
@@ -77,34 +90,28 @@ public class Table extends TableObject {
     public void addColumns(int number) {
         for (int i = 0; i < number; i++) {
             for (Row row : this.rows) {
-                Cell cell = row.getLastCell().clone();
-                cell.setId(cell.getId() + 1);
+                Cell lastCell = row.getLastCell();
+                Cell cell = new Cell(0, lastCell.posX + lastCell.width, lastCell.posY, lastCell.width, lastCell.height);
                 row.addCell(cell);
                 row.setWidth(row.getWidth() + cell.getWidth());
                 this.width = row.getWidth();
             }
         }
+        this.updateIds();
     }
     
     public void addRows(int number) {
-        int id = this.getLastRow().getLastCell().getId() + 1;
         for (int i = 0; i < number; i++) {
-            Row row = this.getLastRow().clone();
-            row.setId(row.getId() + 1);
-            for (Cell cell : row.getCells()) {
-                cell.setId(id);
-                id++;
+            Row lastRow = this.getLastRow();
+            Row row = new Row(0, lastRow.posX, lastRow.posY - lastRow.height, lastRow.width, lastRow.height);
+            float x = lastRow.posX;
+            for (Cell cell : lastRow.getCells()) {
+                row.addCell(new Cell(0, cell.posX, lastRow.posY - lastRow.height, cell.width, cell.height));
             }
             this.rows.add(row);
+            this.height += lastRow.height;
         }
-    }
-    
-    /**
-     * Ajoute une colonne
-     * @param row 
-     */
-    public void addRow(Row row) {
-        this.rows.add(row);
+        this.updateIds();
     }
     
     /**
