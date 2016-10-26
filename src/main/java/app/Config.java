@@ -10,7 +10,13 @@ package app;
  * @author t.kint
  */
 public class Config {
-    public static String appTitle = "PDFEdit";
-    public static String docTitle = "test";
-    public static String img = "./img/poros.jpg";
+    public static final String APP_TITLE = "PDFEdit";
+    public static final String APP_VERSION = "0";
+    public static final String APP_AUTHORS = "Erik FREMONT, Gaetan CAPEL, Ludovic BOUVIER, Thomas KINT";
+    public static final String APP_SOCIETY = "EPSI";
+    public static final String APP_DATE = "2016";
+    
+    
+    public static final String DOC_TITLE = "test";
+    public static final String IMG_NAME = "./img/poros.jpg";
 }

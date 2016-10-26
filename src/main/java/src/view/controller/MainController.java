@@ -11,6 +11,11 @@ import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import app.Config;
 import java.io.File;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -25,19 +30,99 @@ import src.model.table.Table;
  * @author t.kint
  */
 public class MainController implements Initializable {
-
+    private String filename;
+    private PDDocument document;
+    private Stage stage;
+    
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
     }
     
-    public void generateDocument() {
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+    
+    public void btnHelpAbout() {
+        String text = Config.APP_TITLE;
+        
+        text += '\n' + "Version: " + Config.APP_VERSION;
+        text += '\n' + "Auteurs: " + '\n' + Config.APP_AUTHORS;
+        text += '\n' + "Société: " + Config.APP_SOCIETY;
+        text += '\n' + "Date: " + Config.APP_DATE;
+        
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.initStyle(StageStyle.UNIFIED);
+        alert.setTitle("A propos");
+        alert.setHeaderText(null);
+        alert.setContentText(text);
+
+        alert.showAndWait();
+    }
+    
+    public void btnFileNew() {
+        this.document = new PDDocument();
+        this.document.addPage(new PDPage());
+    }
+    
+    public void btnFileOpen() throws IOException {
+        if (this.stage != null) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Ouvrir un fichier");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+            File file = fileChooser.showOpenDialog(this.stage);
+            if (file != null) {
+                this.filename = file.getName();
+                this.document = PDDocument.load(file);
+                System.out.println("Filename: " + this.filename);
+                System.out.println("Document: " + this.document);
+            }
+        }
+    }
+    
+    public void btnFileSave() throws IOException {
+        if (this.filename != null) {
+            if (this.document != null) {
+                this.document.save(this.filename);
+                this.document.close();
+                System.out.println("Document " + this.filename + " a été enregistré");
+            } else {
+                System.out.println("Pas de document");
+            }
+        } else {
+            btnFileSaveAs();
+        }
+    }
+    
+    public void btnFileSaveAs() throws IOException {
+        if (this.document != null) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Sauvegarder le fichier");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+            File file = fileChooser.showSaveDialog(this.stage);
+            if (file != null) {
+                this.filename = file.getName();
+                this.document.save(file);
+                this.document.close();
+            }
+        }
+    }
+    
+    public void btnFileExit() {
+        System.exit(0);
+    }
+        
+    public void testCreateFile() {
         try {
             PDDocument document = new PDDocument();
-            document.save(Config.docTitle + ".pdf");
+            document.save(Config.DOC_TITLE + ".pdf");
             document.close();
             System.out.println("Document généré");
         } catch (IOException e) {
@@ -50,7 +135,7 @@ public class MainController implements Initializable {
             ImageController imageController = new ImageController();
             
             // Chargement du document
-            File file = new File(Config.docTitle + ".pdf");
+            File file = new File(Config.DOC_TITLE + ".pdf");
             PDDocument document = PDDocument.load(file);
             
             document.addPage(new PDPage());
@@ -58,11 +143,11 @@ public class MainController implements Initializable {
             PDPageContentStream contentStream = new PDPageContentStream(document, document.getPage(document.getNumberOfPages() - 1), PDPageContentStream.AppendMode.APPEND, true);
             
             // Ajout d'une image sur la deuxième page
-            imageController.addImage(document, contentStream, Config.img, 100, 400, 0.2f);
+            imageController.addImage(document, contentStream, Config.IMG_NAME, 100, 400, 0.2f);
             
             contentStream.close();
             
-            document.save(Config.docTitle + ".pdf");
+            document.save(Config.DOC_TITLE + ".pdf");
             document.close();
             
             System.out.println("Image ajoutée");
@@ -76,7 +161,7 @@ public class MainController implements Initializable {
             ImageController imageController = new ImageController();
             
             // Chargement du document
-            File file = new File(Config.docTitle + ".pdf");
+            File file = new File(Config.DOC_TITLE + ".pdf");
             PDDocument document = PDDocument.load(file);
 
             // Extraction de l'image définie dans le format défini
@@ -96,7 +181,7 @@ public class MainController implements Initializable {
             TableController tableController = new TableController();
             
             // Chargement du document
-            File file = new File(Config.docTitle + ".pdf");
+            File file = new File(Config.DOC_TITLE + ".pdf");
             PDDocument document = PDDocument.load(file);
             
             document.addPage(new PDPage());
@@ -120,7 +205,7 @@ public class MainController implements Initializable {
             tableController.drawTable(contentStream, table);
             
             contentStream.close();
-            document.save(Config.docTitle + ".pdf");
+            document.save(Config.DOC_TITLE + ".pdf");
             
             System.out.println("Tableau ajouté");
         } catch(IOException e) {
