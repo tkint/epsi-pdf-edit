@@ -12,7 +12,7 @@ import src.view.controller.MainController;
  * Created by Thomas on 10/10/2016.
  * @author Thomas Kint
  */
-public class Main extends Application {
+public class Main extends Application implements Config {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/fxml/Main.fxml"));
@@ -25,7 +25,7 @@ public class Main extends Application {
         
         Scene scene = new Scene(root);
         
-        stage.setTitle(Config.APP_TITLE);
+        stage.setTitle(APP_TITLE);
         stage.setScene(scene);
         stage.show();
     }
