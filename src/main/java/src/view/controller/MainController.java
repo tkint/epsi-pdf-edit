@@ -1,11 +1,12 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change instance license header, choose License Headers in Project Properties.
+ * To change instance template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package src.view.controller;
 
 import app.Config;
+import app.Instance;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -30,14 +31,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Pair;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import src.controller.ImageController;
-import src.controller.PageController;
-import src.controller.TableController;
-import src.model.table.Cell;
-import src.model.table.Table;
+import org.apache.pdfbox.pdmodel.*;
+import src.controller.*;
+import src.model.table.*;
+import src.view.*;
 
 /**
  * FXML Controller class
@@ -46,10 +43,7 @@ import src.model.table.Table;
  */
 public class MainController implements Config, Initializable {
 
-    private String file;
-    private String filename;
-    private PDDocument document;
-    private Stage stage;
+    private static final Instance instance = Instance.getInstance();
 
     /**
      * Initializes the controller class.
@@ -63,68 +57,90 @@ public class MainController implements Config, Initializable {
     }
 
     public void setStage(Stage stage) {
-        this.stage = stage;
+        instance.stage = stage;
     }
 
     //  <editor-fold desc="File">
+    /**
+     * Initialise un nouveau document
+     * @throws IOException 
+     */
     public void btnFileNew() throws IOException {
-        if (this.document != null) {
-            this.document.close();
-        }
-        this.document = new PDDocument();
-        this.document.addPage(new PDPage());
+        PDDocument document = new PDDocument();
+        document.addPage(new PDPage());
+        instance.addDocument(document, new File("Nouveau.pdf"));
+        Displayer.displayPDFNewTab(instance.documents.size() - 1, "Nouveau");
     }
 
+    /**
+     * Ouvre un document déjà existant
+     * @throws IOException 
+     */
     public void btnFileOpen() throws IOException {
-        if (this.document != null) {
-            this.document.close();
-        }
-        if (this.stage != null) {
+        if (instance.stage != null) {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Ouvrir un fichier");
+            fileChooser.setTitle(BTN_FILE_OPEN_TITLE);
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
-            fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-            File file = fileChooser.showOpenDialog(this.stage);
+            fileChooser.setInitialDirectory(new File(System.getProperty(OPEN_SAVE_DIR)));
+            File file = fileChooser.showOpenDialog(instance.stage);
             if (file != null) {
-                this.file = file.getName();
-                this.filename = this.file.substring(0, this.file.length() - 4);
-                this.document = PDDocument.load(file);
-                System.out.println("Filename: " + this.file);
-                System.out.println("Document: " + this.document);
+                if (!Instance.isOpen(file)) {
+                    PDDocument document = PDDocument.load(file);
+                    instance.addDocument(document, file);
+                    Displayer.displayPDFNewTab(instance.documents.size() - 1, instance.filenameOpened);
+                } else {
+                    System.out.println("Document déjà ouvert");
+                }
             }
         }
     }
 
+    /**
+     * Enregistre un document déjà existant, sinon fait appel à saveAs
+     * @throws IOException 
+     */
     public void btnFileSave() throws IOException {
-        if (this.file != null) {
-            if (this.document != null) {
-                this.document.save(this.file);
-                this.document.close();
-                System.out.println("Document " + this.file + " a été enregistré");
-            } else {
-                System.out.println("Pas de document");
+        if (instance.fileOpened != null && instance.documentOpened != null) {
+            File f = new File(instance.fileOpened);
+            if (!f.isDirectory()) {
+                if (f.exists()) {
+                    instance.documentOpened.save(instance.filenameOpened + ".pdf");
+                    System.out.println("Document " + instance.fileOpened + " a été enregistré");
+                } else {
+                    btnFileSaveAs();
+                }
             }
         } else {
-            btnFileSaveAs();
+            System.out.println("Pas de document ouvert");
         }
     }
 
+    /**
+     * Enregistre un nouveau document
+     * @throws IOException 
+     */
     public void btnFileSaveAs() throws IOException {
-        if (this.document != null) {
+        if (instance.fileOpened != null && instance.documentOpened != null) {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Sauvegarder le fichier");
+            fileChooser.setTitle(BTN_FILE_SAVE_TITLE);
+            fileChooser.setInitialFileName(instance.filenameOpened);
+            fileChooser.setInitialDirectory(new File(System.getProperty(OPEN_SAVE_DIR)));
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
-            fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-            File file = fileChooser.showSaveDialog(this.stage);
+            File file = fileChooser.showSaveDialog(instance.stage);
             if (file != null) {
-                this.file = file.getName();
-                this.filename = this.file.substring(0, this.file.length() - 4);
-                this.document.save(file);
-                this.document.close();
+                instance.documentOpened.save(file);
+                instance.updateDocument(instance.documentOpened, file);
+                Displayer.updatePDFTab(instance.opened);
+                System.out.println("Document " + file.getName() + " a été enregistré");
             }
+        } else {
+            System.out.println("Pas de document ouvert");
         }
     }
 
+    /**
+     * Quitte l'application
+     */
     public void btnFileExit() {
         System.exit(0);
     }
@@ -137,8 +153,11 @@ public class MainController implements Config, Initializable {
     //  </editor-fold>
 
     //  <editor-fold desc="Tools">
+    /**
+     * Extrait du document ouvert la page définie par l'utilisateur
+     */
     public void btnToolsExtractPage() {
-        if (this.document != null) {
+        if (instance.documentOpened != null) {
             Dialog<Pair<String, String>> dialog = new Dialog<>();
             dialog.setTitle("Extraire une page");
             dialog.setHeaderText("Choisissez la page à extraire");
@@ -147,7 +166,7 @@ public class MainController implements Config, Initializable {
             dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
 
             List<String> pages = new ArrayList<>();
-            for (int i = 0; i < this.document.getPages().getCount(); i++) {
+            for (int i = 0; i < instance.documentOpened.getPages().getCount(); i++) {
                 pages.add(String.valueOf(i + 1));
             }
 
@@ -181,22 +200,28 @@ public class MainController implements Config, Initializable {
             result.ifPresent(pair -> {
                 int id = Integer.parseInt(pair.getValue());
                 PageController pageController = new PageController();
-                pageController.extractPage(this.document, id - 1, pair.getKey());
+                pageController.extractPage(instance.documentOpened, id - 1, pair.getKey());
             });
         }
     }
 
+    /**
+     * Extrait toutes les pages du document ouvert
+     */
     public void btnToolsExtractPages() {
-        if (this.document != null) {
+        if (instance.documentOpened != null) {
             PageController pageController = new PageController();
-            for (int i = 0; i < this.document.getPages().getCount(); i++) {
-                pageController.extractPage(this.document, i, this.filename + "_" + (i + 1));
+            for (int i = 0; i < instance.documentOpened.getPages().getCount(); i++) {
+                pageController.extractPage(instance.documentOpened, i, instance.filenameOpened + "_" + (i + 1));
             }
         }
     }
     //  </editor-fold>
 
     //  <editor-fold desc="Help">
+    /**
+     * Affiche une popup A propos
+     */
     public void btnHelpAbout() {
         String text = APP_TITLE;
 
@@ -219,7 +244,7 @@ public class MainController implements Config, Initializable {
     public void testCreateFile() {
         try {
             PDDocument document = new PDDocument();
-            document.save(DOC_TITLE + ".pdf");
+            document.save(TEST_DOC_TITLE + ".pdf");
             document.close();
             System.out.println("Document généré");
         } catch (IOException e) {
@@ -232,7 +257,7 @@ public class MainController implements Config, Initializable {
             ImageController imageController = new ImageController();
 
             // Chargement du document
-            File file = new File(DOC_TITLE + ".pdf");
+            File file = new File(TEST_DOC_TITLE + ".pdf");
             PDDocument document = PDDocument.load(file);
 
             document.addPage(new PDPage());
@@ -240,11 +265,11 @@ public class MainController implements Config, Initializable {
             PDPageContentStream contentStream = new PDPageContentStream(document, document.getPage(document.getNumberOfPages() - 1), PDPageContentStream.AppendMode.APPEND, true);
 
             // Ajout d'une image sur la deuxième page
-            imageController.addImage(document, contentStream, IMG_NAME, 100, 400, 0.2f);
+            imageController.addImage(document, contentStream, TEST_IMG_NAME, 100, 400, 0.2f);
 
             contentStream.close();
 
-            document.save(DOC_TITLE + ".pdf");
+            document.save(TEST_DOC_TITLE + ".pdf");
             document.close();
 
             System.out.println("Image ajoutée");
@@ -258,7 +283,7 @@ public class MainController implements Config, Initializable {
             ImageController imageController = new ImageController();
 
             // Chargement du document
-            File file = new File(DOC_TITLE + ".pdf");
+            File file = new File(TEST_DOC_TITLE + ".pdf");
             PDDocument document = PDDocument.load(file);
 
             // Extraction de l'image définie dans le format défini
@@ -278,7 +303,7 @@ public class MainController implements Config, Initializable {
             TableController tableController = new TableController();
 
             // Chargement du document
-            File file = new File(DOC_TITLE + ".pdf");
+            File file = new File(TEST_DOC_TITLE + ".pdf");
             PDDocument document = PDDocument.load(file);
 
             document.addPage(new PDPage());
@@ -302,7 +327,7 @@ public class MainController implements Config, Initializable {
             tableController.drawTable(contentStream, table);
 
             contentStream.close();
-            document.save(DOC_TITLE + ".pdf");
+            document.save(TEST_DOC_TITLE + ".pdf");
 
             System.out.println("Tableau ajouté");
         } catch (IOException e) {
