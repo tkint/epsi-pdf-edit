@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import app.Config;
+import app.Instance;
 import src.view.controller.MainController;
 
 /**
@@ -16,9 +17,11 @@ import src.view.controller.MainController;
  */
 public class Main extends Application implements Config {
 
+    private static final Instance INSTANCE = Instance.getInstance();
+    
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("view/fxml/Main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("view/fxml/main.fxml"));
 
         Parent root = (Parent) loader.load();
 
@@ -28,9 +31,11 @@ public class Main extends Application implements Config {
 
         Scene scene = new Scene(root);
 
-        stage.setTitle(APP_TITLE);
+        stage.setTitle(APP_NAME);
         stage.setScene(scene);
         stage.show();
+        
+        INSTANCE.load();
     }
 
     public static void main(String[] args) throws IOException {

@@ -5,70 +5,181 @@
  */
 package app;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.Stage;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import src.model.DocFile;
+import src.view.Displayer;
 
 /**
  *
  * @author Thomas
  */
-public class Instance {
+public class Instance implements Config {
 
     private static Instance INSTANCE = new Instance();
 
     public static int opened;
-    public static String fileOpened;
-    public static String filenameOpened;
-    public static PDDocument documentOpened;
-    public static List<PDDocument> documents = new ArrayList<>();
-    public static List<File> files = new ArrayList<>();
+    public static List<DocFile> docFiles = new ArrayList<>();
 
     public static Stage stage;
 
+    /**
+     * Contructeur
+     */
     private Instance() {
 
     }
 
-    public static void addDocument(PDDocument document, File file) {
-        documents.add(document);
-        files.add(file);
-        opened = documents.size() - 1;
-        updateDocument(null, null);
-        System.out.println("File : " + file.getName() + " | Opened : " + opened);
-    }
-
-    public static boolean isOpen(File file) {
-        for (File f : INSTANCE.files) {
-            if (f.equals(file)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static void updateDocument(PDDocument document, File file) {
-        if (document != null) {
-            documents.set(opened, document);
-        }
-        if (file != null) {
-            files.set(opened, file);
-        }
-        documentOpened = documents.get(opened);
-        fileOpened = files.get(opened).getName();
-        filenameOpened = fileOpened.substring(0, fileOpened.length() - 4);
-    }
-
     /**
      * Définition du singleton
-     * @return 
+     *
+     * @return
      */
     public static synchronized Instance getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new Instance();
         }
         return INSTANCE;
+    }
+
+    /**
+     * Ajoute un docFile à la liste
+     * @param document
+     * @param file 
+     */
+    public static void addDocFile(PDDocument document, File file) {
+        docFiles.add(new DocFile(0, document, file));
+        opened = docFiles.size() - 1;
+        getDocOpened().setId(opened);
+    }
+
+    /**
+     * Ferme un docFile de la liste
+     * @param id 
+     */
+    public static void closeDocFile(int id) {
+        try {
+            docFiles.get(id).getDocument().close();
+            docFiles.remove(id);
+            if (docFiles.size() > id) {
+                opened = id;
+            } else {
+                opened = docFiles.size();
+            }
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+    }
+
+    /**
+     * Met à jour le docFile ouvert
+     * @param document
+     * @param file 
+     */
+    public static void updateDocFile(PDDocument document, File file) {
+        if (document != null) {
+            docFiles.get(opened).setDocument(document);
+        }
+        if (file != null) {
+            docFiles.get(opened).setFile(file);
+        }
+    }
+
+    /**
+     * Récupère le docFile ouvert
+     * @return 
+     */
+    public static DocFile getDocOpened() {
+        DocFile doc = null;
+        if (opened > -1 && opened < docFiles.size()) {
+            doc = docFiles.get(opened);
+        }
+        return doc;
+    }
+
+    /**
+     * Vérifie si le fichier est déjà ouvert
+     * @param file
+     * @return 
+     */
+    public static boolean isDocFileOpen(File file) {
+        boolean r = false;
+        int i = 0;
+        while (i < docFiles.size() && r == false) {
+            if (docFiles.get(i).getFile().equals(file)) {
+                r = true;
+            }
+            i++;
+        }
+        return r;
+    }
+
+    /**
+     * Sauvegarde l'instance dans un fichier temporaire
+     */
+    public static void save() {
+        try {
+            BufferedWriter writer = null;
+            File temp = new File(APP_NAME + ".txt");
+
+            writer = new BufferedWriter(new FileWriter(temp));
+
+            for (DocFile docFile : getDocFilesOpened()) {
+                writer.write(docFile.toTemp());
+                writer.newLine();
+            }
+
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+
+    /**
+     * Charge l'instance depuis le fichier temp
+     */
+    public static void load() {
+        try {
+            File temp = new File(APP_NAME + ".txt");
+            if (temp.exists()) {
+                BufferedReader reader = new BufferedReader(new FileReader(temp));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] l = line.split("-");
+                    File file = new File(l[1]);
+                    if (file.exists()) {
+                        PDDocument document = PDDocument.load(file);
+                        addDocFile(document, file);
+                        getDocOpened().setSaved(true);
+                        Displayer.displayDocFileNewTab(getDocOpened().getShortFileName());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+    }
+
+    /**
+     * Liste les docFile sauvegardés
+     * @return 
+     */
+    private static List<DocFile> getDocFilesOpened() {
+        List<DocFile> df = new ArrayList<>();
+        for (DocFile docFile : docFiles) {
+            if (docFile.isSaved()) {
+                df.add(docFile);
+            }
+        }
+        return df;
     }
 }

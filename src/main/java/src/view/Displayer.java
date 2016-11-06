@@ -11,7 +11,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -27,59 +30,29 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  */
 public class Displayer implements Config {
 
-    private static final Instance instance = Instance.getInstance();
+    private static final Instance INSTANCE = Instance.getInstance();
 
     //  <editor-fold desc="Display">
-    public static void displayPDFTab() throws IOException {
-        if (instance.documents.size() > 0) {
-            TabPane tabPane = (TabPane) instance.stage.getScene().lookup("#documents");
-
-            int doc = 0;
-            for (PDDocument document : instance.documents) {
-                Tab tab = new Tab("Doc " + doc);
-
-                ScrollPane scrollPane = new ScrollPane();
-                scrollPane.setFitToWidth(true);
-                scrollPane.setFitToHeight(true);
-
-                VBox vBox = new VBox();
-                vBox.setSpacing(PDF_DISPLAY_PAGE_PADDING);
-                vBox.setAlignment(Pos.CENTER);
-
-                PDFRenderer renderer = new PDFRenderer(document);
-
-                for (int id = 0; id < document.getPages().getCount(); id++) {
-                    BufferedImage bufferedImage = renderer.renderImage(id);
-                    WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
-                    ImageView imageView = new ImageView(image);
-                    vBox.getChildren().add(imageView);
-                }
-
-                scrollPane.setContent(vBox);
-                tab.setContent(scrollPane);
-                tabPane.getTabs().add(tab);
+    public static void displayDocFileNewTab(String tabName) throws IOException {
+        if (INSTANCE.getDocOpened() != null) {
+            TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup(TAB_PANE_ID);
+            if (TAB_CLOSE) {
+                tabPane.tabClosingPolicyProperty().set(TabPane.TabClosingPolicy.SELECTED_TAB);
             }
-        }
-    }
-
-    public static void displayPDFNewTab(int id, String tabName) throws IOException {
-        if (instance.documents.size() > 0 && instance.documents.get(id) != null) {
-            TabPane tabPane = (TabPane) instance.stage.getScene().lookup("#documents");
-            //tabPane.tabClosingPolicyProperty().set(TabPane.TabClosingPolicy.ALL_TABS);
 
             Tab tab = new Tab(defineTabName(tabName));
-            //tab.closableProperty().set(true);
+            tab.closableProperty().set(true);
 
             ScrollPane scrollPane = new ScrollPane();
             scrollPane.setFitToWidth(true);
             scrollPane.setFitToHeight(true);
-            scrollPane.setStyle("-fx-background: #2B2B2B;");
+            scrollPane.setStyle("-fx-background: " + PDF_BACKGROUND_COLOR + ";");
 
             VBox vBox = new VBox();
             vBox.setSpacing(PDF_DISPLAY_PAGE_PADDING);
             vBox.setAlignment(Pos.CENTER);
 
-            PDDocument document = instance.documents.get(id);
+            PDDocument document = INSTANCE.getDocOpened().getDocument();
             PDFRenderer renderer = new PDFRenderer(document);
             if (document != null) {
                 for (int i = 0; i < document.getPages().getCount(); i++) {
@@ -89,80 +62,44 @@ public class Displayer implements Config {
                     vBox.getChildren().add(imageView);
                 }
             }
-
+            
             scrollPane.setContent(vBox);
 
+            tab.setId(Integer.toString(tabPane.getTabs().size()));
             tab.setContent(scrollPane);
+            tab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    int id = Integer.parseInt(tab.getId());
+                    if (id > tabPane.getTabs().size()) {
+                        id = 0;
+                    }
+                    System.out.println("Fermeture de l'onglet : " + id);
+                    INSTANCE.closeDocFile(id);
+                }
+            });
 
             tabPane.getTabs().add(tab);
             tabPane.getSelectionModel().select(tab);
-
             tabPane.getSelectionModel().selectedIndexProperty().addListener((obs, ov, nv) -> {
-                instance.opened = nv.intValue();
-                instance.updateDocument(null, null);
+                if (nv != null) {
+                    INSTANCE.opened = nv.intValue();
+                }
             });
         }
     }
 
-    public static void updatePDFTab(int id) {
-        if (instance.files.size() > 0 && instance.files.get(id) != null) {
-            File file = instance.files.get(id);
+    public static void updateDocFileTab(int id) {
+        if (INSTANCE.docFiles.size() > 0 && INSTANCE.docFiles.get(id) != null) {
+            File file = INSTANCE.docFiles.get(id).getFile();
 
-            TabPane tabPane = (TabPane) instance.stage.getScene().lookup("#documents");
+            TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup(TAB_PANE_ID);
             Tab tab = tabPane.getTabs().get(id);
             tab.setText(defineTabName(file.getName().substring(0, file.getName().length() - 4)));
-        }
-    }
-
-    public static void displayPDF() {
-        if (instance.documentOpened != null) {
-            try {
-                ScrollPane scrollPane = (ScrollPane) instance.stage.getScene().lookup("#display");
-                scrollPane.setFitToHeight(true);
-                scrollPane.setFitToWidth(true);
-
-                VBox vBox = new VBox();
-                vBox.getChildren().clear();
-                vBox.setSpacing(PDF_DISPLAY_PAGE_PADDING);
-                vBox.setAlignment(Pos.CENTER);
-
-//                vBox.setOnScroll(new EventHandler<ScrollEvent>() {
-//                    @Override
-//                    public void handle(ScrollEvent scrollEvent) {
-//                        scrollEvent.consume();
-//
-//                        if (scrollEvent.getDeltaY() == 0) {
-//                            return;
-//                        }
-//
-//                        double scaleFactor = 0;
-//                        if (scrollEvent.getDeltaY() > 0) {
-//                            scaleFactor = PDF_DISPLAY_ZOOM_SCALE;
-//                        } else {
-//                            scaleFactor = 1 / PDF_DISPLAY_ZOOM_SCALE;
-//                        }
-//
-//                        vBox.setScaleX(vBox.getScaleX() * scaleFactor);
-//                        vBox.setScaleY(vBox.getScaleY() * scaleFactor);
-//                    }
-//                });
-                PDFRenderer renderer = new PDFRenderer(instance.documentOpened);
-
-                for (int id = 0; id < instance.documentOpened.getPages().getCount(); id++) {
-                    BufferedImage bufferedImage = renderer.renderImage(id);
-                    WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
-                    ImageView imageView = new ImageView(image);
-                    vBox.getChildren().add(imageView);
-                }
-
-                scrollPane.setContent(vBox);
-            } catch (IOException e) {
-                System.out.println(e.toString());
-            }
+            tabPane.getSelectionModel().select(tab);
         }
     }
 //  </editor-fold>
-
     private static String defineTabName(String tabName) {
         String s;
         if (tabName.length() > TAB_TITLE_SIZE) {

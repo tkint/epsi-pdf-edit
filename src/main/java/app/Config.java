@@ -5,6 +5,8 @@
  */
 package app;
 
+import javafx.scene.control.TabPane.TabClosingPolicy;
+
 /**
  *
  * @author t.kint
@@ -12,13 +14,15 @@ package app;
 public interface Config {
 
     // APP SETTINGS
-    final String APP_TITLE = "PDFEdit";
+    final String APP_NAME = "PDFEdit";
     final String APP_VERSION = "0";
     final String APP_AUTHORS = "Erik FREMONT, Gaetan CAPEL, Ludovic BOUVIER, Thomas KINT";
     final String APP_SOCIETY = "EPSI";
     final String APP_DATE = "2016";
     
     // 
+    final String TAB_PANE_ID = "#documents";
+    final boolean TAB_CLOSE = true;
     final int TAB_TITLE_SIZE = 10; // Longueur du titre des onglets
     
     // 
@@ -26,6 +30,7 @@ public interface Config {
     final String BTN_FILE_SAVE_TITLE = "Sauvegarder le fichier";
     final String BTN_FILE_OPEN_TITLE = "Ouvrir un fichier";
 
+    final String PDF_BACKGROUND_COLOR = "#2B2B2B";
     final double PDF_DISPLAY_ZOOM_SCALE = 1.1;
     final float PDF_DISPLAY_PAGE_PADDING = 20;
     
