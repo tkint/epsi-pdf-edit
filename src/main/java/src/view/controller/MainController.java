@@ -11,11 +11,20 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.apache.pdfbox.pdmodel.*;
 import src.controller.*;
+import src.model.DocFile;
 import src.model.table.*;
+import src.view.Displayer;
 import src.view.controller.menu.*;
 
 /**
@@ -31,6 +40,9 @@ public class MainController implements Config, Initializable {
     private static final MenuTools MENUTOOLS = MenuTools.getInstance();
     private static final MenuHelp MENUHELP = MenuHelp.getInstance();
 
+    @FXML
+    public Menu menuFileOpenRecent;
+
     /**
      * Initializes the controller class.
      *
@@ -39,7 +51,32 @@ public class MainController implements Config, Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        for (DocFile docFile : INSTANCE.loadRecent()) {
+            addMenuFileOpenRecent(docFile);
+        }
+    }
 
+    public void addMenuFileOpenRecent(DocFile docFile) {
+        MenuItem menuItem = new MenuItem(docFile.getFileName());
+        menuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    if (!INSTANCE.isDocFileOpen(docFile.getFile())) {
+                        System.out.println("Ouverture d'un fichier récent : " + docFile.getFileName());
+                        PDDocument document = PDDocument.load(docFile.getFile());
+                        INSTANCE.addDocFile(document, docFile.getFile());
+                        INSTANCE.getDocFileOpened().setSaved(true);
+                        Displayer.displayDocFileNewTab(INSTANCE.getDocFileOpened().getShortFileName());
+                    } else {
+                        System.out.println("Document déjà ouvert");
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        menuFileOpenRecent.getItems().add(menuItem);
     }
 
     public void setStage(Stage stage) {

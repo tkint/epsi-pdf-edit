@@ -13,10 +13,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import src.model.DocFile;
 import src.view.Displayer;
+import src.view.controller.MainController;
 
 /**
  *
@@ -52,18 +58,21 @@ public class Instance implements Config {
 
     /**
      * Ajoute un docFile à la liste
+     *
      * @param document
-     * @param file 
+     * @param file
      */
     public static void addDocFile(PDDocument document, File file) {
         docFiles.add(new DocFile(0, document, file));
         opened = docFiles.size() - 1;
-        getDocOpened().setId(opened);
+        getDocFileOpened().setId(opened);
+        saveRecent(getDocFileOpened());
     }
 
     /**
      * Ferme un docFile de la liste
-     * @param id 
+     *
+     * @param id
      */
     public static void closeDocFile(int id) {
         try {
@@ -81,8 +90,9 @@ public class Instance implements Config {
 
     /**
      * Met à jour le docFile ouvert
+     *
      * @param document
-     * @param file 
+     * @param file
      */
     public static void updateDocFile(PDDocument document, File file) {
         if (document != null) {
@@ -95,9 +105,10 @@ public class Instance implements Config {
 
     /**
      * Récupère le docFile ouvert
-     * @return 
+     *
+     * @return
      */
-    public static DocFile getDocOpened() {
+    public static DocFile getDocFileOpened() {
         DocFile doc = null;
         if (opened > -1 && opened < docFiles.size()) {
             doc = docFiles.get(opened);
@@ -107,14 +118,15 @@ public class Instance implements Config {
 
     /**
      * Vérifie si le fichier est déjà ouvert
+     *
      * @param file
-     * @return 
+     * @return
      */
     public static boolean isDocFileOpen(File file) {
         boolean r = false;
         int i = 0;
         while (i < docFiles.size() && r == false) {
-            if (docFiles.get(i).getFile().equals(file)) {
+            if (docFiles.get(i).getFile().getAbsolutePath().equals(file.getAbsolutePath())) {
                 r = true;
             }
             i++;
@@ -154,13 +166,13 @@ public class Instance implements Config {
                 BufferedReader reader = new BufferedReader(new FileReader(temp));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    String[] l = line.split("-");
+                    String[] l = line.split(TEMP_DATA_SEPARATOR);
                     File file = new File(l[1]);
                     if (file.exists()) {
                         PDDocument document = PDDocument.load(file);
                         addDocFile(document, file);
-                        getDocOpened().setSaved(true);
-                        Displayer.displayDocFileNewTab(getDocOpened().getShortFileName());
+                        getDocFileOpened().setSaved(true);
+                        Displayer.displayDocFileNewTab(getDocFileOpened().getShortFileName());
                     }
                 }
             }
@@ -169,9 +181,68 @@ public class Instance implements Config {
         }
     }
 
+    public static void saveRecent(DocFile docFile) {
+        if (!isAlreadyRecent(docFile)) {
+            try {
+                BufferedWriter writer = null;
+                File temp = new File(APP_NAME + "_recent.txt");
+
+                if (temp.exists()) {
+                    writer = new BufferedWriter(new FileWriter(temp, true));
+                } else {
+                    writer = new BufferedWriter(new FileWriter(temp));
+                }
+
+                writer.write(docFile.toTemp());
+                writer.newLine();
+                writer.flush();
+                writer.close();
+            } catch (Exception e) {
+                System.out.println(e.toString());
+            }
+        }
+    }
+
+    public static ArrayList<DocFile> loadRecent() {
+        ArrayList<DocFile> docFiles = new ArrayList<>();
+        try {
+            File temp = new File(APP_NAME + "_recent.txt");
+            if (temp.exists()) {
+                BufferedReader reader = new BufferedReader(new FileReader(temp));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] l = line.split(TEMP_DATA_SEPARATOR);
+                    File file = new File(l[1]);
+                    if (file.exists()) {
+                        PDDocument document = PDDocument.load(file);
+                        DocFile docFile = new DocFile(INSTANCE.docFiles.size() - 1, document, file);
+                        docFiles.add(docFile);
+                        document.close();
+                    } else {
+                        System.out.println("Le fichier " + l[1] + " n'existe pas");
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+        return docFiles;
+    }
+
+    private static boolean isAlreadyRecent(DocFile docFile) {
+        boolean r = false;
+        for (DocFile df : loadRecent()) {
+            if (docFile.getFile().getAbsolutePath().equals(df.getFile().getAbsolutePath())) {
+                r = true;
+            }
+        }
+        return r;
+    }
+
     /**
      * Liste les docFile sauvegardés
-     * @return 
+     *
+     * @return
      */
     private static List<DocFile> getDocFilesOpened() {
         List<DocFile> df = new ArrayList<>();

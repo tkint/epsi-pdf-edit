@@ -53,7 +53,7 @@ public class MenuTools implements Config {
      * Extrait du document ouvert la page définie par l'utilisateur
      */
     public void btnToolsExtractPage() {
-        if (INSTANCE.getDocOpened() != null) {
+        if (INSTANCE.getDocFileOpened() != null) {
             Dialog<Pair<String, String>> dialog = new Dialog<>();
             dialog.setTitle("Extraire une page");
             dialog.setHeaderText("Choisissez la page à extraire");
@@ -62,7 +62,7 @@ public class MenuTools implements Config {
             dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
 
             List<String> pages = new ArrayList<>();
-            for (int i = 0; i < INSTANCE.getDocOpened().getDocument().getPages().getCount(); i++) {
+            for (int i = 0; i < INSTANCE.getDocFileOpened().getDocument().getPages().getCount(); i++) {
                 pages.add(String.valueOf(i + 1));
             }
 
@@ -96,7 +96,7 @@ public class MenuTools implements Config {
             result.ifPresent(pair -> {
                 int id = Integer.parseInt(pair.getValue());
                 PageController pageController = new PageController();
-                pageController.extractPage(INSTANCE.getDocOpened().getDocument(), id - 1, pair.getKey());
+                pageController.extractPage(INSTANCE.getDocFileOpened().getDocument(), id - 1, pair.getKey());
             });
         }
     }
@@ -105,10 +105,10 @@ public class MenuTools implements Config {
      * Extrait toutes les pages du document ouvert
      */
     public void btnToolsExtractPages() {
-        if (INSTANCE.getDocOpened() != null) {
+        if (INSTANCE.getDocFileOpened() != null) {
             PageController pageController = new PageController();
-            for (int i = 0; i < INSTANCE.getDocOpened().getDocument().getPages().getCount(); i++) {
-                pageController.extractPage(INSTANCE.getDocOpened().getDocument(), i, INSTANCE.getDocOpened().getShortFileName() + "_" + (i + 1));
+            for (int i = 0; i < INSTANCE.getDocFileOpened().getDocument().getPages().getCount(); i++) {
+                pageController.extractPage(INSTANCE.getDocFileOpened().getDocument(), i, INSTANCE.getDocFileOpened().getShortFileName() + "_" + (i + 1));
             }
         }
     }

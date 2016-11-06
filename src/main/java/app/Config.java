@@ -37,4 +37,6 @@ public interface Config {
     // TEST SETTINGS
     final String TEST_DOC_TITLE = "test";
     final String TEST_IMG_NAME = "./img/poros.jpg";
+    
+    final String TEMP_DATA_SEPARATOR = "->";
 }

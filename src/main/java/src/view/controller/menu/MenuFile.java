@@ -7,12 +7,14 @@ package src.view.controller.menu;
 
 import app.Config;
 import app.Instance;
+import static app.Instance.getDocFileOpened;
 import java.io.File;
 import java.io.IOException;
 import javafx.stage.FileChooser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import src.view.Displayer;
+import src.view.controller.MainController;
 
 /**
  *
@@ -63,8 +65,8 @@ public class MenuFile implements Config {
                     if (!Instance.isDocFileOpen(file)) {
                         PDDocument document = PDDocument.load(file);
                         INSTANCE.addDocFile(document, file);
-                        INSTANCE.getDocOpened().setSaved(true);
-                        Displayer.displayDocFileNewTab(INSTANCE.getDocOpened().getShortFileName());
+                        INSTANCE.getDocFileOpened().setSaved(true);
+                        Displayer.displayDocFileNewTab(INSTANCE.getDocFileOpened().getShortFileName());
                     } else {
                         System.out.println("Document déjà ouvert");
                     }
@@ -76,14 +78,14 @@ public class MenuFile implements Config {
     }
 
     public void btnFileSave() {
-        if (INSTANCE.getDocOpened() != null) {
+        if (INSTANCE.getDocFileOpened() != null) {
             try {
-                File file = new File(INSTANCE.getDocOpened().getFile().getName());
+                File file = new File(INSTANCE.getDocFileOpened().getFile().getName());
                 if (!file.isDirectory()) {
                     if (file.exists()) {
-                        INSTANCE.getDocOpened().getDocument().save(INSTANCE.getDocOpened().getFileName());
-                        INSTANCE.getDocOpened().setSaved(true);
-                        System.out.println("Document " + INSTANCE.getDocOpened().getFileName() + " a été enregistré");
+                        INSTANCE.getDocFileOpened().getDocument().save(INSTANCE.getDocFileOpened().getFileName());
+                        INSTANCE.getDocFileOpened().setSaved(true);
+                        System.out.println("Document " + INSTANCE.getDocFileOpened().getFileName() + " a été enregistré");
                     } else {
                         btnFileSaveAs();
                     }
@@ -97,18 +99,18 @@ public class MenuFile implements Config {
     }
 
     public void btnFileSaveAs() {
-        if (INSTANCE.getDocOpened() != null) {
+        if (INSTANCE.getDocFileOpened() != null) {
             try {
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle(BTN_FILE_SAVE_TITLE);
-                fileChooser.setInitialFileName(INSTANCE.getDocOpened().getFile().getName());
+                fileChooser.setInitialFileName(INSTANCE.getDocFileOpened().getFile().getName());
                 fileChooser.setInitialDirectory(new File(System.getProperty(OPEN_SAVE_DIR)));
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
                 File file = fileChooser.showSaveDialog(INSTANCE.stage);
                 if (file != null) {
-                    INSTANCE.getDocOpened().getDocument().save(file);
-                    INSTANCE.updateDocFile(INSTANCE.getDocOpened().getDocument(), file);
-                    INSTANCE.getDocOpened().setSaved(true);
+                    INSTANCE.getDocFileOpened().getDocument().save(file);
+                    INSTANCE.updateDocFile(INSTANCE.getDocFileOpened().getDocument(), file);
+                    INSTANCE.getDocFileOpened().setSaved(true);
                     Displayer.updateDocFileTab(INSTANCE.opened);
                     System.out.println("Document " + file.getName() + " a été enregistré");
                 }

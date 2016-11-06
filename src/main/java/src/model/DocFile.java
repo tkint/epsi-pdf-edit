@@ -5,6 +5,7 @@
  */
 package src.model;
 
+import app.Config;
 import java.io.File;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -12,7 +13,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  *
  * @author Thomas
  */
-public class DocFile {
+public class DocFile implements Config {
 
     private int id;
     private PDDocument document;
@@ -67,6 +68,6 @@ public class DocFile {
     }
 
     public String toTemp() {
-        return id + "-" + file.getName();
+        return id + TEMP_DATA_SEPARATOR + file.getAbsolutePath();
     }
 }

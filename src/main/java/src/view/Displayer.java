@@ -14,7 +14,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.Pagination;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -34,7 +33,7 @@ public class Displayer implements Config {
 
     //  <editor-fold desc="Display">
     public static void displayDocFileNewTab(String tabName) throws IOException {
-        if (INSTANCE.getDocOpened() != null) {
+        if (INSTANCE.getDocFileOpened() != null) {
             TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup(TAB_PANE_ID);
             if (TAB_CLOSE) {
                 tabPane.tabClosingPolicyProperty().set(TabPane.TabClosingPolicy.SELECTED_TAB);
@@ -52,7 +51,7 @@ public class Displayer implements Config {
             vBox.setSpacing(PDF_DISPLAY_PAGE_PADDING);
             vBox.setAlignment(Pos.CENTER);
 
-            PDDocument document = INSTANCE.getDocOpened().getDocument();
+            PDDocument document = INSTANCE.getDocFileOpened().getDocument();
             PDFRenderer renderer = new PDFRenderer(document);
             if (document != null) {
                 for (int i = 0; i < document.getPages().getCount(); i++) {

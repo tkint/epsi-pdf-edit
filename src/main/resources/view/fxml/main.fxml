@@ -15,10 +15,11 @@
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#btnFileNew" text="Nouveau" />
                         <MenuItem mnemonicParsing="false" onAction="#btnFileOpen" text="Ouvrir" />
+                  <Menu fx:id="menuFileOpenRecent" mnemonicParsing="false" text="Ouvrir..." />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#btnFileSave" text="Enregistrer" />
                         <MenuItem mnemonicParsing="false" onAction="#btnFileSaveAs" text="Enregistrer sous..." />
-                        <SeparatorMenuItem mnemonicParsing="false" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#btnFileExit" text="Quitter" />
                     </items>
                 </Menu>
@@ -48,6 +49,6 @@
                 </Menu>
             </menus>
         </MenuBar>
-      <TabPane id="documents" layoutY="25.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@../styles/main.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="24.0" />
+      <TabPane id="documents" layoutY="25.0" prefHeight="376.0" prefWidth="600.0" stylesheets="@../styles/main.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="24.0" />
     </children>
 </AnchorPane>
