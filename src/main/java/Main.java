@@ -37,6 +37,11 @@ public class Main extends Application implements Config {
         
         INSTANCE.load();
     }
+    
+    @Override
+    public void stop() {
+        INSTANCE.save();
+    }
 
     public static void main(String[] args) throws IOException {
         launch(args);

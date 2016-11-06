@@ -85,6 +85,7 @@ public class MenuFile implements Config {
                     if (file.exists()) {
                         INSTANCE.getDocFileOpened().getDocument().save(INSTANCE.getDocFileOpened().getFileName());
                         INSTANCE.getDocFileOpened().setSaved(true);
+                        INSTANCE.saveRecent(getDocFileOpened());
                         System.out.println("Document " + INSTANCE.getDocFileOpened().getFileName() + " a été enregistré");
                     } else {
                         btnFileSaveAs();
@@ -111,6 +112,7 @@ public class MenuFile implements Config {
                     INSTANCE.getDocFileOpened().getDocument().save(file);
                     INSTANCE.updateDocFile(INSTANCE.getDocFileOpened().getDocument(), file);
                     INSTANCE.getDocFileOpened().setSaved(true);
+                    INSTANCE.saveRecent(getDocFileOpened());
                     Displayer.updateDocFileTab(INSTANCE.opened);
                     System.out.println("Document " + file.getName() + " a été enregistré");
                 }
@@ -126,7 +128,6 @@ public class MenuFile implements Config {
      * Quitte l'application
      */
     public void btnFileExit() {
-        INSTANCE.save();
-        System.exit(0);
+        INSTANCE.stage.close();
     }
 }

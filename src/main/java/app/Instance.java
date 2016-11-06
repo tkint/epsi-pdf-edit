@@ -175,6 +175,7 @@ public class Instance implements Config {
                         Displayer.displayDocFileNewTab(getDocFileOpened().getShortFileName());
                     }
                 }
+                reader.close();
             }
         } catch (IOException e) {
             System.out.println(e.toString());
@@ -222,6 +223,7 @@ public class Instance implements Config {
                         System.out.println("Le fichier " + l[1] + " n'existe pas");
                     }
                 }
+                reader.close();
             }
         } catch (IOException e) {
             System.out.println(e.toString());
