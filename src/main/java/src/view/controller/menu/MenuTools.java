@@ -74,6 +74,7 @@ public class MenuTools implements Config {
             TextField filenameField = new TextField();
             filenameField.setPromptText("Nom du fichier");
             ComboBox<String> pageBox = new ComboBox<>(FXCollections.observableList(pages));
+            pageBox.getSelectionModel().select(INSTANCE.getDocFileOpened().getSelectedPage());
 
             gridPane.add(new Label("Page :"), 0, 0);
             gridPane.add(pageBox, 1, 0);

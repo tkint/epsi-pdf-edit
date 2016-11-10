@@ -14,7 +14,6 @@ import javafx.stage.FileChooser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import src.view.Displayer;
-import src.view.controller.MainController;
 
 /**
  *
@@ -42,6 +41,9 @@ public class MenuFile implements Config {
         return MENUFILE;
     }
 
+    /**
+     * Créer un nouveau fichier
+     */
     public void btnFileNew() {
         try {
             PDDocument document = new PDDocument();
@@ -53,13 +55,16 @@ public class MenuFile implements Config {
         }
     }
 
+    /**
+     * Ouvre un fichier
+     */
     public void btnFileOpen() {
         if (INSTANCE.stage != null) {
             try {
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle(BTN_FILE_OPEN_TITLE);
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
-                fileChooser.setInitialDirectory(new File(System.getProperty(OPEN_SAVE_DIR)));
+                fileChooser.setInitialDirectory(new File(System.getProperty(BTN_OPEN_SAVE_DEFAULT_DIR)));
                 File file = fileChooser.showOpenDialog(INSTANCE.stage);
                 if (file != null) {
                     if (!Instance.isDocFileOpen(file)) {
@@ -77,6 +82,9 @@ public class MenuFile implements Config {
         }
     }
 
+    /**
+     * Sauvegarde le fichier ouvert
+     */
     public void btnFileSave() {
         if (INSTANCE.getDocFileOpened() != null) {
             try {
@@ -99,13 +107,16 @@ public class MenuFile implements Config {
         }
     }
 
+    /**
+     * Sauvegarde le fichier ouvert à l'endroit choisit
+     */
     public void btnFileSaveAs() {
         if (INSTANCE.getDocFileOpened() != null) {
             try {
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle(BTN_FILE_SAVE_TITLE);
                 fileChooser.setInitialFileName(INSTANCE.getDocFileOpened().getFile().getName());
-                fileChooser.setInitialDirectory(new File(System.getProperty(OPEN_SAVE_DIR)));
+                fileChooser.setInitialDirectory(new File(System.getProperty(BTN_OPEN_SAVE_DEFAULT_DIR)));
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
                 File file = fileChooser.showSaveDialog(INSTANCE.stage);
                 if (file != null) {

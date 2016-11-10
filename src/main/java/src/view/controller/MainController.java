@@ -56,29 +56,36 @@ public class MainController implements Config, Initializable {
         }
     }
 
+    /**
+     * Ajoute les fichiers récents au menu Fichier -> Ouvrir...
+     *
+     * @param docFile
+     */
     public void addMenuFileOpenRecent(DocFile docFile) {
         MenuItem menuItem = new MenuItem(docFile.getFileName());
-        menuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    if (!INSTANCE.isDocFileOpen(docFile.getFile())) {
-                        System.out.println("Ouverture d'un fichier récent : " + docFile.getFileName());
-                        PDDocument document = PDDocument.load(docFile.getFile());
-                        INSTANCE.addDocFile(document, docFile.getFile());
-                        INSTANCE.getDocFileOpened().setSaved(true);
-                        Displayer.displayDocFileNewTab(INSTANCE.getDocFileOpened().getShortFileName());
-                    } else {
-                        System.out.println("Document déjà ouvert");
-                    }
-                } catch (IOException ex) {
-                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        menuItem.setOnAction((ActionEvent event) -> {
+            try {
+                if (!INSTANCE.isDocFileOpen(docFile.getFile())) {
+                    System.out.println("Ouverture d'un fichier récent : " + docFile.getFileName());
+                    PDDocument document = PDDocument.load(docFile.getFile());
+                    INSTANCE.addDocFile(document, docFile.getFile());
+                    INSTANCE.getDocFileOpened().setSaved(true);
+                    Displayer.displayDocFileNewTab(INSTANCE.getDocFileOpened().getShortFileName());
+                } else {
+                    System.out.println("Document déjà ouvert");
                 }
+            } catch (IOException e) {
+                System.out.println(e.toString());
             }
         });
         menuFileOpenRecent.getItems().add(menuItem);
     }
 
+    /**
+     * Renseigne son stage dans l'instance
+     *
+     * @param stage
+     */
     public void setStage(Stage stage) {
         INSTANCE.stage = stage;
     }

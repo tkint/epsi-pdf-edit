@@ -9,7 +9,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #2B2B2B;" styleClass="mainFxmlClass" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.view.controller.MainController">
     <children>
-        <MenuBar prefHeight="25.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <MenuBar minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <menus>
                 <Menu mnemonicParsing="false" text="Fichier">
                     <items>
@@ -49,6 +49,6 @@
                 </Menu>
             </menus>
         </MenuBar>
-      <TabPane id="documents" layoutY="25.0" prefHeight="376.0" prefWidth="600.0" stylesheets="@../styles/main.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="24.0" />
+      <TabPane id="documents" layoutY="25.0" prefHeight="333.0" prefWidth="600.0" stylesheets="@../styles/main.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
     </children>
 </AnchorPane>

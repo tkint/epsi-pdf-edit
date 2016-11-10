@@ -13,16 +13,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import src.model.DocFile;
 import src.view.Displayer;
-import src.view.controller.MainController;
 
 /**
  *
@@ -140,12 +134,12 @@ public class Instance implements Config {
     public static void save() {
         try {
             BufferedWriter writer = null;
-            File temp = new File(APP_NAME + ".txt");
+            File save = new File(APP_NAME + ".txt");
 
-            writer = new BufferedWriter(new FileWriter(temp));
+            writer = new BufferedWriter(new FileWriter(save));
 
             for (DocFile docFile : getDocFilesOpened()) {
-                writer.write(docFile.toTemp());
+                writer.write(docFile.toSaveString());
                 writer.newLine();
             }
 
@@ -157,21 +151,22 @@ public class Instance implements Config {
     }
 
     /**
-     * Charge l'instance depuis le fichier temp
+     * Charge l'instance depuis le fichier
      */
     public static void load() {
         try {
-            File temp = new File(APP_NAME + ".txt");
-            if (temp.exists()) {
-                BufferedReader reader = new BufferedReader(new FileReader(temp));
+            File save = new File(APP_NAME + ".txt");
+            if (save.exists()) {
+                BufferedReader reader = new BufferedReader(new FileReader(save));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    String[] l = line.split(TEMP_DATA_SEPARATOR);
+                    String[] l = line.split(INSTANCE_SAVE_DATA_SEPARATOR);
                     File file = new File(l[1]);
                     if (file.exists()) {
                         PDDocument document = PDDocument.load(file);
                         addDocFile(document, file);
                         getDocFileOpened().setSaved(true);
+                        getDocFileOpened().setSelectedPage(Integer.parseInt(l[2]));
                         Displayer.displayDocFileNewTab(getDocFileOpened().getShortFileName());
                     }
                 }
@@ -182,19 +177,24 @@ public class Instance implements Config {
         }
     }
 
+    /**
+     * Ajoute le fichier à la liste des récemment ouverts
+     *
+     * @param docFile
+     */
     public static void saveRecent(DocFile docFile) {
         if (!isAlreadyRecent(docFile)) {
             try {
                 BufferedWriter writer = null;
-                File temp = new File(APP_NAME + "_recent.txt");
+                File save = new File(APP_NAME + "_recent.txt");
 
-                if (temp.exists()) {
-                    writer = new BufferedWriter(new FileWriter(temp, true));
+                if (save.exists()) {
+                    writer = new BufferedWriter(new FileWriter(save, true));
                 } else {
-                    writer = new BufferedWriter(new FileWriter(temp));
+                    writer = new BufferedWriter(new FileWriter(save));
                 }
 
-                writer.write(docFile.toTemp());
+                writer.write(docFile.toSaveString());
                 writer.newLine();
                 writer.flush();
                 writer.close();
@@ -204,6 +204,11 @@ public class Instance implements Config {
         }
     }
 
+    /**
+     * Charge les fichiers récemment ouverts
+     *
+     * @return
+     */
     public static ArrayList<DocFile> loadRecent() {
         ArrayList<DocFile> docFiles = new ArrayList<>();
         try {
@@ -212,11 +217,12 @@ public class Instance implements Config {
                 BufferedReader reader = new BufferedReader(new FileReader(temp));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    String[] l = line.split(TEMP_DATA_SEPARATOR);
+                    String[] l = line.split(INSTANCE_SAVE_DATA_SEPARATOR);
                     File file = new File(l[1]);
                     if (file.exists()) {
                         PDDocument document = PDDocument.load(file);
                         DocFile docFile = new DocFile(INSTANCE.docFiles.size() - 1, document, file);
+                        docFile.setSelectedPage(Integer.parseInt(l[2]));
                         docFiles.add(docFile);
                         document.close();
                     } else {
@@ -231,6 +237,12 @@ public class Instance implements Config {
         return docFiles;
     }
 
+    /**
+     * Vérifie si le fichier est déjà enregistré dans les récemment ouverts
+     *
+     * @param docFile
+     * @return
+     */
     private static boolean isAlreadyRecent(DocFile docFile) {
         boolean r = false;
         for (DocFile df : loadRecent()) {
