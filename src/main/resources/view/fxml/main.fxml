@@ -28,6 +28,20 @@
                         <MenuItem mnemonicParsing="false" onAction="#btnEditDelete" text="Supprimer" />
                     </items>
                 </Menu>
+            <Menu mnemonicParsing="false" text="Document">
+              <items>
+                  <MenuItem mnemonicParsing="false" onAction="#btnDocumentAddPage" text="Ajouter une page" />
+                  <MenuItem mnemonicParsing="false" onAction="#btnDocumentRemovePage" text="Supprimer page" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Page">
+              <items>
+                  <MenuItem mnemonicParsing="false" onAction="#btnPageRotateRight" text="Tourner sur la droite" />
+                  <MenuItem mnemonicParsing="false" text="Tourner sur la gauche" />
+                  <MenuItem mnemonicParsing="false" text="Orienter en paysage" />
+                  <MenuItem mnemonicParsing="false" text="Orienter en portrait" />
+              </items>
+            </Menu>
                 <Menu mnemonicParsing="false" text="Outils">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#btnToolsExtractPage" text="Extraire page" />

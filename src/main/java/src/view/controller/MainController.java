@@ -37,6 +37,8 @@ public class MainController implements Config, Initializable {
     private static final Instance INSTANCE = Instance.getInstance();
     private static final MenuFile MENUFILE = MenuFile.getInstance();
     private static final MenuEdit MENUEDIT = MenuEdit.getInstance();
+    private static final MenuDocument MENUDOCUMENT = MenuDocument.getInstance();
+    private static final MenuPage MENUPAGE = MenuPage.getInstance();
     private static final MenuTools MENUTOOLS = MenuTools.getInstance();
     private static final MenuHelp MENUHELP = MenuHelp.getInstance();
 
@@ -130,6 +132,22 @@ public class MainController implements Config, Initializable {
     //  <editor-fold desc="Edit">
     public void btnEditDelete() {
         MENUEDIT.btnEditDelete();
+    }
+    //  </editor-fold>
+    
+    //  <editor-fold desc="Document">
+    public void btnDocumentAddPage() {
+        MENUDOCUMENT.btnDocumentAddPage();
+    }
+    
+    public void btnDocumentRemovePage() {
+        MENUDOCUMENT.btnDocumentRemovePage();
+    }
+    //  </editor-fold>
+    
+    //  <editor-fold desc="Page">
+    public void btnPageRotateRight() {
+        MENUPAGE.btnPageRotateRight();
     }
     //  </editor-fold>
 

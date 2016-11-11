@@ -47,15 +47,14 @@ public class Displayer implements Config {
         if (INSTANCE.getDocFileOpened() != null) {
             // Récupération du tableau d'onglets
             TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
-            // Récupération du document
-            PDDocument document = INSTANCE.getDocFileOpened().getDocument();
-            // Initialisation du renderer
-            PDFRenderer renderer = new PDFRenderer(document);
 
             // Définition de l'onglet
             Tab tab = new Tab(defineTabName(tabName));
             // Définition de la pagination
-            Pagination pagination = new Pagination(document.getNumberOfPages());
+            Pagination pagination = new Pagination(INSTANCE.getDocFileOpened().getDocument().getNumberOfPages());
+
+            // Définition du renderer
+            PDFRenderer renderer = new PDFRenderer(INSTANCE.getDocFileOpened().getDocument());
 
             // Paramétrage du tableau d'onglets
             if (TAB_CLOSE) {
@@ -80,13 +79,14 @@ public class Displayer implements Config {
             });
 
             // Paramétrage de la pagination
+            pagination.setStyle("-fx-background-color: white");
             pagination.setPadding(new Insets(0, 0, 0, 0));
             pagination.setCurrentPageIndex(INSTANCE.getDocFileOpened().getSelectedPage());
             pagination.setPageFactory((Integer pageIndex) -> {
                 ScrollPane scrollPane = new ScrollPane();
                 try {
                     // Conteneur de l'image
-                    ImageView imageView = setImageView(renderer.renderImage(pageIndex), scrollPane);
+                    ImageView imageView = setImageView(renderer, pageIndex, scrollPane);
                     StackPane stackPane = new StackPane(imageView);
 
                     // Panneau défilant
@@ -94,6 +94,9 @@ public class Displayer implements Config {
                     scrollPane.setContent(stackPane);
 
                     INSTANCE.getDocFileOpened().setSelectedPage(pageIndex);
+                    pagination.setCurrentPageIndex(pageIndex);
+                    
+                    System.out.println("Page sélectionnée : doc " + INSTANCE.getDocFileOpened().getSelectedPage() + " | tab " + pagination.getCurrentPageIndex());
                 } catch (IOException e) {
                     System.out.println(e.toString());
                 }
@@ -127,6 +130,55 @@ public class Displayer implements Config {
     }
 
     /**
+     * Ajoute une page à l'onglet ouvert
+     *
+     * @param id
+     */
+    public static void addDocFilePageTab(int id) {
+        if (INSTANCE.getDocFileOpened() != null) {
+            // Récupération du tableau d'onglets
+            TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
+            // Récupération de l'onglet
+            Tab tab = tabPane.getTabs().get(id);
+            // Récupération de la pagination
+            Pagination pagination = (Pagination) tab.getContent();
+
+            if (INSTANCE.getDocFileOpened().getDocument().getNumberOfPages() > pagination.getPageCount()) {
+                pagination.setPageCount(pagination.getPageCount() + 1);
+                int pageSelected = pagination.getPageCount() - 1;
+                
+                pagination.getPageFactory().call(pageSelected);
+                pagination.setCurrentPageIndex(pageSelected);
+                INSTANCE.getDocFileOpened().setSelectedPage(pageSelected);
+            }
+        }
+    }
+    
+    /**
+     * Ajoute une page à l'onglet ouvert
+     *
+     * @param id
+     */
+    public static void removeDocFilePageTab(int id) {
+        if (INSTANCE.getDocFileOpened() != null) {
+            // Récupération du tableau d'onglets
+            TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
+            // Récupération de l'onglet
+            Tab tab = tabPane.getTabs().get(id);
+            // Récupération de la pagination
+            Pagination pagination = (Pagination) tab.getContent();
+
+            if (INSTANCE.getDocFileOpened().getDocument().getNumberOfPages() < pagination.getPageCount()) {
+                pagination.setPageCount(pagination.getPageCount() - 1);
+                int pageSelected = pagination.getPageCount() - 1;
+                
+                pagination.setCurrentPageIndex(pageSelected);
+                INSTANCE.getDocFileOpened().setSelectedPage(pageSelected);
+            }
+        }
+    }
+
+    /**
      * Instancie et paramètre le scrollPane de la page
      *
      * @return ScrollPane
@@ -135,7 +187,7 @@ public class Displayer implements Config {
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
-        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        scrollPane.setStyle("-fx-background: " + PDF_BACKGROUND_COLOR + "; -fx-background-color: " + PDF_BACKGROUND_COLOR + ";");
         return scrollPane;
     }
 
@@ -145,15 +197,22 @@ public class Displayer implements Config {
      * @param bufferedImage
      * @return
      */
-    private static ImageView setImageView(BufferedImage bufferedImage, ScrollPane scrollPane) {
-        // Transformation du résultat du renderer en imageView
+    private static ImageView setImageView(PDFRenderer renderer, int pageIndex, ScrollPane scrollPane) throws IOException {
+        // Transformation de la page en image
+        BufferedImage bufferedImage = renderer.renderImage(pageIndex);
         WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
         ImageView imageView = new ImageView(image);
 
         // Paramétrage de l'image
-//        imageView.setPreserveRatio(true);
-        imageView.setFitWidth(INSTANCE.getDocFileOpened().getWidth());
-        imageView.setFitHeight(INSTANCE.getDocFileOpened().getHeight());
+        // On met l'image sous la même forme (paysage, portrait) que la page
+        if (bufferedImage.getHeight() > bufferedImage.getWidth()) {
+            imageView.setFitWidth(INSTANCE.getDocFileOpened().getWidth());
+            imageView.setFitHeight(INSTANCE.getDocFileOpened().getHeight());
+        } else {
+            imageView.setFitWidth(INSTANCE.getDocFileOpened().getHeight());
+            imageView.setFitHeight(INSTANCE.getDocFileOpened().getWidth());
+        }
+        imageView.setStyle("-fx-effect: dropshadow(three-pass-box, black, 100, 0, 0, 0);");
 
         imageView.setOnScroll((event) -> {
             if (event.isControlDown()) {
@@ -163,7 +222,7 @@ public class Displayer implements Config {
                 if (event.getDeltaY() == 0) {
                     return;
                 }
-                
+
                 boolean canZoomIn = imageView.getFitWidth() * PDF_DISPLAY_ZOOM_SCALE < PDF_DISPLAY_INITIAL_RATIO.getWidth() * PDF_DISPLAY_ZOOMIN_LIMIT;
                 boolean canZoomOut = imageView.getFitWidth() * PDF_DISPLAY_ZOOM_SCALE > PDF_DISPLAY_INITIAL_RATIO.getWidth() * PDF_DISPLAY_ZOOMOUT_LIMIT;
 
@@ -202,112 +261,5 @@ public class Displayer implements Config {
             s = tabName;
         }
         return s;
-    }
-
-    /**
-     * Affiche le document dans un nouvel onglet (deprecated)
-     *
-     * @param tabName
-     * @throws IOException
-     */
-    public static void displayDocFileNewTabOld(String tabName) throws IOException {
-        if (INSTANCE.getDocFileOpened() != null) {
-            // Récupération du tableau d'onglets
-            TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
-            // Récupération du document
-            PDDocument document = INSTANCE.getDocFileOpened().getDocument();
-
-            // Définition de l'onglet
-            Tab tab = new Tab(defineTabName(tabName));
-            // Définition du conteneur d'éléments de l'onglet
-            VBox content = new VBox();
-
-            // Définition du panneau défilant
-            ScrollPane scrollPane = new ScrollPane();
-            // Définition du conteneur des images
-            VBox vBox = new VBox();
-
-            // Création de la barre d'outil
-            AnchorPane toolbar = new AnchorPane();
-            // Création de la pagination
-            Pagination pagination = new Pagination(document.getNumberOfPages());
-
-            // Paramétrage du tableau d'onglets
-            if (TAB_CLOSE) {
-                tabPane.tabClosingPolicyProperty().set(TabPane.TabClosingPolicy.SELECTED_TAB);
-            }
-            tabPane.getSelectionModel().selectedIndexProperty().addListener((obs, ov, nv) -> {
-                if (nv != null) {
-                    INSTANCE.opened = nv.intValue();
-                }
-            });
-
-            // Paramétrage de l'onglet
-            tab.setId(Integer.toString(tabPane.getTabs().size()));
-            tab.closableProperty().set(true);
-            tab.setOnClosed(new EventHandler<Event>() {
-                @Override
-                public void handle(Event event) {
-                    int id = Integer.parseInt(tab.getId());
-                    if (id > tabPane.getTabs().size()) {
-                        id = 0;
-                    }
-                    System.out.println("Fermeture de l'onglet : " + id);
-                    INSTANCE.closeDocFile(id);
-                }
-            });
-
-            // Paramétraye du panneau défilant
-            scrollPane.setFitToWidth(true);
-            scrollPane.setFitToHeight(true);
-            scrollPane.setStyle("-fx-background: " + PDF_BACKGROUND_COLOR + ";");
-
-            scrollPane.vvalueProperty().addListener(((obs, ov, nv) -> {
-                DocFile df = INSTANCE.getDocFileOpened();
-                float pageHeightOnScrollBar = (float) 1 / df.getDocument().getNumberOfPages();
-                float capTop = df.getSelectedPage() * pageHeightOnScrollBar;
-                float capBottom = (df.getSelectedPage() + 1) * pageHeightOnScrollBar;
-                if (obs.getValue().floatValue() > capBottom && df.getNextPage() != null) {
-                    INSTANCE.getDocFileOpened().setSelectedPage(df.getSelectedPage() + 1);
-                } else if (obs.getValue().floatValue() < capTop && df.getPreviousPage() != null) {
-                    INSTANCE.getDocFileOpened().setSelectedPage(df.getSelectedPage() - 1);
-                }
-                pagination.setCurrentPageIndex(INSTANCE.getDocFileOpened().getSelectedPage());
-            }));
-
-            // Paramétrage du conteneur des images
-            vBox.setSpacing(PDF_DISPLAY_PAGE_PADDING);
-            vBox.setAlignment(Pos.CENTER);
-
-            PDFRenderer renderer = new PDFRenderer(document);
-            if (document != null) {
-                for (int i = 0; i < document.getPages().getCount(); i++) {
-                    BufferedImage bufferedImage = renderer.renderImage(i);
-                    WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
-                    ImageView imageView = new ImageView(image);
-                    vBox.getChildren().add(imageView);
-                }
-            }
-
-            // Paramétrage de la boite à outils
-            // Paramétrage de la pagination
-            // Ajout du contenu dans le panneau défilant
-            scrollPane.setContent(vBox);
-            // Ajout du panneau défilant au conteneur de l'onglet
-            content.getChildren().add(scrollPane);
-
-            // Ajout de la pagination à la barre d'outils
-            toolbar.getChildren().add(pagination);
-            // Ajout de la barre d'outils au conteneur de l'onglet
-            content.getChildren().add(toolbar);
-
-            // Ajout du panneau défilant à l'onglet
-            tab.setContent(content);
-            // Ajout de l'onglet au tableau d'onglets
-            tabPane.getTabs().add(tab);
-
-            // Sélection du nouvel onglet
-            tabPane.getSelectionModel().select(tab);
-        }
     }
 }
