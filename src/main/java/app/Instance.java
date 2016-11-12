@@ -16,7 +16,6 @@ import java.util.List;
 import javafx.stage.Stage;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import src.model.DocFile;
-import src.view.Displayer;
 
 /**
  *
@@ -30,6 +29,7 @@ public class Instance implements Config {
     public static List<DocFile> docFiles = new ArrayList<>();
 
     public static Stage stage;
+    public static String stageName;
 
     /**
      * Contructeur
@@ -55,12 +55,21 @@ public class Instance implements Config {
      *
      * @param document
      * @param file
+     * @throws java.io.IOException
      */
-    public static void addDocFile(PDDocument document, File file) {
-        docFiles.add(new DocFile(0, document, file));
-        opened = docFiles.size() - 1;
-        getDocFileOpened().setId(opened);
-        saveRecent(getDocFileOpened());
+    public static void addDocFile(PDDocument document, File file) throws IOException {
+        // Si le fichier n'est pas déjà ouvert
+        if (!isFileAlreadyOpened(file)) {
+            DocFile docFile = new DocFile(0, document, file);
+            docFiles.add(docFile);
+            opened = docFiles.size() - 1;
+            getDocFileOpened().setId(opened);
+
+            // Si le fichier existe on l'enregistre dans les fichiers récents
+            if (file.exists()) {
+                saveInSaveFile(docFile, TRANSLATOR.getString("APP_NAME") + "_recent");
+            }
+        }
     }
 
     /**
@@ -103,11 +112,11 @@ public class Instance implements Config {
      * @return
      */
     public static DocFile getDocFileOpened() {
-        DocFile doc = null;
+        DocFile docFile = null;
         if (opened > -1 && opened < docFiles.size()) {
-            doc = docFiles.get(opened);
+            docFile = docFiles.get(opened);
         }
-        return doc;
+        return docFile;
     }
 
     /**
@@ -129,104 +138,91 @@ public class Instance implements Config {
     }
 
     /**
-     * Sauvegarde l'instance dans un fichier temporaire
+     * Charge le fichier d'instance
+     *
+     * @throws IOException
      */
-    public static void save() {
-        try {
-            BufferedWriter writer = null;
-            File save = new File(TRANSLATOR.getString("APP_NAME") + ".txt");
+    public static void load() throws IOException {
+        for (DocFile docFile : loadSaveFile(TRANSLATOR.getString("APP_NAME"))) {
+            addDocFile(docFile.getDocument(), docFile.getFile());
+        }
+    }
 
-            writer = new BufferedWriter(new FileWriter(save));
+    /**
+     * Sauvegarde le fichier d'instance
+     *
+     * @throws IOException
+     */
+    public static void save() throws IOException {
+        BufferedWriter writer = null;
+        File saveFile = new File(TRANSLATOR.getString("APP_NAME") + ".txt");
 
-            for (DocFile docFile : getDocFilesOpened()) {
+        writer = new BufferedWriter(new FileWriter(saveFile));
+
+        for (DocFile docFile : docFiles) {
+            if (docFile.isSaved()) {
                 writer.write(docFile.toSaveString());
                 writer.newLine();
+                System.out.println(TRANSLATOR.getString("FILE") + " " + docFile.getFileName() + " " + TRANSLATOR.getString("HAS_BEEN_SAVED_IN") + " " + TRANSLATOR.getString("APP_NAME") + ".txt");
             }
-
-            writer.flush();
-            writer.close();
-        } catch (Exception e) {
-            System.out.println(e.toString());
         }
+        writer.flush();
+        writer.close();
     }
 
     /**
-     * Charge l'instance depuis le fichier
-     */
-    public static void load() {
-        try {
-            File save = new File(TRANSLATOR.getString("APP_NAME") + ".txt");
-            if (save.exists()) {
-                BufferedReader reader = new BufferedReader(new FileReader(save));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] l = line.split(TRANSLATOR.getString("INSTANCE_DATA_SEPARATOR"));
-                    File file = new File(l[1]);
-                    if (file.exists()) {
-                        PDDocument document = PDDocument.load(file);
-                        addDocFile(document, file);
-                        getDocFileOpened().setSaved(true);
-                        getDocFileOpened().setSelectedPage(Integer.parseInt(l[2]));
-                        Displayer.displayDocFileNewTab(getDocFileOpened().getShortFileName());
-                    }
-                }
-                reader.close();
-            }
-        } catch (IOException e) {
-            System.out.println(e.toString());
-        }
-    }
-
-    /**
-     * Ajoute le fichier à la liste des récemment ouverts
+     * Sauvegarde le fichier dans le fichier de sauvegarde désigné
      *
      * @param docFile
+     * @param saveFilename
+     * @throws IOException
      */
-    public static void saveRecent(DocFile docFile) {
-        if (!isAlreadyRecent(docFile)) {
-            try {
-                BufferedWriter writer = null;
-                File save = new File(TRANSLATOR.getString("APP_NAME") + "_recent.txt");
+    public static void saveInSaveFile(DocFile docFile, String saveFilename) throws IOException {
+        if (!isAlreadyInSaveFile(docFile, saveFilename)) {
+            BufferedWriter writer = null;
+            File saveFile = new File(saveFilename + ".txt");
 
-                if (save.exists()) {
-                    writer = new BufferedWriter(new FileWriter(save, true));
-                } else {
-                    writer = new BufferedWriter(new FileWriter(save));
-                }
-
-                writer.write(docFile.toSaveString());
-                writer.newLine();
-                writer.flush();
-                writer.close();
-            } catch (Exception e) {
-                System.out.println(e.toString());
+            if (saveFile.exists()) {
+                writer = new BufferedWriter(new FileWriter(saveFile, true));
+            } else {
+                writer = new BufferedWriter(new FileWriter(saveFile));
             }
+
+            writer.write(docFile.toSaveString());
+            writer.newLine();
+            writer.flush();
+            writer.close();
+            System.out.println(TRANSLATOR.getString("FILE") + " " + docFile.getFileName() + " " + TRANSLATOR.getString("HAS_BEEN_SAVED_IN") + " " + saveFilename);
+        } else {
+            System.out.println(TRANSLATOR.getString("FILE") + " " + docFile.getFileName() + " " + TRANSLATOR.getString("IS_ALREADY_SAVED_IN") + " " + saveFilename);
         }
     }
 
     /**
-     * Charge les fichiers récemment ouverts
+     * Charge les fichiers du fichier de sauvegarde ciblé
      *
+     * @param saveFilename
      * @return
      */
-    public static ArrayList<DocFile> loadRecent() {
+    public static ArrayList<DocFile> loadSaveFile(String saveFilename) {
         ArrayList<DocFile> docFiles = new ArrayList<>();
         try {
-            File temp = new File(TRANSLATOR.getString("APP_NAME") + "_recent.txt");
-            if (temp.exists()) {
-                BufferedReader reader = new BufferedReader(new FileReader(temp));
+            File saveFile = new File(saveFilename + ".txt");
+            if (saveFile.exists()) {
+                BufferedReader reader = new BufferedReader(new FileReader(saveFile));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    String[] l = line.split(TRANSLATOR.getString("INSTANCE_DATA_SEPARATOR"));
-                    File file = new File(l[1]);
+                    String[] lineRead = line.split(TRANSLATOR.getString("INSTANCE_DATA_SEPARATOR"));
+                    File file = new File(lineRead[1]);
                     if (file.exists()) {
                         PDDocument document = PDDocument.load(file);
                         DocFile docFile = new DocFile(INSTANCE.docFiles.size() - 1, document, file);
-                        docFile.setSelectedPage(Integer.parseInt(l[2]));
+                        docFile.setSelectedPage(Integer.parseInt(lineRead[2]));
                         docFiles.add(docFile);
-                        document.close();
+                        //document.close();
+                        System.out.println(TRANSLATOR.getString("FILE_LOAD_SUCCESS_1") + " " + lineRead[1] + " " + TRANSLATOR.getString("FILE_LOAD_SUCCESS_2") + " " + saveFilename);
                     } else {
-                        System.out.println(TRANSLATOR.getString("RECENT_FILE_LOAD_FAIL_1") + l[1] + TRANSLATOR.getString("RECENT_FILE_LOAD_FAIL_2"));
+                        System.out.println(TRANSLATOR.getString("FILE_LOAD_FAIL_1") + " " + lineRead[1] + " " + TRANSLATOR.getString("FILE_LOAD_FAIL_2") + " " + saveFilename);
                     }
                 }
                 reader.close();
@@ -238,15 +234,16 @@ public class Instance implements Config {
     }
 
     /**
-     * Vérifie si le fichier est déjà enregistré dans les récemment ouverts
+     * Vérifie si le fichier est déjà dans le fichier de sauvegarde
      *
      * @param docFile
+     * @param saveFilename
      * @return
      */
-    private static boolean isAlreadyRecent(DocFile docFile) {
+    private static boolean isAlreadyInSaveFile(DocFile docFile, String saveFilename) {
         boolean r = false;
-        for (DocFile df : loadRecent()) {
-            if (docFile.getFile().getAbsolutePath().equals(df.getFile().getAbsolutePath())) {
+        for (DocFile df : loadSaveFile(saveFilename)) {
+            if (docFile.getFile().equals(df.getFile())) {
                 r = true;
             }
         }
@@ -254,17 +251,20 @@ public class Instance implements Config {
     }
 
     /**
-     * Liste les docFile sauvegardés
+     * Vérifie si le fichier est déjà ouvert
      *
+     * @param file
      * @return
      */
-    private static List<DocFile> getDocFilesOpened() {
-        List<DocFile> df = new ArrayList<>();
-        for (DocFile docFile : docFiles) {
-            if (docFile.isSaved()) {
-                df.add(docFile);
+    public static boolean isFileAlreadyOpened(File file) {
+        boolean r = false;
+        int i = 0;
+        while (i < docFiles.size() && !r) {
+            if (docFiles.get(i).getFile().equals(file)) {
+                r = true;
             }
+            i++;
         }
-        return df;
+        return r;
     }
 }

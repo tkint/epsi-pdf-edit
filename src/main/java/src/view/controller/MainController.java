@@ -22,12 +22,13 @@ import src.controller.*;
 import src.model.DocFile;
 import src.model.table.*;
 import src.view.Displayer;
+import static src.view.Displayer.defineTabName;
 import src.view.controller.menu.*;
 
 /**
  * FXML Controller class
  *
- * @author t.kint
+ * @author Thomas
  */
 public class MainController implements Config, Initializable {
 
@@ -50,9 +51,7 @@ public class MainController implements Config, Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        for (DocFile docFile : INSTANCE.loadRecent()) {
-            addMenuFileOpenRecent(docFile);
-        }
+        addMenuFileOpenRecent();
     }
 
     /**
@@ -60,24 +59,27 @@ public class MainController implements Config, Initializable {
      *
      * @param docFile
      */
-    public void addMenuFileOpenRecent(DocFile docFile) {
-        MenuItem menuItem = new MenuItem(docFile.getFileName());
-        menuItem.setOnAction((ActionEvent event) -> {
-            try {
-                if (!INSTANCE.isDocFileOpen(docFile.getFile())) {
-                    System.out.println(TRANSLATOR.getString("RECENT_FILE_OPENING") + " : " + docFile.getFileName());
-                    PDDocument document = PDDocument.load(docFile.getFile());
-                    INSTANCE.addDocFile(document, docFile.getFile());
-                    INSTANCE.getDocFileOpened().setSaved(true);
-                    Displayer.displayDocFileNewTab(INSTANCE.getDocFileOpened().getShortFileName());
-                } else {
-                    System.out.println(TRANSLATOR.getString("FILE_ALREADY_OPENED"));
+    public void addMenuFileOpenRecent() {
+        for (DocFile docFile : INSTANCE.loadSaveFile(TRANSLATOR.getString("APP_NAME") + "_recent")) {
+            MenuItem menuItem = new MenuItem(docFile.getFileName());
+            menuItem.setOnAction((ActionEvent event) -> {
+                try {
+                    if (!INSTANCE.isDocFileOpen(docFile.getFile())) {
+                        System.out.println(TRANSLATOR.getString("RECENT_FILE_OPENING") + " : " + docFile.getFileName());
+                        PDDocument document = PDDocument.load(docFile.getFile());
+                        INSTANCE.addDocFile(document, docFile.getFile());
+                        INSTANCE.getDocFileOpened().setSaved(true);
+                        Displayer.displayDocFileNewTab(INSTANCE.getDocFileOpened(), INSTANCE.getDocFileOpened().getShortFileName());
+                    } else {
+                        Displayer.selectDocFileTab(defineTabName(docFile.getFile().getName().substring(0, docFile.getFile().getName().length() - 4)));
+                        System.out.println(TRANSLATOR.getString("FILE_ALREADY_OPENED"));
+                    }
+                } catch (IOException e) {
+                    System.out.println(e.toString());
                 }
-            } catch (IOException e) {
-                System.out.println(e.toString());
-            }
-        });
-        menuFileOpenRecent.getItems().add(menuItem);
+            });
+            menuFileOpenRecent.getItems().add(menuItem);
+        }
     }
 
     /**
@@ -86,6 +88,7 @@ public class MainController implements Config, Initializable {
      * @param stage
      */
     public void setStage(Stage stage) {
+        INSTANCE.stageName = "main";
         INSTANCE.stage = stage;
     }
 
@@ -131,17 +134,17 @@ public class MainController implements Config, Initializable {
         MENUEDIT.btnEditDelete();
     }
     //  </editor-fold>
-    
+
     //  <editor-fold desc="Document">
     public void btnDocumentAddPage() {
         MENUDOCUMENT.btnDocumentAddPage();
     }
-    
+
     public void btnDocumentRemovePage() {
         MENUDOCUMENT.btnDocumentRemovePage();
     }
     //  </editor-fold>
-    
+
     //  <editor-fold desc="Page">
     public void btnPageRotateRight() {
         MENUPAGE.btnPageRotateRight();

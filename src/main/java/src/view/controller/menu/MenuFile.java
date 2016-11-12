@@ -14,6 +14,7 @@ import javafx.stage.FileChooser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import src.view.Displayer;
+import static src.view.Displayer.defineTabName;
 
 /**
  *
@@ -49,7 +50,7 @@ public class MenuFile implements Config {
             PDDocument document = new PDDocument();
             document.addPage(new PDPage());
             INSTANCE.addDocFile(document, new File(TRANSLATOR.getString("FILE_NAME_DEFAULT") + ".pdf"));
-            Displayer.displayDocFileNewTab(TRANSLATOR.getString("FILE_NAME_DEFAULT"));
+            Displayer.displayDocFileNewTab(INSTANCE.getDocFileOpened(), TRANSLATOR.getString("FILE_NAME_DEFAULT"));
         } catch (IOException e) {
             System.out.println(e.toString());
         }
@@ -67,12 +68,13 @@ public class MenuFile implements Config {
                 fileChooser.setInitialDirectory(new File(System.getProperty(BTN_OPEN_SAVE_DEFAULT_DIR)));
                 File file = fileChooser.showOpenDialog(INSTANCE.stage);
                 if (file != null) {
-                    if (!Instance.isDocFileOpen(file)) {
+                    if (!INSTANCE.isFileAlreadyOpened(file)) {
                         PDDocument document = PDDocument.load(file);
                         INSTANCE.addDocFile(document, file);
                         INSTANCE.getDocFileOpened().setSaved(true);
-                        Displayer.displayDocFileNewTab(INSTANCE.getDocFileOpened().getShortFileName());
+                        Displayer.displayDocFileNewTab(INSTANCE.getDocFileOpened(), INSTANCE.getDocFileOpened().getShortFileName());
                     } else {
+                        Displayer.selectDocFileTab(defineTabName(file.getName().substring(0, file.getName().length() - 4)));
                         System.out.println(TRANSLATOR.getString("FILE_ALREADY_OPENED"));
                     }
                 }
@@ -93,7 +95,7 @@ public class MenuFile implements Config {
                     if (file.exists()) {
                         INSTANCE.getDocFileOpened().getDocument().save(INSTANCE.getDocFileOpened().getFileName());
                         INSTANCE.getDocFileOpened().setSaved(true);
-                        INSTANCE.saveRecent(getDocFileOpened());
+                        INSTANCE.saveInSaveFile(getDocFileOpened(), TRANSLATOR.getString("APP_NAME") + "_recent");
                         System.out.println(TRANSLATOR.getString("FILE_HAS_BEEN_SAVED_1") + " " + INSTANCE.getDocFileOpened().getFileName() + " " + TRANSLATOR.getString("FILE_HAS_BEEN_SAVED_2"));
                     } else {
                         btnFileSaveAs();
@@ -123,7 +125,7 @@ public class MenuFile implements Config {
                     INSTANCE.getDocFileOpened().getDocument().save(file);
                     INSTANCE.updateDocFile(INSTANCE.getDocFileOpened().getDocument(), file);
                     INSTANCE.getDocFileOpened().setSaved(true);
-                    INSTANCE.saveRecent(getDocFileOpened());
+                    INSTANCE.saveInSaveFile(getDocFileOpened(), TRANSLATOR.getString("APP_NAME") + "_recent");
                     Displayer.updateDocFileTab(INSTANCE.opened);
                     System.out.println(TRANSLATOR.getString("FILE_HAS_BEEN_SAVED_1") + " " + file.getName() + " " + TRANSLATOR.getString("FILE_HAS_BEEN_SAVED_2"));
                 }

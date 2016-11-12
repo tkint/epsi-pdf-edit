@@ -22,6 +22,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import src.model.DocFile;
 
 /**
  *
@@ -31,24 +32,30 @@ public class Displayer implements Config {
 
     private static final Instance INSTANCE = Instance.getInstance();
 
+    public static void displayDocFiles() throws IOException {
+        for (DocFile docFile : INSTANCE.docFiles) {
+            displayDocFileNewTab(docFile, docFile.getShortFileName());
+        }
+    }
+    
     /**
      * Affiche le document ouvert dans un nouvel onglet
      *
      * @param tabName
      * @throws IOException
      */
-    public static void displayDocFileNewTab(String tabName) throws IOException {
-        if (INSTANCE.getDocFileOpened() != null) {
+    public static void displayDocFileNewTab(DocFile docfile, String tabName) throws IOException {
+        if (docfile != null && INSTANCE.stageName == "main") {
             // Récupération du tableau d'onglets
             TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
 
             // Définition de l'onglet
             Tab tab = new Tab(defineTabName(tabName));
             // Définition de la pagination
-            Pagination pagination = new Pagination(INSTANCE.getDocFileOpened().getDocument().getNumberOfPages());
+            Pagination pagination = new Pagination(docfile.getDocument().getNumberOfPages());
 
             // Définition du renderer
-            PDFRenderer renderer = new PDFRenderer(INSTANCE.getDocFileOpened().getDocument());
+            PDFRenderer renderer = new PDFRenderer(docfile.getDocument());
 
             // Paramétrage du tableau d'onglets
             if (TAB_CLOSE) {
@@ -75,19 +82,19 @@ public class Displayer implements Config {
             // Paramétrage de la pagination
             pagination.setStyle("-fx-background-color: white");
             pagination.setPadding(new Insets(0, 0, 0, 0));
-            pagination.setCurrentPageIndex(INSTANCE.getDocFileOpened().getSelectedPage());
+            pagination.setCurrentPageIndex(docfile.getSelectedPage());
             pagination.setPageFactory((Integer pageIndex) -> {
                 ScrollPane scrollPane = new ScrollPane();
                 try {
                     // Conteneur de l'image
-                    ImageView imageView = setImageView(renderer, pageIndex, scrollPane);
+                    ImageView imageView = setImageView(docfile, renderer, pageIndex, scrollPane);
                     StackPane stackPane = new StackPane(imageView);
 
                     // Panneau défilant
                     scrollPane = setScrollPane();
                     scrollPane.setContent(stackPane);
 
-                    INSTANCE.getDocFileOpened().setSelectedPage(pageIndex);
+                    docfile.setSelectedPage(pageIndex);
                     pagination.setCurrentPageIndex(pageIndex);
                 } catch (IOException e) {
                     System.out.println(e.toString());
@@ -111,12 +118,30 @@ public class Displayer implements Config {
      * @param id
      */
     public static void updateDocFileTab(int id) {
-        if (INSTANCE.docFiles.size() > 0 && INSTANCE.docFiles.get(id) != null) {
+        if (INSTANCE.docFiles.size() > 0 && INSTANCE.docFiles.get(id) != null && INSTANCE.stageName == "main") {
             File file = INSTANCE.docFiles.get(id).getFile();
 
             TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
             Tab tab = tabPane.getTabs().get(id);
             tab.setText(defineTabName(file.getName().substring(0, file.getName().length() - 4)));
+            tabPane.getSelectionModel().select(tab);
+        }
+    }
+
+    /**
+     * Sélectionne l'onglet précisé
+     *
+     * @param id
+     */
+    public static void selectDocFileTab(String fileName) {
+        if (INSTANCE.stageName == "main") {
+            TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
+            Tab tab = tabPane.getTabs().get(0);
+            for (Tab t : tabPane.getTabs()) {
+                if (t.getText().equals(defineTabName(fileName))) {
+                    tab = t;
+                }
+            }
             tabPane.getSelectionModel().select(tab);
         }
     }
@@ -138,14 +163,14 @@ public class Displayer implements Config {
             if (INSTANCE.getDocFileOpened().getDocument().getNumberOfPages() > pagination.getPageCount()) {
                 pagination.setPageCount(pagination.getPageCount() + 1);
                 int pageSelected = pagination.getPageCount() - 1;
-                
+
                 pagination.getPageFactory().call(pageSelected);
                 pagination.setCurrentPageIndex(pageSelected);
                 INSTANCE.getDocFileOpened().setSelectedPage(pageSelected);
             }
         }
     }
-    
+
     /**
      * Ajoute une page à l'onglet ouvert
      *
@@ -163,7 +188,7 @@ public class Displayer implements Config {
             if (INSTANCE.getDocFileOpened().getDocument().getNumberOfPages() < pagination.getPageCount()) {
                 pagination.setPageCount(pagination.getPageCount() - 1);
                 int pageSelected = pagination.getPageCount() - 1;
-                
+
                 pagination.setCurrentPageIndex(pageSelected);
                 INSTANCE.getDocFileOpened().setSelectedPage(pageSelected);
             }
@@ -189,7 +214,7 @@ public class Displayer implements Config {
      * @param bufferedImage
      * @return
      */
-    private static ImageView setImageView(PDFRenderer renderer, int pageIndex, ScrollPane scrollPane) throws IOException {
+    private static ImageView setImageView(DocFile docfile, PDFRenderer renderer, int pageIndex, ScrollPane scrollPane) throws IOException {
         // Transformation de la page en image
         BufferedImage bufferedImage = renderer.renderImageWithDPI(pageIndex, PDF_DISPLAY_DPI);
         WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
@@ -199,11 +224,11 @@ public class Displayer implements Config {
         imageView.setStyle("-fx-effect: dropshadow(three-pass-box, black, 100, 0, 0, 0);");
         // On met l'image sous la même forme (paysage, portrait) que la page
         if (bufferedImage.getHeight() > bufferedImage.getWidth()) {
-            imageView.setFitWidth(INSTANCE.getDocFileOpened().getWidth());
-            imageView.setFitHeight(INSTANCE.getDocFileOpened().getHeight());
+            imageView.setFitWidth(docfile.getWidth());
+            imageView.setFitHeight(docfile.getHeight());
         } else {
-            imageView.setFitWidth(INSTANCE.getDocFileOpened().getHeight());
-            imageView.setFitHeight(INSTANCE.getDocFileOpened().getWidth());
+            imageView.setFitWidth(docfile.getHeight());
+            imageView.setFitHeight(docfile.getWidth());
         }
 
         imageView.setOnScroll((event) -> {
@@ -232,8 +257,8 @@ public class Displayer implements Config {
                 imageView.setFitHeight(imageView.getFitHeight() * factor);
 
                 // Mise à jour du ratio du document ouvert
-                INSTANCE.getDocFileOpened().setWidth(INSTANCE.getDocFileOpened().getWidth() * factor);
-                INSTANCE.getDocFileOpened().setHeight(INSTANCE.getDocFileOpened().getHeight() * factor);
+                docfile.setWidth(docfile.getWidth() * factor);
+                docfile.setHeight(docfile.getHeight() * factor);
             }
         });
         return imageView;
@@ -245,7 +270,7 @@ public class Displayer implements Config {
      * @param tabName
      * @return
      */
-    private static String defineTabName(String tabName) {
+    public static String defineTabName(String tabName) {
         String s;
         if (tabName.length() > TAB_TITLE_SIZE) {
             s = tabName.substring(0, TAB_TITLE_SIZE) + "...";

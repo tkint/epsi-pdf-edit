@@ -8,7 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import app.Config;
 import app.Instance;
-import src.view.controller.MainController;
+import src.view.controller.HomeController;
 
 /**
  * Created by Thomas on 10/10/2016.
@@ -21,26 +21,27 @@ public class Main extends Application implements Config {
     
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("view/fxml/main.fxml"));
-        loader.setResources(TRANSLATOR);
-
-        Parent root = (Parent) loader.load();
-
-        MainController controller = (MainController) loader.getController();
-
-        controller.setStage(stage);
-
-        Scene scene = new Scene(root);
-
+        // Définition de la scene d'accueil
+        FXMLLoader homeLoader = new FXMLLoader(getClass().getResource("view/fxml/home.fxml"));
+        homeLoader.setResources(TRANSLATOR);
+        
+        Parent homeParent = (Parent) homeLoader.load();
+        
+        HomeController homeController = (HomeController) homeLoader.getController();
+        homeController.setStage(stage);
+        
+        Scene homeScene = new Scene(homeParent);
+        
         stage.setTitle(TRANSLATOR.getString("APP_NAME"));
-        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.setScene(homeScene);
         stage.show();
         
         INSTANCE.load();
     }
     
     @Override
-    public void stop() {
+    public void stop() throws IOException {
         INSTANCE.save();
     }
 
