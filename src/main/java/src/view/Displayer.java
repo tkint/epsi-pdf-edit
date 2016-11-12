@@ -37,7 +37,7 @@ public class Displayer implements Config {
             displayDocFileNewTab(docFile, docFile.getShortFileName());
         }
     }
-    
+
     /**
      * Affiche le document ouvert dans un nouvel onglet
      *
@@ -87,7 +87,7 @@ public class Displayer implements Config {
                 ScrollPane scrollPane = new ScrollPane();
                 try {
                     // Conteneur de l'image
-                    ImageView imageView = setImageView(docfile, renderer, pageIndex, scrollPane);
+                    ImageView imageView = setImageView(docfile, renderer, pageIndex);
                     StackPane stackPane = new StackPane(imageView);
 
                     // Panneau défilant
@@ -118,7 +118,7 @@ public class Displayer implements Config {
      * @param id
      */
     public static void updateDocFileTab(int id) {
-        if (INSTANCE.docFiles.size() > 0 && INSTANCE.docFiles.get(id) != null && INSTANCE.stageName == "main") {
+        if (INSTANCE.docFiles.size() > 0 && INSTANCE.docFiles.get(id) != null && INSTANCE.stageName.equals("main")) {
             File file = INSTANCE.docFiles.get(id).getFile();
 
             TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
@@ -131,10 +131,10 @@ public class Displayer implements Config {
     /**
      * Sélectionne l'onglet précisé
      *
-     * @param id
+     * @param fileName String nom du fichier dont on veut l'onglet
      */
     public static void selectDocFileTab(String fileName) {
-        if (INSTANCE.stageName == "main") {
+        if (INSTANCE.stageName.equals("main")) {
             TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
             Tab tab = tabPane.getTabs().get(0);
             for (Tab t : tabPane.getTabs()) {
@@ -149,7 +149,7 @@ public class Displayer implements Config {
     /**
      * Ajoute une page à l'onglet ouvert
      *
-     * @param id
+     * @param id Id de l'onglet
      */
     public static void addDocFilePageTab(int id) {
         if (INSTANCE.getDocFileOpened() != null) {
@@ -174,7 +174,7 @@ public class Displayer implements Config {
     /**
      * Ajoute une page à l'onglet ouvert
      *
-     * @param id
+     * @param id Id de l'onglet
      */
     public static void removeDocFilePageTab(int id) {
         if (INSTANCE.getDocFileOpened() != null) {
@@ -211,10 +211,13 @@ public class Displayer implements Config {
     /**
      * Instancie et paramètre l'imageView de la page
      *
-     * @param bufferedImage
-     * @return
+     * @param docfile DocFile que l'on souhaite afficher
+     * @param renderer PDFRenderer renderer du document ciblé
+     * @param pageIndex Id de la page à afficher
+     * @return ImageView
+     * @throws IOException Exception
      */
-    private static ImageView setImageView(DocFile docfile, PDFRenderer renderer, int pageIndex, ScrollPane scrollPane) throws IOException {
+    private static ImageView setImageView(DocFile docfile, PDFRenderer renderer, int pageIndex) throws IOException {
         // Transformation de la page en image
         BufferedImage bufferedImage = renderer.renderImageWithDPI(pageIndex, PDF_DISPLAY_DPI);
         WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);

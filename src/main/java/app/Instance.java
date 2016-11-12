@@ -5,6 +5,7 @@
  */
 package app;
 
+import static app.Config.TRANSLATOR;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -41,7 +42,7 @@ public class Instance implements Config {
     /**
      * Définition du singleton
      *
-     * @return
+     * @return Instance
      */
     public static synchronized Instance getInstance() {
         if (INSTANCE == null) {
@@ -53,29 +54,38 @@ public class Instance implements Config {
     /**
      * Ajoute un docFile à la liste
      *
-     * @param document
-     * @param file
-     * @throws java.io.IOException
+     * @param document PDDocument
+     * @param file File
+     * @return DocFile
+     * @throws java.io.IOException Exception
      */
-    public static void addDocFile(PDDocument document, File file) throws IOException {
-        // Si le fichier n'est pas déjà ouvert
-        if (!isFileAlreadyOpened(file)) {
-            DocFile docFile = new DocFile(0, document, file);
+    public static DocFile addDocFile(PDDocument document, File file) throws IOException {
+        DocFile docFile = null;
+        // Si le fichier est déjà ouvert
+        if (isFileAlreadyOpened(file)) {
+            // On le récupère
+            docFile = getDocFileByFile(file);
+            document.close();
+        } else {
+            // Sinon on le créé
+            docFile = new DocFile(docFiles.size(), document, file);
             docFiles.add(docFile);
-            opened = docFiles.size() - 1;
-            getDocFileOpened().setId(opened);
-
-            // Si le fichier existe on l'enregistre dans les fichiers récents
-            if (file.exists()) {
-                saveInSaveFile(docFile, TRANSLATOR.getString("APP_NAME") + "_recent");
-            }
         }
+        opened = docFile.getId();
+
+        // Si le fichier existe on l'enregistre dans les fichiers récents
+        if (file.exists()) {
+            docFile.setSaved(true);
+            saveInSaveFile(docFile, TRANSLATOR.getString("APP_NAME") + "_recent");
+        }
+        
+        return docFile;
     }
 
     /**
      * Ferme un docFile de la liste
      *
-     * @param id
+     * @param id Id du DocFile à fermer
      */
     public static void closeDocFile(int id) {
         try {
@@ -94,8 +104,8 @@ public class Instance implements Config {
     /**
      * Met à jour le docFile ouvert
      *
-     * @param document
-     * @param file
+     * @param document PDDocument à soumettre
+     * @param file File à soumettre
      */
     public static void updateDocFile(PDDocument document, File file) {
         if (document != null) {
@@ -109,7 +119,7 @@ public class Instance implements Config {
     /**
      * Récupère le docFile ouvert
      *
-     * @return
+     * @return DocFile
      */
     public static DocFile getDocFileOpened() {
         DocFile docFile = null;
@@ -120,27 +130,9 @@ public class Instance implements Config {
     }
 
     /**
-     * Vérifie si le fichier est déjà ouvert
-     *
-     * @param file
-     * @return
-     */
-    public static boolean isDocFileOpen(File file) {
-        boolean r = false;
-        int i = 0;
-        while (i < docFiles.size() && r == false) {
-            if (docFiles.get(i).getFile().getAbsolutePath().equals(file.getAbsolutePath())) {
-                r = true;
-            }
-            i++;
-        }
-        return r;
-    }
-
-    /**
      * Charge le fichier d'instance
      *
-     * @throws IOException
+     * @throws IOException Exception
      */
     public static void load() throws IOException {
         for (DocFile docFile : loadSaveFile(TRANSLATOR.getString("APP_NAME"))) {
@@ -151,7 +143,7 @@ public class Instance implements Config {
     /**
      * Sauvegarde le fichier d'instance
      *
-     * @throws IOException
+     * @throws IOException Exception
      */
     public static void save() throws IOException {
         BufferedWriter writer = null;
@@ -173,9 +165,9 @@ public class Instance implements Config {
     /**
      * Sauvegarde le fichier dans le fichier de sauvegarde désigné
      *
-     * @param docFile
-     * @param saveFilename
-     * @throws IOException
+     * @param docFile DocFile à sauvegarder
+     * @param saveFilename String nom du fichier de sauvegarde
+     * @throws IOException Exception
      */
     public static void saveInSaveFile(DocFile docFile, String saveFilename) throws IOException {
         if (!isAlreadyInSaveFile(docFile, saveFilename)) {
@@ -201,8 +193,8 @@ public class Instance implements Config {
     /**
      * Charge les fichiers du fichier de sauvegarde ciblé
      *
-     * @param saveFilename
-     * @return
+     * @param saveFilename String nom du fichier de sauvegarde
+     * @return Liste de DocFile
      */
     public static ArrayList<DocFile> loadSaveFile(String saveFilename) {
         ArrayList<DocFile> docFiles = new ArrayList<>();
@@ -216,13 +208,12 @@ public class Instance implements Config {
                     File file = new File(lineRead[1]);
                     if (file.exists()) {
                         PDDocument document = PDDocument.load(file);
-                        DocFile docFile = new DocFile(INSTANCE.docFiles.size() - 1, document, file);
+                        DocFile docFile = new DocFile(INSTANCE.docFiles.size(), document, file);
                         docFile.setSelectedPage(Integer.parseInt(lineRead[2]));
                         docFiles.add(docFile);
-                        //document.close();
-                        System.out.println(TRANSLATOR.getString("FILE_LOAD_SUCCESS_1") + " " + lineRead[1] + " " + TRANSLATOR.getString("FILE_LOAD_SUCCESS_2") + " " + saveFilename);
+                        System.out.println(TRANSLATOR.getString("FILE_LOAD_SUCCESS_1") + " " + file.getName() + " " + TRANSLATOR.getString("FILE_LOAD_SUCCESS_2") + " " + saveFilename);
                     } else {
-                        System.out.println(TRANSLATOR.getString("FILE_LOAD_FAIL_1") + " " + lineRead[1] + " " + TRANSLATOR.getString("FILE_LOAD_FAIL_2") + " " + saveFilename);
+                        System.out.println(TRANSLATOR.getString("FILE_LOAD_FAIL_1") + " " + file.getName() + " " + TRANSLATOR.getString("FILE_LOAD_FAIL_2") + " " + saveFilename);
                     }
                 }
                 reader.close();
@@ -236,9 +227,9 @@ public class Instance implements Config {
     /**
      * Vérifie si le fichier est déjà dans le fichier de sauvegarde
      *
-     * @param docFile
-     * @param saveFilename
-     * @return
+     * @param docFile DocFile à vérifier
+     * @param saveFilename String nom du fichier de sauvegarde
+     * @return true si le DocFile est présent, false sinon
      */
     private static boolean isAlreadyInSaveFile(DocFile docFile, String saveFilename) {
         boolean r = false;
@@ -251,10 +242,28 @@ public class Instance implements Config {
     }
 
     /**
+     * Récupère le DocFile du File renseigné
+     * 
+     * @param file File dont on cherche le DocFile
+     * @return DocFile
+     */
+    private static DocFile getDocFileByFile(File file) {
+        DocFile docFile = null;
+        int i = 0;
+        while (i < docFiles.size() && docFile == null) {
+            if (docFiles.get(i).getFile().equals(file)) {
+                docFile = docFiles.get(i);
+            }
+            i++;
+        }
+        return docFile;
+    }
+
+    /**
      * Vérifie si le fichier est déjà ouvert
      *
-     * @param file
-     * @return
+     * @param file File ) vérifier
+     * @return true si le fichier est déjà ouvert, false sinon
      */
     public static boolean isFileAlreadyOpened(File file) {
         boolean r = false;

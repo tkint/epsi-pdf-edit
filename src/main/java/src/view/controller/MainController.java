@@ -55,30 +55,32 @@ public class MainController implements Config, Initializable {
     }
 
     /**
-     * Ajoute les fichiers récents au menu Fichier -> Ouvrir...
+     * Ajoute les fichiers récents au menu Fichier Ouvrir...
      *
-     * @param docFile
      */
     public void addMenuFileOpenRecent() {
-        for (DocFile docFile : INSTANCE.loadSaveFile(TRANSLATOR.getString("APP_NAME") + "_recent")) {
-            MenuItem menuItem = new MenuItem(docFile.getFileName());
-            menuItem.setOnAction((ActionEvent event) -> {
-                try {
-                    if (!INSTANCE.isDocFileOpen(docFile.getFile())) {
-                        System.out.println(TRANSLATOR.getString("RECENT_FILE_OPENING") + " : " + docFile.getFileName());
-                        PDDocument document = PDDocument.load(docFile.getFile());
-                        INSTANCE.addDocFile(document, docFile.getFile());
-                        INSTANCE.getDocFileOpened().setSaved(true);
-                        Displayer.displayDocFileNewTab(INSTANCE.getDocFileOpened(), INSTANCE.getDocFileOpened().getShortFileName());
-                    } else {
-                        Displayer.selectDocFileTab(defineTabName(docFile.getFile().getName().substring(0, docFile.getFile().getName().length() - 4)));
-                        System.out.println(TRANSLATOR.getString("FILE_ALREADY_OPENED"));
+        for (DocFile df : INSTANCE.loadSaveFile(TRANSLATOR.getString("APP_NAME") + "_recent")) {
+            File file = df.getFile();
+            if (file.exists()) {
+                MenuItem menuItem = new MenuItem(file.getName());
+                menuItem.setOnAction((ActionEvent event) -> {
+                    try {
+                        PDDocument document = PDDocument.load(file);
+                        DocFile docFile = INSTANCE.addDocFile(document, file);
+                        
+                        if (!INSTANCE.isFileAlreadyOpened(file)) {
+                            Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
+                            System.out.println(TRANSLATOR.getString("RECENT_FILE_OPENING") + " : " + docFile.getFileName());
+                        } else {
+                            Displayer.selectDocFileTab(defineTabName(docFile.getShortFileName()));
+                            System.out.println(TRANSLATOR.getString("FILE_ALREADY_OPENED") + " : " + docFile.getFileName());
+                        }
+                    } catch (IOException e) {
+                        System.out.println(e.toString());
                     }
-                } catch (IOException e) {
-                    System.out.println(e.toString());
-                }
-            });
-            menuFileOpenRecent.getItems().add(menuItem);
+                });
+                menuFileOpenRecent.getItems().add(menuItem);
+            }
         }
     }
 
