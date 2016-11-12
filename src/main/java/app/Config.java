@@ -5,6 +5,7 @@
  */
 package app;
 
+import java.util.ResourceBundle;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 /**
@@ -13,15 +14,8 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
  */
 public interface Config {
 
-    // APP SETTINGS
-    final String APP_NAME = "PDFEdit";
-    final String APP_VERSION = "0";
-    final String APP_AUTHORS = "Erik FREMONT, Gaetan CAPEL, Ludovic BOUVIER, Thomas KINT";
-    final String APP_SOCIETY = "EPSI";
-    final String APP_DATE = "2016";
-
-    // INSTANCE SETTINGS
-    final String INSTANCE_SAVE_DATA_SEPARATOR = "->";
+    // Définition des resources de traduction
+    final ResourceBundle TRANSLATOR = ResourceBundle.getBundle("translations/messages");
 
     // TAB SETTINGS
     final boolean TAB_CLOSE = true;
@@ -29,11 +23,11 @@ public interface Config {
 
     // 
     final String BTN_OPEN_SAVE_DEFAULT_DIR = "user.dir";
-    final String BTN_FILE_SAVE_TITLE = "Sauvegarder le fichier";
-    final String BTN_FILE_OPEN_TITLE = "Ouvrir un fichier";
 
     // PDF SETTINGS
     final String PDF_BACKGROUND_COLOR = "#2B2B2B";
+    // Défaut: 72. Convention: 150, 200, 300, 600
+    final float PDF_DISPLAY_DPI = 200.0f;
     final PDRectangle PDF_DISPLAY_INITIAL_RATIO = PDRectangle.A4;
     final float PDF_DISPLAY_ZOOM_SCALE = 1.1f;
     final float PDF_DISPLAY_ZOOMIN_LIMIT = 5.0f;

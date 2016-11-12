@@ -11,10 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Menu;
@@ -68,13 +65,13 @@ public class MainController implements Config, Initializable {
         menuItem.setOnAction((ActionEvent event) -> {
             try {
                 if (!INSTANCE.isDocFileOpen(docFile.getFile())) {
-                    System.out.println("Ouverture d'un fichier récent : " + docFile.getFileName());
+                    System.out.println(TRANSLATOR.getString("RECENT_FILE_OPENING") + " : " + docFile.getFileName());
                     PDDocument document = PDDocument.load(docFile.getFile());
                     INSTANCE.addDocFile(document, docFile.getFile());
                     INSTANCE.getDocFileOpened().setSaved(true);
                     Displayer.displayDocFileNewTab(INSTANCE.getDocFileOpened().getShortFileName());
                 } else {
-                    System.out.println("Document déjà ouvert");
+                    System.out.println(TRANSLATOR.getString("FILE_ALREADY_OPENED"));
                 }
             } catch (IOException e) {
                 System.out.println(e.toString());
@@ -182,7 +179,7 @@ public class MainController implements Config, Initializable {
             PDDocument document = new PDDocument();
             document.save(TEST_DOC_TITLE + ".pdf");
             document.close();
-            System.out.println("Document généré");
+            System.out.println(TRANSLATOR.getString("TEST_FILE_GENERATED"));
         } catch (IOException e) {
             System.out.println(e.toString());
         }
@@ -208,7 +205,7 @@ public class MainController implements Config, Initializable {
             document.save(TEST_DOC_TITLE + ".pdf");
             document.close();
 
-            System.out.println("Image ajoutée");
+            System.out.println(TRANSLATOR.getString("TEST_IMAGE_ADDED"));
         } catch (IOException e) {
             System.out.println(e.toString());
         }
@@ -228,7 +225,7 @@ public class MainController implements Config, Initializable {
             // Fermeture du document
             document.close();
 
-            System.out.println("Image extraite");
+            System.out.println(TRANSLATOR.getString("TEST_IMAGE_EXTRACTED"));
         } catch (IOException e) {
             System.out.println(e.toString());
         }
@@ -265,7 +262,7 @@ public class MainController implements Config, Initializable {
             contentStream.close();
             document.save(TEST_DOC_TITLE + ".pdf");
 
-            System.out.println("Tableau ajouté");
+            System.out.println(TRANSLATOR.getString("TEST_TABLE_ADDED"));
         } catch (IOException e) {
             System.out.println(e.toString());
         }

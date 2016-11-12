@@ -55,10 +55,10 @@ public class MenuTools implements Config {
     public void btnToolsExtractPage() {
         if (INSTANCE.getDocFileOpened() != null) {
             Dialog<Pair<String, String>> dialog = new Dialog<>();
-            dialog.setTitle("Extraire une page");
-            dialog.setHeaderText("Choisissez la page à extraire");
+            dialog.setTitle(TRANSLATOR.getString("EXTRACT_PAGE"));
+            dialog.setHeaderText(TRANSLATOR.getString("EXTRACT_PAGE_TEXT"));
 
-            ButtonType confirmButtonType = new ButtonType("Extraire", ButtonBar.ButtonData.OK_DONE);
+            ButtonType confirmButtonType = new ButtonType(TRANSLATOR.getString("EXTRACT_PAGE_BUTTON"), ButtonBar.ButtonData.OK_DONE);
             dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
 
             List<String> pages = new ArrayList<>();
@@ -72,13 +72,13 @@ public class MenuTools implements Config {
             gridPane.setPadding(new Insets(10));
 
             TextField filenameField = new TextField();
-            filenameField.setPromptText("Nom du fichier");
+            filenameField.setPromptText(TRANSLATOR.getString("EXTRACT_PAGE_FILENAME"));
             ComboBox<String> pageBox = new ComboBox<>(FXCollections.observableList(pages));
             pageBox.getSelectionModel().select(INSTANCE.getDocFileOpened().getSelectedPage());
 
-            gridPane.add(new Label("Page :"), 0, 0);
+            gridPane.add(new Label(TRANSLATOR.getString("PAGE") + " :"), 0, 0);
             gridPane.add(pageBox, 1, 0);
-            gridPane.add(new Label("Enregistrer sous :"), 0, 1);
+            gridPane.add(new Label(TRANSLATOR.getString("SAVE_AS") + " :"), 0, 1);
             gridPane.add(filenameField, 1, 1);
 
             dialog.getDialogPane().setContent(gridPane);

@@ -134,7 +134,7 @@ public class Instance implements Config {
     public static void save() {
         try {
             BufferedWriter writer = null;
-            File save = new File(APP_NAME + ".txt");
+            File save = new File(TRANSLATOR.getString("APP_NAME") + ".txt");
 
             writer = new BufferedWriter(new FileWriter(save));
 
@@ -155,12 +155,12 @@ public class Instance implements Config {
      */
     public static void load() {
         try {
-            File save = new File(APP_NAME + ".txt");
+            File save = new File(TRANSLATOR.getString("APP_NAME") + ".txt");
             if (save.exists()) {
                 BufferedReader reader = new BufferedReader(new FileReader(save));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    String[] l = line.split(INSTANCE_SAVE_DATA_SEPARATOR);
+                    String[] l = line.split(TRANSLATOR.getString("INSTANCE_DATA_SEPARATOR"));
                     File file = new File(l[1]);
                     if (file.exists()) {
                         PDDocument document = PDDocument.load(file);
@@ -186,7 +186,7 @@ public class Instance implements Config {
         if (!isAlreadyRecent(docFile)) {
             try {
                 BufferedWriter writer = null;
-                File save = new File(APP_NAME + "_recent.txt");
+                File save = new File(TRANSLATOR.getString("APP_NAME") + "_recent.txt");
 
                 if (save.exists()) {
                     writer = new BufferedWriter(new FileWriter(save, true));
@@ -212,12 +212,12 @@ public class Instance implements Config {
     public static ArrayList<DocFile> loadRecent() {
         ArrayList<DocFile> docFiles = new ArrayList<>();
         try {
-            File temp = new File(APP_NAME + "_recent.txt");
+            File temp = new File(TRANSLATOR.getString("APP_NAME") + "_recent.txt");
             if (temp.exists()) {
                 BufferedReader reader = new BufferedReader(new FileReader(temp));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    String[] l = line.split(INSTANCE_SAVE_DATA_SEPARATOR);
+                    String[] l = line.split(TRANSLATOR.getString("INSTANCE_DATA_SEPARATOR"));
                     File file = new File(l[1]);
                     if (file.exists()) {
                         PDDocument document = PDDocument.load(file);
@@ -226,7 +226,7 @@ public class Instance implements Config {
                         docFiles.add(docFile);
                         document.close();
                     } else {
-                        System.out.println("Le fichier " + l[1] + " n'existe pas");
+                        System.out.println(TRANSLATOR.getString("RECENT_FILE_LOAD_FAIL_1") + l[1] + TRANSLATOR.getString("RECENT_FILE_LOAD_FAIL_2"));
                     }
                 }
                 reader.close();

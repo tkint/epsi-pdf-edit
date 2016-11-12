@@ -6,14 +6,9 @@
 package src.view.controller.menu;
 
 import app.Config;
-import static app.Config.APP_AUTHORS;
-import static app.Config.APP_DATE;
-import static app.Config.APP_SOCIETY;
-import static app.Config.APP_VERSION;
 import app.Instance;
 import javafx.scene.control.Alert;
 import javafx.stage.StageStyle;
-import static app.Config.APP_NAME;
 
 /**
  *
@@ -40,21 +35,21 @@ public class MenuHelp implements Config {
         }
         return MENUHELP;
     }
-    
+
     /**
      * Affiche une popup A propos
      */
     public void btnHelpAbout() {
-        String text = APP_NAME;
+        String text = TRANSLATOR.getString("APP_NAME");
 
-        text += '\n' + "Version: " + APP_VERSION;
-        text += '\n' + "Auteurs: " + '\n' + APP_AUTHORS;
-        text += '\n' + "Société: " + APP_SOCIETY;
-        text += '\n' + "Date: " + APP_DATE;
+        text += '\n' + TRANSLATOR.getString("VERSION") + " : " + TRANSLATOR.getString("APP_VERSION");
+        text += '\n' + TRANSLATOR.getString("AUTHORS") + " : " + '\n' + TRANSLATOR.getString("APP_AUTHORS");
+        text += '\n' + TRANSLATOR.getString("COMPANY") + " : " + TRANSLATOR.getString("APP_SOCIETY");
+        text += '\n' + TRANSLATOR.getString("DATE") + " : " + TRANSLATOR.getString("APP_DATE");
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.initStyle(StageStyle.UNIFIED);
-        alert.setTitle("A propos");
+        alert.setTitle(TRANSLATOR.getString("ABOUT"));
         alert.setHeaderText(null);
         alert.setContentText(text);
 

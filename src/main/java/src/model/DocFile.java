@@ -120,6 +120,6 @@ public class DocFile implements Config {
     }
 
     public String toSaveString() {
-        return this.id + INSTANCE_SAVE_DATA_SEPARATOR + this.file.getAbsolutePath() + INSTANCE_SAVE_DATA_SEPARATOR + this.getSelectedPage();
+        return this.id + TRANSLATOR.getString("INSTANCE_DATA_SEPARATOR") + this.file.getAbsolutePath() + TRANSLATOR.getString("INSTANCE_DATA_SEPARATOR") + this.getSelectedPage();
     }
 }

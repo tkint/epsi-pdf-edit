@@ -41,6 +41,7 @@ public class MenuDocument implements Config {
         PDDocument document = INSTANCE.getDocFileOpened().getDocument();
         document.addPage(new PDPage());
         Displayer.addDocFilePageTab(INSTANCE.opened);
+        System.out.println(TRANSLATOR.getString("PAGE_ADD_SUCCESS"));
     }
 
     public void btnDocumentRemovePage() {
@@ -49,7 +50,7 @@ public class MenuDocument implements Config {
             document.removePage(INSTANCE.getDocFileOpened().getSelectedPage());
             Displayer.removeDocFilePageTab(INSTANCE.opened);
         } else {
-            System.out.println("Impossible de supprimer la page : le document ne peut être vide");
+            System.out.println(TRANSLATOR.getString("PAGE_DELETE_FAIL"));
         }
     }
 }

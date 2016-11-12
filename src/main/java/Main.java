@@ -22,6 +22,7 @@ public class Main extends Application implements Config {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/fxml/main.fxml"));
+        loader.setResources(TRANSLATOR);
 
         Parent root = (Parent) loader.load();
 
@@ -31,7 +32,7 @@ public class Main extends Application implements Config {
 
         Scene scene = new Scene(root);
 
-        stage.setTitle(APP_NAME);
+        stage.setTitle(TRANSLATOR.getString("APP_NAME"));
         stage.setScene(scene);
         stage.show();
         

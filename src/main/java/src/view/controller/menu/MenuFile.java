@@ -48,8 +48,8 @@ public class MenuFile implements Config {
         try {
             PDDocument document = new PDDocument();
             document.addPage(new PDPage());
-            INSTANCE.addDocFile(document, new File("Nouveau.pdf"));
-            Displayer.displayDocFileNewTab("Nouveau");
+            INSTANCE.addDocFile(document, new File(TRANSLATOR.getString("FILE_NAME_DEFAULT") + ".pdf"));
+            Displayer.displayDocFileNewTab(TRANSLATOR.getString("FILE_NAME_DEFAULT"));
         } catch (IOException e) {
             System.out.println(e.toString());
         }
@@ -62,7 +62,7 @@ public class MenuFile implements Config {
         if (INSTANCE.stage != null) {
             try {
                 FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle(BTN_FILE_OPEN_TITLE);
+                fileChooser.setTitle(TRANSLATOR.getString("FILE_OPEN"));
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
                 fileChooser.setInitialDirectory(new File(System.getProperty(BTN_OPEN_SAVE_DEFAULT_DIR)));
                 File file = fileChooser.showOpenDialog(INSTANCE.stage);
@@ -73,7 +73,7 @@ public class MenuFile implements Config {
                         INSTANCE.getDocFileOpened().setSaved(true);
                         Displayer.displayDocFileNewTab(INSTANCE.getDocFileOpened().getShortFileName());
                     } else {
-                        System.out.println("Document déjà ouvert");
+                        System.out.println(TRANSLATOR.getString("FILE_ALREADY_OPENED"));
                     }
                 }
             } catch (IOException e) {
@@ -94,7 +94,7 @@ public class MenuFile implements Config {
                         INSTANCE.getDocFileOpened().getDocument().save(INSTANCE.getDocFileOpened().getFileName());
                         INSTANCE.getDocFileOpened().setSaved(true);
                         INSTANCE.saveRecent(getDocFileOpened());
-                        System.out.println("Document " + INSTANCE.getDocFileOpened().getFileName() + " a été enregistré");
+                        System.out.println(TRANSLATOR.getString("FILE_HAS_BEEN_SAVED_1") + " " + INSTANCE.getDocFileOpened().getFileName() + " " + TRANSLATOR.getString("FILE_HAS_BEEN_SAVED_2"));
                     } else {
                         btnFileSaveAs();
                     }
@@ -103,7 +103,7 @@ public class MenuFile implements Config {
                 System.out.println(e.toString());
             }
         } else {
-            System.out.println("Pas de document ouvert");
+            System.out.println(TRANSLATOR.getString("FILE_SAVE_FAIL"));
         }
     }
 
@@ -114,7 +114,7 @@ public class MenuFile implements Config {
         if (INSTANCE.getDocFileOpened() != null) {
             try {
                 FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle(BTN_FILE_SAVE_TITLE);
+                fileChooser.setTitle(TRANSLATOR.getString("FILE_SAVE"));
                 fileChooser.setInitialFileName(INSTANCE.getDocFileOpened().getFile().getName());
                 fileChooser.setInitialDirectory(new File(System.getProperty(BTN_OPEN_SAVE_DEFAULT_DIR)));
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
@@ -125,13 +125,13 @@ public class MenuFile implements Config {
                     INSTANCE.getDocFileOpened().setSaved(true);
                     INSTANCE.saveRecent(getDocFileOpened());
                     Displayer.updateDocFileTab(INSTANCE.opened);
-                    System.out.println("Document " + file.getName() + " a été enregistré");
+                    System.out.println(TRANSLATOR.getString("FILE_HAS_BEEN_SAVED_1") + " " + file.getName() + " " + TRANSLATOR.getString("FILE_HAS_BEEN_SAVED_2"));
                 }
             } catch (IOException e) {
                 System.out.println(e.toString());
             }
         } else {
-            System.out.println("Pas de document ouvert");
+            System.out.println(TRANSLATOR.getString("FILE_SAVE_FAIL"));
         }
     }
 

@@ -13,21 +13,15 @@ import java.io.File;
 import java.io.IOException;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import src.model.DocFile;
 
 /**
  *
@@ -74,7 +68,7 @@ public class Displayer implements Config {
                 if (id > tabPane.getTabs().size()) {
                     id = 0;
                 }
-                System.out.println("Fermeture de l'onglet : " + id);
+                System.out.println(TRANSLATOR.getString("TAB_CLOSING") + " : " + id);
                 INSTANCE.closeDocFile(id);
             });
 
@@ -95,8 +89,6 @@ public class Displayer implements Config {
 
                     INSTANCE.getDocFileOpened().setSelectedPage(pageIndex);
                     pagination.setCurrentPageIndex(pageIndex);
-                    
-                    System.out.println("Page sélectionnée : doc " + INSTANCE.getDocFileOpened().getSelectedPage() + " | tab " + pagination.getCurrentPageIndex());
                 } catch (IOException e) {
                     System.out.println(e.toString());
                 }
@@ -199,11 +191,12 @@ public class Displayer implements Config {
      */
     private static ImageView setImageView(PDFRenderer renderer, int pageIndex, ScrollPane scrollPane) throws IOException {
         // Transformation de la page en image
-        BufferedImage bufferedImage = renderer.renderImage(pageIndex);
+        BufferedImage bufferedImage = renderer.renderImageWithDPI(pageIndex, PDF_DISPLAY_DPI);
         WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
         ImageView imageView = new ImageView(image);
 
         // Paramétrage de l'image
+        imageView.setStyle("-fx-effect: dropshadow(three-pass-box, black, 100, 0, 0, 0);");
         // On met l'image sous la même forme (paysage, portrait) que la page
         if (bufferedImage.getHeight() > bufferedImage.getWidth()) {
             imageView.setFitWidth(INSTANCE.getDocFileOpened().getWidth());
@@ -212,7 +205,6 @@ public class Displayer implements Config {
             imageView.setFitWidth(INSTANCE.getDocFileOpened().getHeight());
             imageView.setFitHeight(INSTANCE.getDocFileOpened().getWidth());
         }
-        imageView.setStyle("-fx-effect: dropshadow(three-pass-box, black, 100, 0, 0, 0);");
 
         imageView.setOnScroll((event) -> {
             if (event.isControlDown()) {
