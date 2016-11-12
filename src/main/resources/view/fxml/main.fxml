@@ -11,54 +11,54 @@
     <children>
         <MenuBar minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <menus>
-                <Menu mnemonicParsing="false" text="Fichier">
+                <Menu mnemonicParsing="false" text="%MENU_FILE">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#btnFileNew" text="Nouveau" />
-                        <MenuItem mnemonicParsing="false" onAction="#btnFileOpen" text="Ouvrir" />
-                  <Menu fx:id="menuFileOpenRecent" mnemonicParsing="false" text="Ouvrir..." />
+                        <MenuItem mnemonicParsing="false" onAction="#btnFileNew" text="%MENU_FILE_NEW" />
+                        <MenuItem mnemonicParsing="false" onAction="#btnFileOpen" text="%MENU_FILE_OPEN" />
+                  <Menu fx:id="menuFileOpenRecent" mnemonicParsing="false" text="%MENU_FILE_OPEN_RECENT" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#btnFileSave" text="Enregistrer" />
-                        <MenuItem mnemonicParsing="false" onAction="#btnFileSaveAs" text="Enregistrer sous..." />
+                        <MenuItem mnemonicParsing="false" onAction="#btnFileSave" text="%MENU_FILE_SAVE" />
+                        <MenuItem mnemonicParsing="false" onAction="#btnFileSaveAs" text="%MENU_FILE_SAVE_AS" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#btnFileExit" text="Quitter" />
+                        <MenuItem mnemonicParsing="false" onAction="#btnFileExit" text="%MENU_FILE_EXIT" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Editer">
+                <Menu mnemonicParsing="false" text="%MENU_EDIT">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#btnEditDelete" text="Supprimer" />
+                        <MenuItem mnemonicParsing="false" onAction="#btnEditDelete" text="%MENU_EDIT_DELETE" />
                     </items>
                 </Menu>
-            <Menu mnemonicParsing="false" text="Document">
+            <Menu mnemonicParsing="false" text="%MENU_DOCUMENT">
               <items>
-                  <MenuItem mnemonicParsing="false" onAction="#btnDocumentAddPage" text="Ajouter une page" />
-                  <MenuItem mnemonicParsing="false" onAction="#btnDocumentRemovePage" text="Supprimer page" />
+                  <MenuItem mnemonicParsing="false" onAction="#btnDocumentAddPage" text="%MENU_DOCUMENT_ADD_PAGE" />
+                  <MenuItem mnemonicParsing="false" onAction="#btnDocumentRemovePage" text="%MENU_DOCUMENT_REMOVE_PAGE" />
               </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="Page">
+            <Menu mnemonicParsing="false" text="%MENU_PAGE">
               <items>
-                  <MenuItem mnemonicParsing="false" onAction="#btnPageRotateRight" text="Tourner sur la droite" />
-                  <MenuItem mnemonicParsing="false" text="Tourner sur la gauche" />
-                  <MenuItem mnemonicParsing="false" text="Orienter en paysage" />
-                  <MenuItem mnemonicParsing="false" text="Orienter en portrait" />
+                  <MenuItem mnemonicParsing="false" onAction="#btnPageRotateRight" text="%MENU_PAGE_ROTATE_RIGHT" />
+                  <MenuItem mnemonicParsing="false" text="%MENU_PAGE_ROTATE_LEFT" />
+                  <MenuItem mnemonicParsing="false" text="%MENU_PAGE_FLIP_VERTICAL" />
+                  <MenuItem mnemonicParsing="false" text="%MENU_PAGE_FLIP_HORIZONTAL" />
               </items>
             </Menu>
-                <Menu mnemonicParsing="false" text="Outils">
+                <Menu mnemonicParsing="false" text="%MENU_TOOLS">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#btnToolsExtractPage" text="Extraire page" />
-                        <MenuItem mnemonicParsing="false" onAction="#btnToolsExtractPages" text="Extraire les pages" />
+                        <MenuItem mnemonicParsing="false" onAction="#btnToolsExtractPage" text="%MENU_TOOLS_EXTRACT_PAGE" />
+                        <MenuItem mnemonicParsing="false" onAction="#btnToolsExtractPages" text="%MENU_TOOLS_EXTRACT_PAGES" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Aide">
+                <Menu mnemonicParsing="false" text="%MENU_HELP">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#btnHelpAbout" text="A propos" />
+                        <MenuItem mnemonicParsing="false" onAction="#btnHelpAbout" text="%MENU_HELP_ABOUT" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Test">
+                <Menu mnemonicParsing="false" text="%MENU_TEST">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#testCreateFile" text="Générer un document" />
-                        <MenuItem mnemonicParsing="false" onAction="#testAddImage" text="Ajouter une image" />
-                        <MenuItem mnemonicParsing="false" onAction="#testExtractImage" text="Extraire une image" />
-                        <MenuItem mnemonicParsing="false" onAction="#testAddTable" text="Ajouter un tableau" />
+                        <MenuItem mnemonicParsing="false" onAction="#testCreateFile" text="%MENU_TEST_GENERATE_DOCUMENT" />
+                        <MenuItem mnemonicParsing="false" onAction="#testAddImage" text="%MENU_TEST_ADD_IMAGE" />
+                        <MenuItem mnemonicParsing="false" onAction="#testExtractImage" text="%MENU_TEST_EXTRACT_IMAGE" />
+                        <MenuItem mnemonicParsing="false" onAction="#testAddTable" text="%MENU_TEST_ADD_TABLE" />
                     </items>
                 </Menu>
             </menus>
