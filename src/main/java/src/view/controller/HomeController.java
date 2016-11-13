@@ -5,6 +5,7 @@
  */
 package src.view.controller;
 
+import static app.Config.BTN_OPEN_SAVE_DEFAULT_DIR;
 import static app.Config.TRANSLATOR;
 import app.Instance;
 import java.io.File;
@@ -23,11 +24,10 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import src.model.DocFile;
 import src.view.Displayer;
-import static src.view.Displayer.defineTabName;
 import src.view.controller.menu.MenuFile;
 
 /**
@@ -70,9 +70,9 @@ public class HomeController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         hover = new DropShadow(((DropShadow) fileNewImg.getEffect()).getRadius(), Color.WHITE);
         out = new DropShadow(((DropShadow) fileNewImg.getEffect()).getRadius(), Color.BLACK);
-        
-        addRecentFiles();
-        addOpenedFiles();
+
+        fillList(openedFiles, TRANSLATOR.getString("APP_NAME"));
+        fillList(recentFiles, TRANSLATOR.getString("APP_NAME") + "_recent");
         setNewFileSkin();
         setOpenFileSkin();
     }
@@ -128,63 +128,47 @@ public class HomeController implements Initializable {
     }
 
     /**
-     * Peuple la liste des fichiers réçents
-     */
-    public void addRecentFiles() {
-        for (DocFile docFile : INSTANCE.loadSaveFile(TRANSLATOR.getString("APP_NAME") + "_recent")) {
-            fillList(recentFiles, docFile);
-        }
-    }
-
-    /**
-     * Peuple la liste des fichiers ouverts
-     */
-    public void addOpenedFiles() {
-        for (DocFile docFile : INSTANCE.loadSaveFile(TRANSLATOR.getString("APP_NAME"))) {
-            fillList(openedFiles, docFile);
-        }
-    }
-
-    /**
      * Ajoute dans la liste défini le docfile donné
      *
      * @param vBox
-     * @param docFile
+     * @param file
      */
-    private void fillList(VBox vBox, DocFile docFile) {
-        Label label = new Label(docFile.getFileName());
-        label.setStyle("-fx-text-fill: white");
-        label.setPadding(new Insets(0, 0, 0, 10));
-        label.setCursor(Cursor.HAND);
+    private void fillList(VBox vBox, String saveFilename) {
+        for (File file : INSTANCE.loadSaveFile(saveFilename)) {
+            Label label = new Label(file.getName());
+            label.setStyle("-fx-text-fill: white");
+            label.setPadding(new Insets(0, 0, 0, 10));
+            label.setCursor(Cursor.HAND);
 
-        label.setOnMouseEntered((event) -> {
-            label.underlineProperty().set(true);
-        });
+            label.setOnMouseEntered((event) -> {
+                label.underlineProperty().set(true);
+            });
 
-        label.setOnMouseExited((event) -> {
-            label.underlineProperty().set(false);
-        });
+            label.setOnMouseExited((event) -> {
+                label.underlineProperty().set(false);
+            });
 
-        label.setOnMouseClicked((event) -> {
-            try {
-                goToMainScene();
-                File file = docFile.getFile();
-                PDDocument document = PDDocument.load(file);
-                DocFile df = INSTANCE.addDocFile(document, file);
-
-                if (!INSTANCE.isFileAlreadyOpened(file)) {
-                    Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
-                    System.out.println(TRANSLATOR.getString("FILE_OPENING") + " : " + docFile.getFileName());
-                } else {
-                    Displayer.selectDocFileTab(docFile.getShortFileName());
-                    System.out.println(TRANSLATOR.getString("FILE_ALREADY_OPENED") + " : " + docFile.getFileName());
+            label.setOnMouseClicked((event) -> {
+                try {
+                    goToMainScene();
+                    if (INSTANCE.isAlreadyInSaveFile(file, saveFilename)) {
+                        if (INSTANCE.isFileAlreadyOpened(file)) {
+                            Displayer.selectDocFileTab(Displayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
+                        } else {
+                            DocFile docFile = INSTANCE.addFile(file);
+                            Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
+                        }
+                    } else {
+                        DocFile docFile = INSTANCE.addNewFile(file.getName());
+                        Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
+                    }
+                } catch (IOException e) {
+                    System.out.println(e.toString());
                 }
-            } catch (IOException e) {
-                System.out.println(e.toString());
-            }
-        });
+            });
 
-        vBox.getChildren().add(label);
+            vBox.getChildren().add(label);
+        }
     }
 
     /**
@@ -206,8 +190,24 @@ public class HomeController implements Initializable {
      */
     public void btnFileOpen() throws IOException {
         if (this.stage != null) {
-            goToMainScene();
-            MENUFILE.btnFileOpen();
+            try {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle(TRANSLATOR.getString("FILE_OPEN"));
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
+                fileChooser.setInitialDirectory(new File(System.getProperty(BTN_OPEN_SAVE_DEFAULT_DIR)));
+                File file = fileChooser.showOpenDialog(this.stage);
+                if (file != null) {
+                    goToMainScene();
+                    if (INSTANCE.isFileAlreadyOpened(file)) {
+                        Displayer.selectDocFileTab(Displayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
+                    } else {
+                        DocFile docFile = INSTANCE.addFile(file);
+                        Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println(e.toString());
+            }
         }
     }
 

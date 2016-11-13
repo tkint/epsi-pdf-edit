@@ -32,6 +32,8 @@
               <items>
                   <MenuItem mnemonicParsing="false" onAction="#btnDocumentAddPage" text="%MENU_DOCUMENT_ADD_PAGE" />
                   <MenuItem mnemonicParsing="false" onAction="#btnDocumentRemovePage" text="%MENU_DOCUMENT_REMOVE_PAGE" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="%MENU_DOCUMENT_ADD_DOCUMENT" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="%MENU_PAGE">

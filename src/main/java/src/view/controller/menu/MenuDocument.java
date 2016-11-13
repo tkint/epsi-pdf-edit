@@ -6,9 +6,16 @@
 package src.view.controller.menu;
 
 import app.Config;
+import static app.Config.BTN_OPEN_SAVE_DEFAULT_DIR;
+import static app.Config.TRANSLATOR;
 import app.Instance;
+import java.io.File;
+import java.io.IOException;
+import javafx.stage.FileChooser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import src.controller.DocumentController;
+import src.model.DocFile;
 import src.view.Displayer;
 
 /**
@@ -45,12 +52,28 @@ public class MenuDocument implements Config {
     }
 
     public void btnDocumentRemovePage() {
-        PDDocument document = INSTANCE.getDocFileOpened().getDocument();
-        if (document.getNumberOfPages() > 1) {
-            document.removePage(INSTANCE.getDocFileOpened().getSelectedPage());
-            Displayer.removeDocFilePageTab(INSTANCE.opened);
-        } else {
-            System.out.println(TRANSLATOR.getString("PAGE_DELETE_FAIL"));
+        DocFile docFile = INSTANCE.getDocFileOpened();
+        DocumentController documentController = new DocumentController();
+        documentController.removePage(docFile.getDocument(), docFile.getSelectedPage());
+        docFile.setSelectedPage(docFile.getSelectedPage() - 1);
+        Displayer.removeDocFilePageTab(INSTANCE.opened);
+    }
+
+    public void btnDocumentAddDocument() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle(TRANSLATOR.getString("FILE_OPEN"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
+            fileChooser.setInitialDirectory(new File(System.getProperty(BTN_OPEN_SAVE_DEFAULT_DIR)));
+            File file = fileChooser.showOpenDialog(INSTANCE.stage);
+            if (file != null) {
+                DocFile docFile = INSTANCE.getDocFileOpened();
+                DocumentController documentController = new DocumentController();
+                documentController.addPDFToDocument(docFile.getDocument(), file);
+                System.out.println("Document " + file.getName() + " ajouté");
+            }
+        } catch (IOException e) {
+            System.out.println(e.toString());
         }
     }
 }

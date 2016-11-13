@@ -22,7 +22,6 @@ import src.controller.*;
 import src.model.DocFile;
 import src.model.table.*;
 import src.view.Displayer;
-import static src.view.Displayer.defineTabName;
 import src.view.controller.menu.*;
 
 /**
@@ -59,21 +58,16 @@ public class MainController implements Config, Initializable {
      *
      */
     public void addMenuFileOpenRecent() {
-        for (DocFile df : INSTANCE.loadSaveFile(TRANSLATOR.getString("APP_NAME") + "_recent")) {
-            File file = df.getFile();
+        for (File file : INSTANCE.loadSaveFile(TRANSLATOR.getString("APP_NAME") + "_recent")) {
             if (file.exists()) {
                 MenuItem menuItem = new MenuItem(file.getName());
                 menuItem.setOnAction((ActionEvent event) -> {
                     try {
-                        PDDocument document = PDDocument.load(file);
-                        DocFile docFile = INSTANCE.addDocFile(document, file);
-                        
-                        if (!INSTANCE.isFileAlreadyOpened(file)) {
-                            Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
-                            System.out.println(TRANSLATOR.getString("RECENT_FILE_OPENING") + " : " + docFile.getFileName());
+                        if (INSTANCE.isFileAlreadyOpened(file)) {
+                            Displayer.selectDocFileTab(Displayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
                         } else {
-                            Displayer.selectDocFileTab(defineTabName(docFile.getShortFileName()));
-                            System.out.println(TRANSLATOR.getString("FILE_ALREADY_OPENED") + " : " + docFile.getFileName());
+                            DocFile docFile = INSTANCE.addFile(file);
+                            Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
                         }
                     } catch (IOException e) {
                         System.out.println(e.toString());
@@ -144,6 +138,10 @@ public class MainController implements Config, Initializable {
 
     public void btnDocumentRemovePage() {
         MENUDOCUMENT.btnDocumentRemovePage();
+    }
+
+    public void btnDocumentAddDocument() {
+        MENUDOCUMENT.btnDocumentAddDocument();
     }
     //  </editor-fold>
 

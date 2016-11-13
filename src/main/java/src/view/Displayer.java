@@ -62,21 +62,18 @@ public class Displayer implements Config {
                 tabPane.tabClosingPolicyProperty().set(TabPane.TabClosingPolicy.SELECTED_TAB);
             }
             tabPane.getSelectionModel().selectedIndexProperty().addListener((obs, ov, nv) -> {
-                if (nv != null) {
-                    INSTANCE.opened = nv.intValue();
+                if (obs != null) {
+                    INSTANCE.opened = obs.getValue().intValue();
                 }
             });
 
             // Paramétrage de l'onglet
-            tab.setId(Integer.toString(tabPane.getTabs().size()));
+            tab.setId(Integer.toString(docfile.getId()));
             tab.closableProperty().set(true);
             tab.setOnClosed((Event event) -> {
                 int id = Integer.parseInt(tab.getId());
-                if (id > tabPane.getTabs().size()) {
-                    id = 0;
-                }
-                System.out.println(TRANSLATOR.getString("TAB_CLOSING") + " : " + id);
                 INSTANCE.closeDocFile(id);
+                System.out.println(TRANSLATOR.getString("TAB_CLOSING") + " : " + id);
             });
 
             // Paramétrage de la pagination
@@ -172,7 +169,7 @@ public class Displayer implements Config {
     }
 
     /**
-     * Ajoute une page à l'onglet ouvert
+     * Supprime une page à l'onglet ouvert
      *
      * @param id Id de l'onglet
      */
