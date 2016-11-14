@@ -7,6 +7,10 @@ package src.view.controller.menu;
 
 import app.Config;
 import app.Instance;
+import org.apache.pdfbox.pdmodel.PDPage;
+import src.controller.PageController;
+import src.model.DocFile;
+import src.view.Displayer;
 
 /**
  *
@@ -35,6 +39,28 @@ public class MenuPage implements Config {
     }
 
     public void btnPageRotateRight() {
+        PageController pageController = new PageController();
+        DocFile docFile = null;
+        if ((docFile = INSTANCE.getDocFileOpened()) != null) {
+            pageController.rotatePage(docFile.getDocument(), docFile.getSelectedPage(), 90);
+            Displayer.refreshTab();
+        }
+    }
+
+    public void btnPageRotateLeft() {
+        PageController pageController = new PageController();
+        DocFile docFile = null;
+        if ((docFile = INSTANCE.getDocFileOpened()) != null) {
+            pageController.rotatePage(docFile.getDocument(), docFile.getSelectedPage(), - 90);
+            Displayer.refreshTab();
+        }
+    }
+
+    public void btnPageFlipHorizontal() {
+
+    }
+
+    public void btnPageFlipVertical() {
 
     }
 }

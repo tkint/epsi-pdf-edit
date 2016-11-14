@@ -25,13 +25,13 @@ public class DocumentController {
      * @throws IOException
      */
     public void addPDFToDocument(PDDocument document, File file) throws IOException {
-        PDDocument doc = new PDDocument();
+        PDDocument doc = null;
         try {
             if (document != null && file.exists()) {
                 doc = PDDocument.load(file);
                 if (doc != null) {
                     for (PDPage page : doc.getPages()) {
-                        document.getPages().add(page);
+                        document.importPage(page);
                     }
                 }
             }
@@ -39,7 +39,7 @@ public class DocumentController {
             System.out.println(e.toString());
         } finally {
             if (doc != null) {
-                //doc.close();
+                doc.close();
             }
         }
     }

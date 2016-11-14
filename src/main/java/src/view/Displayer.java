@@ -114,7 +114,7 @@ public class Displayer implements Config {
      *
      * @param id
      */
-    public static void updateDocFileTab(int id) {
+    public static void refreshTabName(int id) {
         if (INSTANCE.docFiles.size() > 0 && INSTANCE.docFiles.get(id) != null && INSTANCE.stageName.equals("main")) {
             File file = INSTANCE.docFiles.get(id).getFile();
 
@@ -125,22 +125,70 @@ public class Displayer implements Config {
         }
     }
 
+    public static void refreshTab() {
+        TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+
+        DocFile docFile = INSTANCE.getDocFileOpened();
+
+        int page = docFile.getSelectedPage();
+
+        PDFRenderer renderer = new PDFRenderer(docFile.getDocument());
+
+        Pagination pagination = (Pagination) tab.getContent();
+
+        pagination.setPageCount(docFile.getDocument().getNumberOfPages());
+        pagination.setPageFactory((Integer pageIndex) -> {
+            ScrollPane scrollPane = new ScrollPane();
+            try {
+                // Conteneur de l'image
+                ImageView imageView = setImageView(docFile, renderer, pageIndex);
+                StackPane stackPane = new StackPane(imageView);
+
+                // Panneau défilant
+                scrollPane = setScrollPane();
+                scrollPane.setContent(stackPane);
+
+                docFile.setSelectedPage(pageIndex);
+                pagination.setCurrentPageIndex(pageIndex);
+            } catch (IOException e) {
+                System.out.println(e.toString());
+            }
+            return scrollPane;
+        });
+        pagination.setCurrentPageIndex(page);
+    }
+
+    /**
+     * Ferme l'onglet désigné par l'id
+     *
+     * @param id
+     */
+    public static void closeTabByDocFileId(int id) {
+        TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
+        Tab tab = null;
+        for (Tab t : tabPane.getTabs()) {
+            if (Integer.parseInt(t.getId()) == id) {
+                INSTANCE.closeDocFile(id);
+                tabPane.getTabs().remove(tab);
+            }
+        }
+    }
+
     /**
      * Sélectionne l'onglet précisé
      *
      * @param fileName String nom du fichier dont on veut l'onglet
      */
     public static void selectDocFileTab(String fileName) {
-        if (INSTANCE.stageName.equals("main")) {
-            TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
-            Tab tab = tabPane.getTabs().get(0);
-            for (Tab t : tabPane.getTabs()) {
-                if (t.getText().equals(defineTabName(fileName))) {
-                    tab = t;
-                }
+        TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
+        Tab tab = tabPane.getTabs().get(0);
+        for (Tab t : tabPane.getTabs()) {
+            if (t.getText().equals(defineTabName(fileName))) {
+                tab = t;
             }
-            tabPane.getSelectionModel().select(tab);
         }
+        tabPane.getSelectionModel().select(tab);
     }
 
     /**

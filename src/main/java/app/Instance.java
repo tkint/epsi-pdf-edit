@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.Stage;
@@ -53,26 +55,57 @@ public class Instance implements Config {
     }
 
     /**
+     * Charge le fichier d'instance
+     *
+     * @throws IOException Exception
+     */
+    public static void load() throws IOException {
+        for (File file : loadSaveFile(TRANSLATOR.getString("APP_NAME"))) {
+            addFile(file);
+        }
+    }
+
+    /**
+     * Sauvegarde le fichier d'instance
+     *
+     * @throws IOException Exception
+     */
+    public static void save() throws IOException {
+        BufferedWriter writer = null;
+        File saveFile = new File(TRANSLATOR.getString("APP_NAME") + ".txt");
+
+        writer = new BufferedWriter(new FileWriter(saveFile));
+
+        for (DocFile docFile : docFiles) {
+            if (docFile.isSaved()) {
+                writer.write(toSaveFile(docFile.getFile()));
+                writer.newLine();
+                System.out.println(TRANSLATOR.getString("FILE") + " " + docFile.getFileName() + " " + TRANSLATOR.getString("HAS_BEEN_SAVED_IN") + " " + TRANSLATOR.getString("APP_NAME") + ".txt");
+            }
+        }
+        writer.flush();
+        writer.close();
+    }
+
+    /**
      * Ajoute un nouveau fichier
      *
      * @param fileName
      * @return
      * @throws IOException
      */
-    public static DocFile addNewFile(String fileName) throws IOException {
+    public static DocFile addNewFile(String fileName) {
         DocFile docFile = null;
+        
+        File file = new File(fileName);
+        
         PDDocument document = new PDDocument();
-        try {
-            File file = new File(fileName);
-            document.addPage(new PDPage());
-            docFile = new DocFile(docFiles.size(), document, file);
-            opened = docFile.getId();
-            docFiles.add(docFile);
-        } finally {
-            if (document != null) {
-                //document.close();
-            }
-        }
+        document.addPage(new PDPage());
+        
+        docFile = new DocFile(docFiles.size(), document, file);
+        
+        opened = docFile.getId();
+        docFiles.add(docFile);
         return docFile;
     }
 
@@ -85,10 +118,10 @@ public class Instance implements Config {
      */
     public static DocFile addFile(File file) throws IOException {
         DocFile docFile = null;
-        PDDocument document = new PDDocument();
+        PDDocument document = null;
         try {
             if (file.exists()) {
-                if (!isFileAlreadyOpened(file)) {
+                if (!isAlreadyOpened(file)) {
                     document = PDDocument.load(file);
                     if (document != null) {
                         docFile = new DocFile(docFiles.size(), document, file);
@@ -161,39 +194,6 @@ public class Instance implements Config {
     }
 
     /**
-     * Charge le fichier d'instance
-     *
-     * @throws IOException Exception
-     */
-    public static void load() throws IOException {
-        for (File file : loadSaveFile(TRANSLATOR.getString("APP_NAME"))) {
-            addFile(file);
-        }
-    }
-
-    /**
-     * Sauvegarde le fichier d'instance
-     *
-     * @throws IOException Exception
-     */
-    public static void save() throws IOException {
-        BufferedWriter writer = null;
-        File saveFile = new File(TRANSLATOR.getString("APP_NAME") + ".txt");
-
-        writer = new BufferedWriter(new FileWriter(saveFile));
-
-        for (DocFile docFile : docFiles) {
-            if (docFile.isSaved()) {
-                writer.write(toSaveFile(docFile.getFile()));
-                writer.newLine();
-                System.out.println(TRANSLATOR.getString("FILE") + " " + docFile.getFileName() + " " + TRANSLATOR.getString("HAS_BEEN_SAVED_IN") + " " + TRANSLATOR.getString("APP_NAME") + ".txt");
-            }
-        }
-        writer.flush();
-        writer.close();
-    }
-
-    /**
      * Sauvegarde le fichier dans le fichier de sauvegarde désigné
      *
      * @param docFile DocFile à sauvegarder
@@ -232,18 +232,17 @@ public class Instance implements Config {
         try {
             File saveFile = new File(saveFilename + ".txt");
             if (saveFile.exists()) {
-                BufferedReader reader = new BufferedReader(new FileReader(saveFile));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    File file = new File(line);
+                List<String> content = new ArrayList<>(Files.readAllLines(saveFile.toPath(), StandardCharsets.UTF_8));
+                for (int i = 0; i < content.size(); i++) {
+                    File file = new File(content.get(i));
                     if (file.exists()) {
                         files.add(file);
-                        System.out.println(TRANSLATOR.getString("FILE_LOAD_SUCCESS_1") + " " + file.getName() + " " + TRANSLATOR.getString("FILE_LOAD_SUCCESS_2") + " " + saveFilename);
                     } else {
-                        System.out.println(TRANSLATOR.getString("FILE_LOAD_FAIL_1") + " " + file.getName() + " " + TRANSLATOR.getString("FILE_LOAD_FAIL_2") + " " + saveFilename);
+                        content.set(i, System.getProperty("line.separator"));
+                        break;
                     }
                 }
-                reader.close();
+                Files.write(saveFile.toPath(), content, StandardCharsets.UTF_8);
             }
         } catch (IOException e) {
             System.out.println(e.toString());
@@ -261,9 +260,27 @@ public class Instance implements Config {
     public static boolean isAlreadyInSaveFile(File file, String saveFilename) {
         boolean r = false;
         for (File f : loadSaveFile(saveFilename)) {
-            if (file.equals(f)) {
+            if (file.getAbsolutePath().equals(f.getAbsolutePath())) {
                 r = true;
             }
+        }
+        return r;
+    }
+
+    /**
+     * Vérifie si le fichier est déjà ouvert
+     *
+     * @param file File ) vérifier
+     * @return true si le fichier est déjà ouvert, false sinon
+     */
+    public static boolean isAlreadyOpened(File file) {
+        boolean r = false;
+        int i = 0;
+        while (i < docFiles.size() && !r) {
+            if (docFiles.get(i).getFile().equals(file)) {
+                r = true;
+            }
+            i++;
         }
         return r;
     }
@@ -278,7 +295,7 @@ public class Instance implements Config {
         DocFile docFile = null;
         int i = 0;
         while (i < docFiles.size() && docFile == null) {
-            if (docFiles.get(i).getFile().equals(file)) {
+            if (docFiles.get(i).getFile().getAbsolutePath().equals(file.getAbsolutePath())) {
                 docFile = docFiles.get(i);
             }
             i++;
@@ -287,23 +304,11 @@ public class Instance implements Config {
     }
 
     /**
-     * Vérifie si le fichier est déjà ouvert
+     * Récupère le DocFile en fonction de l'id
      *
-     * @param file File ) vérifier
-     * @return true si le fichier est déjà ouvert, false sinon
+     * @param id
+     * @return
      */
-    public static boolean isFileAlreadyOpened(File file) {
-        boolean r = false;
-        int i = 0;
-        while (i < docFiles.size() && !r) {
-            if (docFiles.get(i).getFile().equals(file)) {
-                r = true;
-            }
-            i++;
-        }
-        return r;
-    }
-
     private static DocFile getDocFileById(int id) {
         DocFile docFile = null;
         int i = 0;

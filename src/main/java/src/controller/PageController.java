@@ -6,6 +6,7 @@
 package src.controller;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 
 /**
  *
@@ -25,5 +26,10 @@ public class PageController {
         } catch (Exception e) {
             System.out.println(e.toString());
         }
+    }
+    
+    public void rotatePage(PDDocument document, int id, int degree) {
+        PDPage page = document.getPage(id);
+        page.setRotation(page.getRotation() + degree);
     }
 }

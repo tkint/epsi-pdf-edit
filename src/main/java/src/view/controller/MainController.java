@@ -63,7 +63,7 @@ public class MainController implements Config, Initializable {
                 MenuItem menuItem = new MenuItem(file.getName());
                 menuItem.setOnAction((ActionEvent event) -> {
                     try {
-                        if (INSTANCE.isFileAlreadyOpened(file)) {
+                        if (INSTANCE.isAlreadyOpened(file)) {
                             Displayer.selectDocFileTab(Displayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
                         } else {
                             DocFile docFile = INSTANCE.addFile(file);
@@ -149,8 +149,20 @@ public class MainController implements Config, Initializable {
     public void btnPageRotateRight() {
         MENUPAGE.btnPageRotateRight();
     }
-    //  </editor-fold>
 
+    public void btnPageRotateLeft() {
+        MENUPAGE.btnPageRotateLeft();
+    }
+
+    public void btnPageFlipHorizontal() {
+        
+    }
+
+    public void btnPageFlipVertical() {
+        
+    }
+    //  </editor-fold>
+    
     //  <editor-fold desc="Tools">
     /**
      * Extrait du document ouvert la page définie par l'utilisateur

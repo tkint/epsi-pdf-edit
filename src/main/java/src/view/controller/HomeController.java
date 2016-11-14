@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -22,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -152,7 +154,7 @@ public class HomeController implements Initializable {
                 try {
                     goToMainScene();
                     if (INSTANCE.isAlreadyInSaveFile(file, saveFilename)) {
-                        if (INSTANCE.isFileAlreadyOpened(file)) {
+                        if (INSTANCE.isAlreadyOpened(file)) {
                             Displayer.selectDocFileTab(Displayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
                         } else {
                             DocFile docFile = INSTANCE.addFile(file);
@@ -198,7 +200,7 @@ public class HomeController implements Initializable {
                 File file = fileChooser.showOpenDialog(this.stage);
                 if (file != null) {
                     goToMainScene();
-                    if (INSTANCE.isFileAlreadyOpened(file)) {
+                    if (INSTANCE.isAlreadyOpened(file)) {
                         Displayer.selectDocFileTab(Displayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
                     } else {
                         DocFile docFile = INSTANCE.addFile(file);
@@ -231,6 +233,22 @@ public class HomeController implements Initializable {
             mainController.setStage(stage);
 
             Scene mainScene = new Scene(mainParent);
+
+            mainScene.setOnKeyPressed((event) -> {
+                if (event.isControlDown()) {
+                    switch (event.getCode()) {
+                        case S:
+                            MENUFILE.btnFileSave();
+                            break;
+                        case T:
+                            MENUFILE.btnFileNew();
+                            break;
+                        case W:
+                            Displayer.closeTabByDocFileId(INSTANCE.opened);
+                            break;
+                    }
+                }
+            });
 
             stage.setTitle(TRANSLATOR.getString("APP_NAME"));
             stage.setMaximized(true);

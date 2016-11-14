@@ -62,7 +62,7 @@ public class MenuFile implements Config {
             fileChooser.setInitialDirectory(new File(System.getProperty(BTN_OPEN_SAVE_DEFAULT_DIR)));
             File file = fileChooser.showOpenDialog(INSTANCE.stage);
             if (file != null) {
-                if (INSTANCE.isFileAlreadyOpened(file)) {
+                if (INSTANCE.isAlreadyOpened(file)) {
                     Displayer.selectDocFileTab(Displayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
                 } else {
                     DocFile docFile = INSTANCE.addFile(file);
@@ -118,7 +118,7 @@ public class MenuFile implements Config {
                     docFile.setSaved(true);
                     INSTANCE.updateDocFile(docFile.getDocument(), file);
                     INSTANCE.saveInSaveFile(file, TRANSLATOR.getString("APP_NAME") + "_recent");
-                    Displayer.updateDocFileTab(INSTANCE.opened);
+                    Displayer.refreshTabName(INSTANCE.opened);
                     System.out.println(TRANSLATOR.getString("FILE_HAS_BEEN_SAVED_1") + " " + file.getName() + " " + TRANSLATOR.getString("FILE_HAS_BEEN_SAVED_2"));
                 }
             } catch (IOException e) {

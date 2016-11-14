@@ -70,6 +70,7 @@ public class MenuDocument implements Config {
                 DocFile docFile = INSTANCE.getDocFileOpened();
                 DocumentController documentController = new DocumentController();
                 documentController.addPDFToDocument(docFile.getDocument(), file);
+                Displayer.refreshTab();
                 System.out.println("Document " + file.getName() + " ajouté");
             }
         } catch (IOException e) {
