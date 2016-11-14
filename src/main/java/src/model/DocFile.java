@@ -23,6 +23,7 @@ public class DocFile implements Config {
     private int selectedPage;
     private float width;
     private float height;
+    private AreaSelect areaSelect;
 
     public DocFile(int id, PDDocument document, File file) {
         this.id = id;
@@ -32,6 +33,7 @@ public class DocFile implements Config {
         this.selectedPage = 0;
         this.width = PDF_DISPLAY_INITIAL_RATIO.getWidth();
         this.height = PDF_DISPLAY_INITIAL_RATIO.getHeight();
+        this.areaSelect = new AreaSelect(0, 0, 0, 0);
     }
 
     public int getId() {
@@ -118,7 +120,19 @@ public class DocFile implements Config {
         return page;
     }
 
-    public String toSaveString() {
-        return this.id + TRANSLATOR.getString("INSTANCE_DATA_SEPARATOR") + this.file.getAbsolutePath() + TRANSLATOR.getString("INSTANCE_DATA_SEPARATOR") + this.getSelectedPage();
+    public AreaSelect getAreaSelect() {
+        return areaSelect;
+    }
+
+    public void setAreaSelect(AreaSelect areaSelect) {
+        this.areaSelect = areaSelect;
+    }
+    
+    public void updateAreaSelect(double posX, double posY, double width, double height) {
+        this.areaSelect.posX = posX;
+        this.areaSelect.posY = posY;
+        this.areaSelect.width = width;
+        this.areaSelect.height = height;
+        //System.out.println(this.areaSelect.toString());
     }
 }

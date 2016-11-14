@@ -11,17 +11,31 @@ import app.Instance;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import src.model.AreaSelect;
 import src.model.DocFile;
 
 /**
@@ -81,22 +95,7 @@ public class Displayer implements Config {
             pagination.setPadding(new Insets(0, 0, 0, 0));
             pagination.setCurrentPageIndex(docfile.getSelectedPage());
             pagination.setPageFactory((Integer pageIndex) -> {
-                ScrollPane scrollPane = new ScrollPane();
-                try {
-                    // Conteneur de l'image
-                    ImageView imageView = setImageView(docfile, renderer, pageIndex);
-                    StackPane stackPane = new StackPane(imageView);
-
-                    // Panneau défilant
-                    scrollPane = setScrollPane();
-                    scrollPane.setContent(stackPane);
-
-                    docfile.setSelectedPage(pageIndex);
-                    pagination.setCurrentPageIndex(pageIndex);
-                } catch (IOException e) {
-                    System.out.println(e.toString());
-                }
-                return scrollPane;
+                return setPage(pagination, docfile, renderer, pageIndex);
             });
 
             tab.setContent(pagination);
@@ -107,6 +106,52 @@ public class Displayer implements Config {
             // Sélection du nouvel onglet
             tabPane.getSelectionModel().select(tab);
         }
+    }
+
+    private static ScrollPane setPage(Pagination pagination, DocFile docFile, PDFRenderer renderer, int pageIndex) {
+        // Panneau supérieur (calque de sélection)
+        Pane calque = new Pane();
+        calque.setMouseTransparent(true);
+        //calque.setStyle("-fx-border-color: pink");
+
+        // Conteneur de l'image
+        ImageView imageView = setImageView(docFile, renderer, calque, pageIndex);
+
+        // Création du panneau
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(imageView, calque);
+
+        // Définition de la grille d'alignement
+        GridPane gridPane = new GridPane();
+
+        // Contrainte de lignes
+        RowConstraints row = new RowConstraints();
+        row.setPercentHeight(100);
+        row.setFillHeight(false);
+        row.setValignment(VPos.CENTER);
+        gridPane.getRowConstraints().add(row);
+
+        // Contraintes de colonnes
+        ColumnConstraints col = new ColumnConstraints();
+        col.setPercentWidth(100);
+        col.setFillWidth(false);
+        col.setHalignment(HPos.CENTER);
+        gridPane.getColumnConstraints().add(col);
+
+        // On met le stackPane dans la grille alignée
+        gridPane.add(stackPane, 0, 0);
+
+        // On met le contenu dans le scrollPane
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setStyle("-fx-background: " + PDF_BACKGROUND_COLOR + "; -fx-background-color: " + PDF_BACKGROUND_COLOR + ";");
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setContent(gridPane);
+
+        docFile.setSelectedPage(pageIndex);
+        pagination.setCurrentPageIndex(pageIndex);
+
+        return scrollPane;
     }
 
     /**
@@ -139,22 +184,7 @@ public class Displayer implements Config {
 
         pagination.setPageCount(docFile.getDocument().getNumberOfPages());
         pagination.setPageFactory((Integer pageIndex) -> {
-            ScrollPane scrollPane = new ScrollPane();
-            try {
-                // Conteneur de l'image
-                ImageView imageView = setImageView(docFile, renderer, pageIndex);
-                StackPane stackPane = new StackPane(imageView);
-
-                // Panneau défilant
-                scrollPane = setScrollPane();
-                scrollPane.setContent(stackPane);
-
-                docFile.setSelectedPage(pageIndex);
-                pagination.setCurrentPageIndex(pageIndex);
-            } catch (IOException e) {
-                System.out.println(e.toString());
-            }
-            return scrollPane;
+            return setPage(pagination, docFile, renderer, pageIndex);
         });
         pagination.setCurrentPageIndex(page);
     }
@@ -244,19 +274,6 @@ public class Displayer implements Config {
     }
 
     /**
-     * Instancie et paramètre le scrollPane de la page
-     *
-     * @return ScrollPane
-     */
-    private static ScrollPane setScrollPane() {
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setStyle("-fx-background: " + PDF_BACKGROUND_COLOR + "; -fx-background-color: " + PDF_BACKGROUND_COLOR + ";");
-        return scrollPane;
-    }
-
-    /**
      * Instancie et paramètre l'imageView de la page
      *
      * @param docfile DocFile que l'on souhaite afficher
@@ -265,53 +282,121 @@ public class Displayer implements Config {
      * @return ImageView
      * @throws IOException Exception
      */
-    private static ImageView setImageView(DocFile docfile, PDFRenderer renderer, int pageIndex) throws IOException {
-        // Transformation de la page en image
-        BufferedImage bufferedImage = renderer.renderImageWithDPI(pageIndex, PDF_DISPLAY_DPI);
-        WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
-        ImageView imageView = new ImageView(image);
+    private static ImageView setImageView(DocFile docfile, PDFRenderer renderer, Pane calque, int pageIndex) {
+        ImageView imageView = new ImageView();
 
-        // Paramétrage de l'image
-        imageView.setStyle("-fx-effect: dropshadow(three-pass-box, black, 100, 0, 0, 0);");
-        // On met l'image sous la même forme (paysage, portrait) que la page
-        if (bufferedImage.getHeight() > bufferedImage.getWidth()) {
-            imageView.setFitWidth(docfile.getWidth());
-            imageView.setFitHeight(docfile.getHeight());
-        } else {
-            imageView.setFitWidth(docfile.getHeight());
-            imageView.setFitHeight(docfile.getWidth());
-        }
+        try {
+            // Transformation de la page en image
+            BufferedImage bufferedImage = renderer.renderImageWithDPI(pageIndex, PDF_DISPLAY_DPI);
+            WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
+            imageView.setImage(image);
 
-        imageView.setOnScroll((event) -> {
-            if (event.isControlDown()) {
-                event.consume();
-
-                // Si on ne scroll pas, on ne fait rien
-                if (event.getDeltaY() == 0) {
-                    return;
-                }
-
-                boolean canZoomIn = imageView.getFitWidth() * PDF_DISPLAY_ZOOM_SCALE < PDF_DISPLAY_INITIAL_RATIO.getWidth() * PDF_DISPLAY_ZOOMIN_LIMIT;
-                boolean canZoomOut = imageView.getFitWidth() * PDF_DISPLAY_ZOOM_SCALE > PDF_DISPLAY_INITIAL_RATIO.getWidth() * PDF_DISPLAY_ZOOMOUT_LIMIT;
-
-                float factor = 1.0f;
-
-                // Si on scroll vers le bas, on augmente le ratio, sinon on le baisse
-                if (event.getDeltaY() > 0 && canZoomIn) {
-                    factor = PDF_DISPLAY_ZOOM_SCALE;
-                } else if (event.getDeltaY() < 0 && canZoomOut) {
-                    factor = 1 / PDF_DISPLAY_ZOOM_SCALE;
-                }
-
-                // Application du changement de ratio sur l'image
-                imageView.setFitWidth(imageView.getFitWidth() * factor);
-                imageView.setFitHeight(imageView.getFitHeight() * factor);
-
-                // Mise à jour du ratio du document ouvert
-                docfile.setWidth(docfile.getWidth() * factor);
-                docfile.setHeight(docfile.getHeight() * factor);
+            // Paramétrage de l'image
+            imageView.setStyle("-fx-effect: dropshadow(three-pass-box, black, 100, 0, 0, 0);");
+            // On met l'image sous la même forme (paysage, portrait) que la page
+            if (bufferedImage.getHeight() > bufferedImage.getWidth()) {
+                imageView.setFitWidth(docfile.getWidth());
+                imageView.setFitHeight(docfile.getHeight());
+            } else {
+                imageView.setFitWidth(docfile.getHeight());
+                imageView.setFitHeight(docfile.getWidth());
             }
-        });
+
+            imageView.setOnScroll((event) -> {
+                if (event.isControlDown()) {
+                    event.consume();
+
+                    // Si on ne scroll pas, on ne fait rien
+                    if (event.getDeltaY() == 0) {
+                        return;
+                    }
+
+                    boolean canZoomIn = imageView.getFitWidth() * PDF_DISPLAY_ZOOM_SCALE < PDF_DISPLAY_INITIAL_RATIO.getWidth() * PDF_DISPLAY_ZOOMIN_LIMIT;
+                    boolean canZoomOut = imageView.getFitWidth() * PDF_DISPLAY_ZOOM_SCALE > PDF_DISPLAY_INITIAL_RATIO.getWidth() * PDF_DISPLAY_ZOOMOUT_LIMIT;
+
+                    float factor = 1.0f;
+
+                    // Si on scroll vers le bas, on augmente le ratio, sinon on le baisse
+                    if (event.getDeltaY() > 0 && canZoomIn) {
+                        factor = PDF_DISPLAY_ZOOM_SCALE;
+                    } else if (event.getDeltaY() < 0 && canZoomOut) {
+                        factor = 1 / PDF_DISPLAY_ZOOM_SCALE;
+                    }
+
+                    // Application du changement de ratio sur l'image
+                    imageView.setFitWidth(imageView.getFitWidth() * factor);
+                    imageView.setFitHeight(imageView.getFitHeight() * factor);
+                    
+                    // Application du changement de ration sur le calque
+                    calque.getChildren().clear();
+
+                    // Mise à jour du ratio du document ouvert
+                    docfile.setWidth(docfile.getWidth() * factor);
+                    docfile.setHeight(docfile.getHeight() * factor);
+                }
+            });
+
+            imageView.setOnMousePressed((event) -> {
+                if (event.isPrimaryButtonDown()) {
+                    //event.setDragDetect(true);
+                    double fromPosX = event.getX();
+                    double fromPosY = event.getY();
+                    imageView.setOnMouseDragged((end) -> {
+                        double toPosX = end.getX();
+                        double toPosY = end.getY();
+
+                        if (toPosX > imageView.getFitWidth()) {
+                            toPosX = imageView.getFitWidth();
+                        } else if (toPosX < 0) {
+                            toPosX = 0;
+                        }
+
+                        if (toPosY > imageView.getFitHeight()) {
+                            toPosY = imageView.getFitHeight();
+                        } else if (toPosY < 0) {
+                            toPosY = 0;
+                        }
+
+                        double posX = 0;
+                        double posY = 0;
+
+                        double width = 0;
+                        double height = 0;
+
+                        if (toPosX > fromPosX) {
+                            posX = fromPosX;
+                            width = toPosX - fromPosX;
+                        } else {
+                            posX = toPosX;
+                            width = fromPosX - toPosX;
+                        }
+
+                        if (toPosY > fromPosY) {
+                            posY = fromPosY;
+                            height = toPosY - fromPosY;
+                        } else {
+                            posY = toPosY;
+                            height = fromPosY - toPosY;
+                        }
+
+                        // Définition du rectangle de sélection
+                        Rectangle rectangle = new Rectangle(posX, posY, width, height);
+                        rectangle.setFill(Color.TRANSPARENT);
+                        rectangle.setStroke(Color.BLUE);
+                        
+                        // Ajout du rectangle sur le calque
+                        calque.getChildren().clear();
+                        calque.getChildren().add(rectangle);
+
+                        // Application de la zone de sélection sur le document
+                        AreaSelect areaSelect = new AreaSelect(posX, posY, width, height);
+                        docfile.updateAreaSelect(posX, posY, width, height);
+                    });
+                }
+            });
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
         return imageView;
     }
 

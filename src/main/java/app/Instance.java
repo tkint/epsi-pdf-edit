@@ -161,7 +161,7 @@ public class Instance implements Config {
                 if (docFiles.size() > id) {
                     opened = id;
                 } else {
-                    opened = docFiles.size();
+                    opened = 0;
                 }
             }
         } catch (IOException e) {
