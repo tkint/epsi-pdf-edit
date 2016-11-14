@@ -27,10 +27,10 @@ public class Main extends Application implements Config {
         
         Parent homeParent = (Parent) homeLoader.load();
         
+        Scene homeScene = new Scene(homeParent);
+        
         HomeController homeController = (HomeController) homeLoader.getController();
         homeController.setStage(stage);
-        
-        Scene homeScene = new Scene(homeParent);
         
         stage.setTitle(TRANSLATOR.getString("APP_NAME"));
         stage.setResizable(false);

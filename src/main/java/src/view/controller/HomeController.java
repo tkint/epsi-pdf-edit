@@ -237,10 +237,17 @@ public class HomeController implements Initializable {
             mainScene.setOnKeyPressed((event) -> {
                 if (event.isControlDown()) {
                     switch (event.getCode()) {
-                        case S:
-                            MENUFILE.btnFileSave();
+                        case O:
+                            MENUFILE.btnFileOpen();
                             break;
-                        case T:
+                        case S:
+                            if (event.isShiftDown()) {
+                                MENUFILE.btnFileSaveAs();
+                            } else {
+                                MENUFILE.btnFileSave();
+                            }
+                            break;
+                        case T: case N:
                             MENUFILE.btnFileNew();
                             break;
                         case W:

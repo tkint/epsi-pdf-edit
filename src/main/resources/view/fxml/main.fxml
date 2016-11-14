@@ -38,8 +38,8 @@
             </Menu>
             <Menu mnemonicParsing="false" text="%MENU_PAGE">
               <items>
-                  <MenuItem mnemonicParsing="false" onAction="#btnPageRotateRight" text="%MENU_PAGE_ROTATE_RIGHT" />
                   <MenuItem mnemonicParsing="false" onAction="#btnPageRotateLeft" text="%MENU_PAGE_ROTATE_LEFT" />
+                  <MenuItem mnemonicParsing="false" onAction="#btnPageRotateRight" text="%MENU_PAGE_ROTATE_RIGHT" />
                   <MenuItem mnemonicParsing="false" onAction="#btnPageFlipHorizontal" text="%MENU_PAGE_FLIP_HORIZONTAL" />
                   <MenuItem mnemonicParsing="false" onAction="#btnPageFlipVertical" text="%MENU_PAGE_FLIP_VERTICAL" />
               </items>

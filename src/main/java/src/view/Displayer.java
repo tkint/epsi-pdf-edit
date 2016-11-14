@@ -169,9 +169,12 @@ public class Displayer implements Config {
         Tab tab = null;
         for (Tab t : tabPane.getTabs()) {
             if (Integer.parseInt(t.getId()) == id) {
-                INSTANCE.closeDocFile(id);
-                tabPane.getTabs().remove(tab);
+                tab = t;
             }
+        }
+        if (tab != null) {
+            INSTANCE.closeDocFile(id);
+            tabPane.getTabs().remove(tab);
         }
     }
 
