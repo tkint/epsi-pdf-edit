@@ -10,6 +10,7 @@ import app.Instance;
 import java.io.File;
 import java.io.IOException;
 import javafx.stage.FileChooser;
+import src.controller.DocumentController;
 import src.model.DocFile;
 import src.view.Displayer;
 
@@ -127,6 +128,55 @@ public class MenuFile implements Config {
         } else {
             System.out.println(TRANSLATOR.getString("FILE_SAVE_FAIL"));
         }
+    }
+    
+    public void btnConvertToPNG(){        
+        
+        
+        DocFile docFile = null;
+        DocumentController documentController = new DocumentController();
+        if ((docFile = INSTANCE.getDocFileOpened()) != null) {
+          
+            File file = new File(docFile.getFileName());
+            documentController.convertToImage(file, ".png");
+   
+        }
+        else {
+            System.out.println(TRANSLATOR.getString("CONVERT_FAIL"));
+        }
+        
+    }
+    
+    public void btnConvertToJPEG(){
+        
+        DocFile docFile = null;
+        DocumentController documentController = new DocumentController();
+        if ((docFile = INSTANCE.getDocFileOpened()) != null) {
+          
+            File file = new File(docFile.getFileName());
+            documentController.convertToImage(file, ".jpeg");
+   
+        }
+        else {
+            System.out.println(TRANSLATOR.getString("CONVERT_FAIL"));
+        }
+        
+    }
+    
+    public void btnConvertToGIF(){
+        
+        DocFile docFile = null;
+        DocumentController documentController = new DocumentController();
+        if ((docFile = INSTANCE.getDocFileOpened()) != null) {
+          
+            File file = new File(docFile.getFileName());
+            documentController.convertToImage(file, ".gif");
+   
+        }
+        else {
+            System.out.println(TRANSLATOR.getString("CONVERT_FAIL"));
+        }
+        
     }
 
     /**

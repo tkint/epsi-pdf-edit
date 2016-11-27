@@ -116,6 +116,27 @@ public class MainController implements Config, Initializable {
     public void btnFileSaveAs() {
         MENUFILE.btnFileSaveAs();
     }
+    
+     /**
+     * Converti un document en PNG 
+     */
+    public void btnConvertToPNG() {
+        MENUFILE.btnConvertToPNG();
+    }
+    
+     /**
+     * Converti un document en JPEG 
+     */
+    public void btnConvertToJPEG() {
+        MENUFILE.btnConvertToJPEG();
+    }
+    
+     /**
+     * Converti un document en GIF 
+     */
+    public void btnConvertToGIF() {
+        MENUFILE.btnConvertToGIF();
+    }
 
     /**
      * Quitte l'application

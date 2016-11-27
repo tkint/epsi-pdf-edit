@@ -19,6 +19,13 @@
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#btnFileSave" text="%MENU_FILE_SAVE" />
                         <MenuItem mnemonicParsing="false" onAction="#btnFileSaveAs" text="%MENU_FILE_SAVE_AS" />
+                  <Menu mnemonicParsing="false" text="%MENU_CONVERT">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#btnConvertToPNG" text="%MENU_CONVERT_TO_PNG" />
+                        <MenuItem mnemonicParsing="false" onAction="#btnConvertToJPEG" text="%MENU_CONVERT_TO_JPEG" />
+                        <MenuItem mnemonicParsing="false" onAction="#btnConvertToGIF" text="%MENU_CONVERT_TO_GIF" />
+                    </items>
+                  </Menu>
                   <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#btnFileExit" text="%MENU_FILE_EXIT" />
                     </items>
