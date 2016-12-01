@@ -7,10 +7,10 @@ package src.view.controller.menu;
 
 import app.Config;
 import app.Instance;
-import org.apache.pdfbox.pdmodel.PDPage;
+import java.io.IOException;
 import src.controller.PageController;
 import src.model.DocFile;
-import src.view.Displayer;
+import src.view.TabDisplayer;
 
 /**
  *
@@ -18,49 +18,31 @@ import src.view.Displayer;
  */
 public class MenuPage implements Config {
 
-    private static MenuPage MENUPAGE = new MenuPage();
-
     private static final Instance INSTANCE = Instance.getInstance();
 
-    private MenuPage() {
-
-    }
-
-    /**
-     * Définition du singleton
-     *
-     * @return
-     */
-    public static synchronized MenuPage getInstance() {
-        if (MENUPAGE == null) {
-            MENUPAGE = new MenuPage();
-        }
-        return MENUPAGE;
-    }
-
-    public void btnPageRotateRight() {
+    public static void btnPageRotateRight() throws IOException {
         PageController pageController = new PageController();
         DocFile docFile = null;
         if ((docFile = INSTANCE.getDocFileOpened()) != null) {
             pageController.rotatePage(docFile.getDocument(), docFile.getSelectedPage(), 90);
-            Displayer.refreshTab();
+            TabDisplayer.refreshOpenedTab();
         }
     }
 
-    public void btnPageRotateLeft() {
+    public static void btnPageRotateLeft() throws IOException {
         PageController pageController = new PageController();
         DocFile docFile = null;
         if ((docFile = INSTANCE.getDocFileOpened()) != null) {
             pageController.rotatePage(docFile.getDocument(), docFile.getSelectedPage(), - 90);
-            Displayer.refreshTab();
+            TabDisplayer.refreshOpenedTab();
         }
     }
 
-    public void btnPageFlipHorizontal() {
+    public static void btnPageFlipHorizontal() {
 
     }
 
-    public void btnPageFlipVertical() {
+    public static void btnPageFlipVertical() {
 
     }
 }

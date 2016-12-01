@@ -13,6 +13,7 @@ import javafx.stage.FileChooser;
 import src.controller.DocumentController;
 import src.model.DocFile;
 import src.view.Displayer;
+import src.view.TabDisplayer;
 
 /**
  *
@@ -20,33 +21,15 @@ import src.view.Displayer;
  */
 public class MenuFile implements Config {
 
-    private static MenuFile MENUFILE = new MenuFile();
-
     private static final Instance INSTANCE = Instance.getInstance();
-
-    private MenuFile() {
-
-    }
-
-    /**
-     * Définition du singleton
-     *
-     * @return
-     */
-    public static synchronized MenuFile getInstance() {
-        if (MENUFILE == null) {
-            MENUFILE = new MenuFile();
-        }
-        return MENUFILE;
-    }
 
     /**
      * Créer un nouveau fichier
      */
-    public void btnFileNew() {
+    public static void btnFileNew() {
         try {
             DocFile docFile = INSTANCE.addNewFile(TRANSLATOR.getString("FILE_NAME_DEFAULT") + ".pdf");
-            Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
+            TabDisplayer.displayDocFileInNewTab(docFile, docFile.getShortFileName());
         } catch (IOException e) {
             System.err.println(e.toString());
         }
@@ -55,7 +38,7 @@ public class MenuFile implements Config {
     /**
      * Ouvre un fichier
      */
-    public void btnFileOpen() {
+    public static void btnFileOpen() {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(TRANSLATOR.getString("FILE_OPEN"));
@@ -64,10 +47,10 @@ public class MenuFile implements Config {
             File file = fileChooser.showOpenDialog(INSTANCE.stage);
             if (file != null) {
                 if (INSTANCE.isAlreadyOpened(file)) {
-                    Displayer.selectDocFileTab(Displayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
+                    TabDisplayer.selectTab(TabDisplayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
                 } else {
                     DocFile docFile = INSTANCE.addFile(file);
-                    Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
+                    TabDisplayer.displayDocFileInNewTab(docFile, docFile.getShortFileName());
                 }
             }
         } catch (IOException e) {
@@ -78,7 +61,7 @@ public class MenuFile implements Config {
     /**
      * Sauvegarde le fichier ouvert
      */
-    public void btnFileSave() {
+    public static void btnFileSave() {
         DocFile docFile = null;
         if ((docFile = INSTANCE.getDocFileOpened()) != null) {
             try {
@@ -104,7 +87,7 @@ public class MenuFile implements Config {
     /**
      * Sauvegarde le fichier ouvert à l'endroit choisit
      */
-    public void btnFileSaveAs() {
+    public static void btnFileSaveAs() {
         DocFile docFile = null;
         if ((docFile = INSTANCE.getDocFileOpened()) != null) {
             try {
@@ -119,7 +102,7 @@ public class MenuFile implements Config {
                     docFile.setSaved(true);
                     INSTANCE.updateDocFile(docFile.getDocument(), file);
                     INSTANCE.saveInSaveFile(file, TRANSLATOR.getString("APP_NAME") + "_recent");
-                    Displayer.refreshTabName(INSTANCE.opened);
+                    TabDisplayer.refreshOpenedTab();
                     System.out.println(TRANSLATOR.getString("FILE_HAS_BEEN_SAVED_1") + " " + file.getName() + " " + TRANSLATOR.getString("FILE_HAS_BEEN_SAVED_2"));
                 }
             } catch (IOException e) {
@@ -130,7 +113,7 @@ public class MenuFile implements Config {
         }
     }
     
-    public void btnConvertToPNG(){        
+    public static void btnConvertToPNG(){        
         
         
         DocFile docFile = null;
@@ -147,7 +130,7 @@ public class MenuFile implements Config {
         
     }
     
-    public void btnConvertToJPEG(){
+    public static void btnConvertToJPEG(){
         
         DocFile docFile = null;
         DocumentController documentController = new DocumentController();
@@ -163,7 +146,7 @@ public class MenuFile implements Config {
         
     }
     
-    public void btnConvertToGIF(){
+    public static void btnConvertToGIF(){
         
         DocFile docFile = null;
         DocumentController documentController = new DocumentController();
@@ -182,7 +165,7 @@ public class MenuFile implements Config {
     /**
      * Quitte l'application
      */
-    public void btnFileExit() {
+    public static void btnFileExit() {
         INSTANCE.stage.close();
     }
 }

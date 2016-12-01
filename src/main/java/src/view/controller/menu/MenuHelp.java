@@ -16,30 +16,12 @@ import javafx.stage.StageStyle;
  */
 public class MenuHelp implements Config {
 
-    private static MenuHelp MENUHELP = new MenuHelp();
-
     private static final Instance INSTANCE = Instance.getInstance();
-
-    private MenuHelp() {
-
-    }
-
-    /**
-     * Définition du singleton
-     *
-     * @return
-     */
-    public static synchronized MenuHelp getInstance() {
-        if (MENUHELP == null) {
-            MENUHELP = new MenuHelp();
-        }
-        return MENUHELP;
-    }
 
     /**
      * Affiche une popup A propos
      */
-    public void btnHelpAbout() {
+    public static void btnHelpAbout() {
         String text = TRANSLATOR.getString("APP_NAME");
 
         text += '\n' + TRANSLATOR.getString("VERSION") + " : " + TRANSLATOR.getString("APP_VERSION");

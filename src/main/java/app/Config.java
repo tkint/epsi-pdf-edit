@@ -6,6 +6,7 @@
 package app;
 
 import java.util.ResourceBundle;
+import javafx.scene.paint.Color;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 /**
@@ -37,4 +38,7 @@ public interface Config {
     // TEST SETTINGS
     final String TEST_DOC_TITLE = "test";
     final String TEST_IMG_NAME = "./img/poros.jpg";
+    
+    final Color AREA_SELECT_BORDER = Color.BLUE;
+    final Color AREA_SELECT_BACKGROUND = Color.TRANSPARENT;
 }

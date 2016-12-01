@@ -21,7 +21,7 @@ import org.apache.pdfbox.pdmodel.*;
 import src.controller.*;
 import src.model.DocFile;
 import src.model.table.*;
-import src.view.Displayer;
+import src.view.TabDisplayer;
 import src.view.controller.menu.*;
 
 /**
@@ -32,12 +32,6 @@ import src.view.controller.menu.*;
 public class MainController implements Config, Initializable {
 
     private static final Instance INSTANCE = Instance.getInstance();
-    private static final MenuFile MENUFILE = MenuFile.getInstance();
-    private static final MenuEdit MENUEDIT = MenuEdit.getInstance();
-    private static final MenuDocument MENUDOCUMENT = MenuDocument.getInstance();
-    private static final MenuPage MENUPAGE = MenuPage.getInstance();
-    private static final MenuTools MENUTOOLS = MenuTools.getInstance();
-    private static final MenuHelp MENUHELP = MenuHelp.getInstance();
 
     @FXML
     public Menu menuFileOpenRecent;
@@ -64,10 +58,10 @@ public class MainController implements Config, Initializable {
                 menuItem.setOnAction((ActionEvent event) -> {
                     try {
                         if (INSTANCE.isAlreadyOpened(file)) {
-                            Displayer.selectDocFileTab(Displayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
+                            TabDisplayer.selectTab(TabDisplayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
                         } else {
                             DocFile docFile = INSTANCE.addFile(file);
-                            Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
+                            TabDisplayer.displayDocFileInNewTab(docFile, docFile.getShortFileName());
                         }
                     } catch (IOException e) {
                         System.out.println(e.toString());
@@ -93,110 +87,130 @@ public class MainController implements Config, Initializable {
      * Initialise un nouveau document
      */
     public void btnFileNew() {
-        MENUFILE.btnFileNew();
+        MenuFile.btnFileNew();
     }
 
     /**
      * Ouvre un document déjà existant
      */
     public void btnFileOpen() {
-        MENUFILE.btnFileOpen();
+        MenuFile.btnFileOpen();
     }
 
     /**
      * Enregistre un document déjà existant, sinon fait appel à saveAs
      */
     public void btnFileSave() {
-        MENUFILE.btnFileSave();
+        MenuFile.btnFileSave();
     }
 
     /**
      * Enregistre un nouveau document
      */
     public void btnFileSaveAs() {
-        MENUFILE.btnFileSaveAs();
+        MenuFile.btnFileSaveAs();
     }
-    
-     /**
-     * Converti un document en PNG 
+
+    /**
+     * Converti un document en PNG
      */
     public void btnConvertToPNG() {
-        MENUFILE.btnConvertToPNG();
+        MenuFile.btnConvertToPNG();
     }
-    
-     /**
-     * Converti un document en JPEG 
+
+    /**
+     * Converti un document en JPEG
      */
     public void btnConvertToJPEG() {
-        MENUFILE.btnConvertToJPEG();
+        MenuFile.btnConvertToJPEG();
     }
-    
-     /**
-     * Converti un document en GIF 
+
+    /**
+     * Converti un document en GIF
      */
     public void btnConvertToGIF() {
-        MENUFILE.btnConvertToGIF();
+        MenuFile.btnConvertToGIF();
     }
 
     /**
      * Quitte l'application
      */
     public void btnFileExit() {
-        MENUFILE.btnFileExit();
+        MenuFile.btnFileExit();
     }
     //  </editor-fold>
 
     //  <editor-fold desc="Edit">
-    public void btnEditDelete() {
-        MENUEDIT.btnEditDelete();
+    public void btnAddText() {
+        MenuEdit.btnAddText();
+    }
+
+    public void btnEditText() {
+        MenuEdit.btnEditText();
+    }
+
+    public void btnEditImage() {
+        MenuEdit.btnEditImage();
+    }
+
+    public void btnAddImage() {
+        MenuEdit.btnAddImage();
+    }
+
+    public void btnEditTable() {
+        MenuEdit.btnEditTable();
+    }
+
+    public void btnAddTable() {
+        MenuEdit.btnAddTable();
     }
     //  </editor-fold>
 
     //  <editor-fold desc="Document">
     public void btnDocumentAddPage() {
-        MENUDOCUMENT.btnDocumentAddPage();
+        MenuDocument.btnDocumentAddPage();
     }
 
     public void btnDocumentRemovePage() {
-        MENUDOCUMENT.btnDocumentRemovePage();
+        MenuDocument.btnDocumentRemovePage();
     }
 
     public void btnDocumentAddDocument() {
-        MENUDOCUMENT.btnDocumentAddDocument();
+        MenuDocument.btnDocumentAddDocument();
     }
     //  </editor-fold>
 
     //  <editor-fold desc="Page">
-    public void btnPageRotateRight() {
-        MENUPAGE.btnPageRotateRight();
+    public void btnPageRotateRight() throws IOException {
+        MenuPage.btnPageRotateRight();
     }
 
-    public void btnPageRotateLeft() {
-        MENUPAGE.btnPageRotateLeft();
+    public void btnPageRotateLeft() throws IOException {
+        MenuPage.btnPageRotateLeft();
     }
 
     public void btnPageFlipHorizontal() {
-        
+
     }
 
     public void btnPageFlipVertical() {
-        
+
     }
     //  </editor-fold>
-    
+
     //  <editor-fold desc="Tools">
     /**
      * Extrait du document ouvert la page définie par l'utilisateur
      */
     public void btnToolsExtractPage() {
-        MENUTOOLS.btnToolsExtractPage();
+        MenuTools.btnToolsExtractPage();
     }
 
     /**
      * Extrait toutes les pages du document ouvert
      */
     public void btnToolsExtractPages() {
-        MENUTOOLS.btnToolsExtractPages();
+        MenuTools.btnToolsExtractPages();
     }
     //  </editor-fold>
 
@@ -205,7 +219,7 @@ public class MainController implements Config, Initializable {
      * Affiche une popup A propos
      */
     public void btnHelpAbout() {
-        MENUHELP.btnHelpAbout();
+        MenuHelp.btnHelpAbout();
     }
     //  </editor-fold>
 

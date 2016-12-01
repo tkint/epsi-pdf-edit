@@ -29,30 +29,12 @@ import src.controller.PageController;
  */
 public class MenuTools implements Config {
 
-    private static MenuTools MENUTOOLS = new MenuTools();
-
     private static final Instance INSTANCE = Instance.getInstance();
 
-    private MenuTools() {
-
-    }
-
-    /**
-     * Définition du singleton
-     *
-     * @return
-     */
-    public static synchronized MenuTools getInstance() {
-        if (MENUTOOLS == null) {
-            MENUTOOLS = new MenuTools();
-        }
-        return MENUTOOLS;
-    }
-    
     /**
      * Extrait du document ouvert la page définie par l'utilisateur
      */
-    public void btnToolsExtractPage() {
+    public static void btnToolsExtractPage() {
         if (INSTANCE.getDocFileOpened() != null) {
             Dialog<Pair<String, String>> dialog = new Dialog<>();
             dialog.setTitle(TRANSLATOR.getString("EXTRACT_PAGE"));
@@ -101,11 +83,11 @@ public class MenuTools implements Config {
             });
         }
     }
-    
+
     /**
      * Extrait toutes les pages du document ouvert
      */
-    public void btnToolsExtractPages() {
+    public static void btnToolsExtractPages() {
         if (INSTANCE.getDocFileOpened() != null) {
             PageController pageController = new PageController();
             for (int i = 0; i < INSTANCE.getDocFileOpened().getDocument().getPages().getCount(); i++) {

@@ -7,6 +7,8 @@ package src.view.controller.menu;
 
 import app.Config;
 import app.Instance;
+import enums.Tool;
+import src.view.TraceDisplayer;
 
 /**
  *
@@ -14,27 +16,38 @@ import app.Instance;
  */
 public class MenuEdit implements Config {
 
-    private static MenuEdit MENUEDIT = new MenuEdit();
-
     private static final Instance INSTANCE = Instance.getInstance();
 
-    private MenuEdit() {
-
+    public static void btnAddText() {
+        switchTool(Tool.ADDTEXT);
     }
 
-    /**
-     * Définition du singleton
-     *
-     * @return
-     */
-    public static synchronized MenuEdit getInstance() {
-        if (MENUEDIT == null) {
-            MENUEDIT = new MenuEdit();
+    public static void btnEditText() {
+        switchTool(Tool.EDITTEXT);
+    }
+
+    public static void btnAddImage() {
+        switchTool(Tool.ADDIMAGE);
+    }
+
+    public static void btnEditImage() {
+        switchTool(Tool.EDITIMAGE);
+    }
+
+    public static void btnAddTable() {
+        switchTool(Tool.ADDTABLE);
+    }
+
+    public static void btnEditTable() {
+        switchTool(Tool.EDITTABLE);
+    }
+
+    private static void switchTool(Tool tool) {
+        if (INSTANCE.getCurrentTool() == tool) {
+            TraceDisplayer.clearTrace();
+            INSTANCE.setNoTool();
+        } else {
+            INSTANCE.setCurrentTool(tool);
         }
-        return MENUEDIT;
-    }
-
-    public void btnEditDelete() {
-
     }
 }

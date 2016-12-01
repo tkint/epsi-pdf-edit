@@ -17,6 +17,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import src.controller.DocumentController;
 import src.model.DocFile;
 import src.view.Displayer;
+import src.view.TabDisplayer;
 
 /**
  *
@@ -24,42 +25,24 @@ import src.view.Displayer;
  */
 public class MenuDocument implements Config {
 
-    private static MenuDocument MENUDOCUMENT = new MenuDocument();
-
     private static final Instance INSTANCE = Instance.getInstance();
 
-    private MenuDocument() {
-
-    }
-
-    /**
-     * Définition du singleton
-     *
-     * @return
-     */
-    public static synchronized MenuDocument getInstance() {
-        if (MENUDOCUMENT == null) {
-            MENUDOCUMENT = new MenuDocument();
-        }
-        return MENUDOCUMENT;
-    }
-
-    public void btnDocumentAddPage() {
+    public static void btnDocumentAddPage() {
         PDDocument document = INSTANCE.getDocFileOpened().getDocument();
         document.addPage(new PDPage());
-        Displayer.addDocFilePageTab(INSTANCE.opened);
+        Displayer.addPageOpenedTab();
         System.out.println(TRANSLATOR.getString("PAGE_ADD_SUCCESS"));
     }
 
-    public void btnDocumentRemovePage() {
+    public static void btnDocumentRemovePage() {
         DocFile docFile = INSTANCE.getDocFileOpened();
         DocumentController documentController = new DocumentController();
         documentController.removePage(docFile.getDocument(), docFile.getSelectedPage());
         docFile.setSelectedPage(docFile.getSelectedPage() - 1);
-        Displayer.removeDocFilePageTab(INSTANCE.opened);
+        Displayer.removePageOpenedTab();
     }
 
-    public void btnDocumentAddDocument() {
+    public static void btnDocumentAddDocument() {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(TRANSLATOR.getString("FILE_OPEN"));
@@ -70,7 +53,7 @@ public class MenuDocument implements Config {
                 DocFile docFile = INSTANCE.getDocFileOpened();
                 DocumentController documentController = new DocumentController();
                 documentController.addPDFToDocument(docFile.getDocument(), file);
-                Displayer.refreshTab();
+                TabDisplayer.refreshOpenedTab();
                 System.out.println("Document " + file.getName() + " ajouté");
             }
         } catch (IOException e) {

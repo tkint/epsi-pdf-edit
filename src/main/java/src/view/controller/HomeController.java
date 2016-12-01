@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -23,13 +22,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import src.model.DocFile;
 import src.view.Displayer;
+import src.view.TabDisplayer;
 import src.view.controller.menu.MenuFile;
 
 /**
@@ -40,7 +39,6 @@ import src.view.controller.menu.MenuFile;
 public class HomeController implements Initializable {
 
     private static final Instance INSTANCE = Instance.getInstance();
-    private static final MenuFile MENUFILE = MenuFile.getInstance();
 
     private Stage stage;
 
@@ -155,14 +153,14 @@ public class HomeController implements Initializable {
                     goToMainScene();
                     if (INSTANCE.isAlreadyInSaveFile(file, saveFilename)) {
                         if (INSTANCE.isAlreadyOpened(file)) {
-                            Displayer.selectDocFileTab(Displayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
+                            TabDisplayer.selectTab(TabDisplayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
                         } else {
                             DocFile docFile = INSTANCE.addFile(file);
-                            Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
+                            TabDisplayer.displayDocFileInNewTab(docFile, docFile.getShortFileName());
                         }
                     } else {
                         DocFile docFile = INSTANCE.addNewFile(file.getName());
-                        Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
+                        TabDisplayer.displayDocFileInNewTab(docFile, docFile.getShortFileName());
                     }
                 } catch (IOException e) {
                     System.out.println(e.toString());
@@ -181,7 +179,7 @@ public class HomeController implements Initializable {
     public void btnFileNew() throws IOException {
         if (this.stage != null) {
             goToMainScene();
-            MENUFILE.btnFileNew();
+            MenuFile.btnFileNew();
         }
     }
 
@@ -201,10 +199,10 @@ public class HomeController implements Initializable {
                 if (file != null) {
                     goToMainScene();
                     if (INSTANCE.isAlreadyOpened(file)) {
-                        Displayer.selectDocFileTab(Displayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
+                        TabDisplayer.selectTab(TabDisplayer.defineTabName(file.getName().substring(0, file.getName().length() - 4)));
                     } else {
                         DocFile docFile = INSTANCE.addFile(file);
-                        Displayer.displayDocFileNewTab(docFile, docFile.getShortFileName());
+                        TabDisplayer.displayDocFileInNewTab(docFile, docFile.getShortFileName());
                     }
                 }
             } catch (IOException e) {
@@ -238,20 +236,21 @@ public class HomeController implements Initializable {
                 if (event.isControlDown()) {
                     switch (event.getCode()) {
                         case O:
-                            MENUFILE.btnFileOpen();
+                            MenuFile.btnFileOpen();
                             break;
                         case S:
                             if (event.isShiftDown()) {
-                                MENUFILE.btnFileSaveAs();
+                                MenuFile.btnFileSaveAs();
                             } else {
-                                MENUFILE.btnFileSave();
+                                MenuFile.btnFileSave();
                             }
                             break;
                         case T: case N:
-                            MENUFILE.btnFileNew();
+                            MenuFile.btnFileNew();
                             break;
                         case W:
-                            Displayer.closeTabByDocFileId(INSTANCE.opened);
+                            INSTANCE.closeDocFile(INSTANCE.opened);
+                            TabDisplayer.closeOpenedTab();
                             break;
                     }
                 }
@@ -262,7 +261,7 @@ public class HomeController implements Initializable {
             stage.setScene(mainScene);
             stage.show();
 
-            Displayer.displayDocFiles();
+            Displayer.displayAllDocFiles();
         }
     }
 
