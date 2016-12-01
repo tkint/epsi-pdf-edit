@@ -10,7 +10,7 @@ import app.Instance;
 import java.io.IOException;
 import src.controller.PageController;
 import src.model.DocFile;
-import src.view.TabDisplayer;
+import src.view.displayer.TabDisplayer;
 
 /**
  *

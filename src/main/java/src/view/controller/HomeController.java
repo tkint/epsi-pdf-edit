@@ -27,8 +27,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import src.model.DocFile;
-import src.view.Displayer;
-import src.view.TabDisplayer;
+import src.view.displayer.Displayer;
+import src.view.displayer.TabDisplayer;
 import src.view.controller.menu.MenuFile;
 
 /**

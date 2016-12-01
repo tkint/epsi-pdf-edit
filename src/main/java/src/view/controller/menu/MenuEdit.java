@@ -8,7 +8,7 @@ package src.view.controller.menu;
 import app.Config;
 import app.Instance;
 import enums.Tool;
-import src.view.TraceDisplayer;
+import src.view.displayer.TraceDisplayer;
 
 /**
  *

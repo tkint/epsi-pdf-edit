@@ -21,7 +21,7 @@ import org.apache.pdfbox.pdmodel.*;
 import src.controller.*;
 import src.model.DocFile;
 import src.model.table.*;
-import src.view.TabDisplayer;
+import src.view.displayer.TabDisplayer;
 import src.view.controller.menu.*;
 
 /**
@@ -294,7 +294,7 @@ public class MainController implements Config, Initializable {
             PDPageContentStream contentStream = new PDPageContentStream(document, document.getPage(document.getNumberOfPages() - 1), PDPageContentStream.AppendMode.APPEND, true);
 
             // Instanciation d'un tableau
-            Table table = new Table(0, 100, 600, 200, 200);
+            Table table = new Table(100, 600, 200, 200);
             // Génération du tableau
             table.generateTable(2, 7);
             table.addColumns(2);
@@ -304,10 +304,10 @@ public class MainController implements Config, Initializable {
             // Initialisation du contenu
             cell.setContent("TEST");
             // Affichage du contenu dans la cellule
-            tableController.displayCellContent(contentStream, cell, "center", "middle");
+            tableController.printCellContent(contentStream, cell, "center", "middle");
 
             // Ajout d'un tableau
-            tableController.drawTable(contentStream, table);
+            tableController.printTable(contentStream, table);
 
             contentStream.close();
             document.save(TEST_DOC_TITLE + ".pdf");

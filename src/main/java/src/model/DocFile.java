@@ -9,6 +9,7 @@ import app.Config;
 import java.io.File;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import src.model.table.Table;
 
 /**
  *
@@ -23,7 +24,9 @@ public class DocFile implements Config {
     private int selectedPage;
     private float width;
     private float height;
+
     private AreaSelect areaSelect;
+    private Table tempTable;
 
     public DocFile(int id, PDDocument document, File file) {
         this.id = id;
@@ -127,12 +130,26 @@ public class DocFile implements Config {
     public void setAreaSelect(AreaSelect areaSelect) {
         this.areaSelect = areaSelect;
     }
-    
+
     public void updateAreaSelect(double posX, double posY, double width, double height) {
         this.areaSelect.posX = posX;
         this.areaSelect.posY = posY;
         this.areaSelect.width = width;
         this.areaSelect.height = height;
-        //System.out.println(this.areaSelect.toString());
+    }
+
+    public Table getTempTable() {
+        return tempTable;
+    }
+
+    public void setTempTable(Table tempTable) {
+        this.tempTable = tempTable;
+    }
+
+    public void updateTempTable(float posX, float posY, float width, float height) {
+        this.tempTable.setPosX(posX);
+        this.tempTable.setPosY(posY);
+        this.tempTable.setWidth(width);
+        this.tempTable.setHeight(height);
     }
 }

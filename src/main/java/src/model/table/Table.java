@@ -10,13 +10,15 @@ import java.util.List;
 
 /**
  * Created by Thomas on 21/10/2016.
+ *
  * @author t.kint
  */
 public class Table extends TableObject {
+
     private List<Row> rows = new ArrayList<Row>();
 
-    public Table(int id, float posX, float posY, float width, float height) {
-        super(id, posX, posY, width, height);
+    public Table(float posX, float posY, float width, float height) {
+        super(0, posX, posY, width, height);
     }
 
     public List<Row> getRows() {
@@ -26,15 +28,16 @@ public class Table extends TableObject {
     public void setRows(List<Row> rows) {
         this.rows = rows;
     }
-    
+
     /**
      * Retourne la dernière ligne
-     * @return 
+     *
+     * @return
      */
     public Row getLastRow() {
         return this.rows.get(this.rows.size() - 1);
     }
-    
+
     public Cell getCell(int id) {
         Cell cell = null;
         int i = 0;
@@ -44,7 +47,7 @@ public class Table extends TableObject {
         }
         return cell;
     }
-    
+
     public void updateIds() {
         int i = 0;
         int id = 0;
@@ -57,9 +60,10 @@ public class Table extends TableObject {
             i++;
         }
     }
-    
+
     /**
      * Génère la table avec le nombre de lignes et de cellules défini
+     *
      * @param numberCells
      * @param numberRows
      * @return Table
@@ -82,10 +86,11 @@ public class Table extends TableObject {
         }
         return this;
     }
-    
+
     /**
      * Ajoute autant de colonnes que défini
-     * @param number 
+     *
+     * @param number
      */
     public void addColumns(int number) {
         for (int i = 0; i < number; i++) {
@@ -99,10 +104,11 @@ public class Table extends TableObject {
         }
         this.updateIds();
     }
-    
+
     /**
      * Ajoute autant de lignes que défini
-     * @param number 
+     *
+     * @param number
      */
     public void addRows(int number) {
         for (int i = 0; i < number; i++) {
@@ -117,10 +123,11 @@ public class Table extends TableObject {
         }
         this.updateIds();
     }
-    
+
     /**
      * Retourne la colonne ciblée par l'id fourni
-     * @param id 
+     *
+     * @param id
      * @return Row
      */
     public Row getRowById(int id) {
@@ -134,10 +141,11 @@ public class Table extends TableObject {
         }
         return row;
     }
-    
+
     /**
      * Supprime la colonne ciblée par l'id fourni
-     * @param id 
+     *
+     * @param id
      */
     public void removeRowById(int id) {
         int i = 0;
@@ -154,16 +162,16 @@ public class Table extends TableObject {
     @Override
     public String toString() {
         String s = "Table{" + "id=" + id + ", width=" + width + ", height=" + height + ", rows={";
-        
+
         for (Row row : rows) {
             s += '\n' + row.toString();
             if (row.getId() != rows.get(rows.size() - 1).getId()) {
                 s += ", " + '\n';
             }
         }
-        
+
         s += '\n' + "}}";
-        
+
         return s;
     }
 }

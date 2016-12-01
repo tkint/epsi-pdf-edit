@@ -10,6 +10,7 @@ package src.model.table;
  * @author t.kint
  */
 public class TableObject {
+
     protected int id;
     protected float posX;
     protected float posY;

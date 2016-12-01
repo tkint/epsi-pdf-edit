@@ -12,8 +12,8 @@ import java.io.IOException;
 import javafx.stage.FileChooser;
 import src.controller.DocumentController;
 import src.model.DocFile;
-import src.view.Displayer;
-import src.view.TabDisplayer;
+import src.view.displayer.Displayer;
+import src.view.displayer.TabDisplayer;
 
 /**
  *

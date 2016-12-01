@@ -16,8 +16,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import src.controller.DocumentController;
 import src.model.DocFile;
-import src.view.Displayer;
-import src.view.TabDisplayer;
+import src.view.displayer.Displayer;
+import src.view.displayer.TabDisplayer;
 
 /**
  *
