@@ -5,11 +5,9 @@
  */
 package app;
 
-import static app.Config.TRANSLATOR;
-import java.io.BufferedReader;
+import enums.Tool;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +26,8 @@ import src.model.DocFile;
 public class Instance implements Config {
 
     private static Instance INSTANCE = new Instance();
+
+    public static Tool currentTool = null;
 
     public static int opened;
     public static List<DocFile> docFiles = new ArrayList<>();
@@ -52,6 +52,23 @@ public class Instance implements Config {
             INSTANCE = new Instance();
         }
         return INSTANCE;
+    }
+
+    public static Tool getCurrentTool() {
+        return currentTool;
+    }
+
+    public static void setCurrentTool(Tool currentTool) {
+        getInstance().currentTool = currentTool;
+        System.out.println(currentTool);
+    }
+
+    public static void setNoTool() {
+        getInstance().currentTool = null;
+    }
+
+    public static boolean hasToolActive() {
+        return (getInstance().currentTool != null);
     }
 
     /**
@@ -96,14 +113,14 @@ public class Instance implements Config {
      */
     public static DocFile addNewFile(String fileName) {
         DocFile docFile = null;
-        
+
         File file = new File(fileName);
-        
+
         PDDocument document = new PDDocument();
         document.addPage(new PDPage());
-        
+
         docFile = new DocFile(docFiles.size(), document, file);
-        
+
         opened = docFile.getId();
         docFiles.add(docFile);
         return docFile;
