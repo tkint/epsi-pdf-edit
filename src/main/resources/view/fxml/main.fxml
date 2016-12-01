@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #2B2B2B;" styleClass="mainFxmlClass" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.view.controller.MainController">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #2B2B2B;" styleClass="mainFxmlClass" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.view.controller.MainController">
     <children>
         <MenuBar minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <menus>
@@ -32,7 +35,9 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="%MENU_EDIT">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#btnEditDelete" text="%MENU_EDIT_DELETE" />
+                        <MenuItem mnemonicParsing="false" onAction="#btnAddText" text="%TOOLBAR_TEXT" />
+                  <MenuItem mnemonicParsing="false" onAction="#btnAddImage" text="%TOOLBAR_IMAGE" />
+                  <MenuItem mnemonicParsing="false" onAction="#btnAddTable" text="%TOOLBAR_TABLE" />
                     </items>
                 </Menu>
             <Menu mnemonicParsing="false" text="%MENU_DOCUMENT">
@@ -72,6 +77,16 @@
                 </Menu>
             </menus>
         </MenuBar>
-      <TabPane id="documents" layoutY="25.0" prefHeight="333.0" prefWidth="600.0" stylesheets="@../styles/main.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
+      <ToolBar layoutY="25.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+        <items>
+          <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#btnAddText" text="%TOOLBAR_TEXT" />
+            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#btnAddImage" text="%TOOLBAR_IMAGE" />
+            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#btnAddTable" text="%TOOLBAR_TABLE" />
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#btnPageRotateLeft" text="%MENU_PAGE_ROTATE_LEFT" />
+            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#btnPageRotateRight" text="%MENU_PAGE_ROTATE_RIGHT" />
+        </items>
+      </ToolBar>
+      <TabPane id="documents" layoutY="64.0" prefHeight="336.0" prefWidth="600.0" stylesheets="@../styles/main.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
     </children>
 </AnchorPane>
