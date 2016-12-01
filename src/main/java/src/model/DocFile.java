@@ -145,11 +145,4 @@ public class DocFile implements Config {
     public void setTempTable(Table tempTable) {
         this.tempTable = tempTable;
     }
-
-    public void updateTempTable(float posX, float posY, float width, float height) {
-        this.tempTable.setPosX(posX);
-        this.tempTable.setPosY(posY);
-        this.tempTable.setWidth(width);
-        this.tempTable.setHeight(height);
-    }
 }

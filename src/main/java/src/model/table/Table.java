@@ -15,10 +15,13 @@ import java.util.List;
  */
 public class Table extends TableObject {
 
+    private static int idStatus = 0;
+
     private List<Row> rows = new ArrayList<Row>();
 
     public Table(float posX, float posY, float width, float height) {
-        super(0, posX, posY, width, height);
+        super(idStatus, posX, posY, width, height);
+        idStatus++;
     }
 
     public List<Row> getRows() {
@@ -81,7 +84,7 @@ public class Table extends TableObject {
                 posX += cellWidth;
             }
             this.rows.add(row);
-            posY -= cellHeight;
+            posY += cellHeight;
             posX = this.posX;
         }
         return this;
@@ -156,6 +159,25 @@ public class Table extends TableObject {
                 finished = true;
             }
             i++;
+        }
+    }
+
+    /**
+     * Met à jour la positions des éléments du tableau
+     */
+    public void refreshPos() {
+        float posX = this.posX;
+        float posY = this.posY;
+        for (Row row : this.rows) {
+            row.posX = posX;
+            row.posY = posY;
+            for (Cell cell : row.getCells()) {
+                cell.posX = posX;
+                cell.posY = posY;
+                posX += cell.width;
+            }
+            posY += row.height;
+            posX = this.posX;
         }
     }
 

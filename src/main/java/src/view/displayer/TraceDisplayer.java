@@ -23,12 +23,14 @@ import src.model.table.Table;
  */
 public class TraceDisplayer implements Config {
 
+    public static float scale;
     private static final Instance INSTANCE = Instance.getInstance();
 
     public static Pane setTrace() {
         Pane pane = new Pane();
         pane.setId("trace");
         pane.setMouseTransparent(true);
+        pane.setStyle("-fx-border-color: red");
 
         return pane;
     }
@@ -49,25 +51,21 @@ public class TraceDisplayer implements Config {
         }
 
         float posX = (float) fromPosX;
-        float posY = (float) toPosY;
-        float width = (float) (toPosX - fromPosX - 1);
-        float height = (float) (toPosY - fromPosY - 1);
+        float posY = (float) fromPosY;
+        float width = (float) toPosX - (float) fromPosX - 1;
+        float height = (float) toPosY - (float) fromPosY - 1;
 
         Table table = new Table(posX, posY, width, height);
         table.generateTable(3, 3);
-        
-        if (INSTANCE.getDocFileOpened().getTempTable() == null) {
-            INSTANCE.getDocFileOpened().setTempTable(table);
-        } else {
-            INSTANCE.getDocFileOpened().updateTempTable(posX, posY, width, height);
-        }
+
+        INSTANCE.getDocFileOpened().setTempTable(table);
 
         Pane trace = getTrace();
         clearTrace();
 
         for (Row row : table.getRows()) {
             for (Cell cell : row.getCells()) {
-                Rectangle rectangle = new Rectangle(cell.getPosX(), cell.getPosY() - cell.getHeight(), cell.getWidth(), cell.getHeight());
+                Rectangle rectangle = new Rectangle(cell.getPosX(), cell.getPosY(), cell.getWidth(), cell.getHeight());
                 rectangle.setFill(AREA_SELECT_BACKGROUND);
                 rectangle.setStroke(AREA_SELECT_BORDER);
 

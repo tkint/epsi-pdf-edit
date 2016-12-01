@@ -7,19 +7,13 @@ package src.view.displayer;
 
 import app.Instance;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import src.controller.TableController;
 import src.model.DocFile;
-import src.model.table.Table;
 
 /**
  *
@@ -47,15 +41,16 @@ public class ContextMenuDisplayer {
                 DocFile docFile = INSTANCE.getDocFileOpened();
                 PDDocument document = docFile.getDocument();
                 PDPage page = docFile.getCurrentPage();
-                PDPageContentStream contentStream = new PDPageContentStream(document, page);
-                
-                Table table = docFile.getTempTable();
+                PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
+
+                docFile.getTempTable().setPosY(docFile.getHeight() - (float) posY);
+                docFile.getTempTable().refreshPos();
                 
                 TableController tc = new TableController();
-                tc.printTable(contentStream, table);
-                
+                tc.printTable(contentStream, docFile.getTempTable());
+
                 contentStream.close();
-                
+
                 TabDisplayer.refreshOpenedTab();
             } catch (IOException e) {
                 System.out.println(e.toString());

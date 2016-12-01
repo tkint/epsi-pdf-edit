@@ -190,7 +190,7 @@ public class PageDisplayer implements Config {
                 // Mise à jour du ratio du document ouvert
                 docFile.setWidth(docFile.getWidth() * factor);
                 docFile.setHeight(docFile.getHeight() * factor);
-
+                
                 TraceDisplayer.clearTrace();
             }
         });
@@ -227,10 +227,7 @@ public class PageDisplayer implements Config {
                     }
                 });
             } else if (pressEvent.isSecondaryButtonDown()) {
-                double posX = pressEvent.getX() + imagePDF.getParent().getLayoutX();
-                double posY = pressEvent.getY() + 60;
-
-                ContextMenuDisplayer.displayContextMenu(posX, posY);
+                ContextMenuDisplayer.displayContextMenu(pressEvent.getSceneX() + 5, pressEvent.getSceneY() - 35);
             }
         });
     }
@@ -242,5 +239,13 @@ public class PageDisplayer implements Config {
         ImageView imagePDF = (ImageView) tab.getContent().lookup("#imagePDF");
 
         return imagePDF;
+    }
+
+    public static float getScaleDifference() {
+        float scale = 0;
+        
+        
+
+        return scale;
     }
 }
