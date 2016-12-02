@@ -72,8 +72,8 @@ public class Table extends TableObject {
      * @return Table
      */
     public Table generateTable(int numberCells, int numberRows) {
-        float cellWidth = this.width / numberCells;
-        float cellHeight = this.height / numberRows;
+        float cellWidth = (float) this.width / (float) numberCells;
+        float cellHeight = (float) this.height / (float) numberRows;
         float posX = this.posX;
         float posY = this.posY;
         for (int i = 0; i < numberRows; i++) {

@@ -41,4 +41,6 @@ public interface Config {
     
     final Color AREA_SELECT_BORDER = Color.BLUE;
     final Color AREA_SELECT_BACKGROUND = Color.TRANSPARENT;
+    
+    final Integer[] ZOOMS = {25, 50, 100, 150, 200, 250, 300, 400};
 }

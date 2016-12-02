@@ -117,6 +117,12 @@ public class PageDisplayer implements Config {
         return imagePDF;
     }
 
+    public static void setZoom(int zoom) {
+        ImageView imagePDF = getImagePDF();
+        imagePDF.setFitWidth(imagePDF.getImage().getWidth() * zoom * .25 / 100);
+        imagePDF.setFitHeight(imagePDF.getImage().getHeight()* zoom * .25 / 100);
+    }
+
     /**
      * Transforme la page actuelle en image
      *
@@ -141,11 +147,11 @@ public class PageDisplayer implements Config {
 
             // On met l'image sous la même forme (paysage, portrait) que la page
             if (bufferedImage.getHeight() > bufferedImage.getWidth()) {
-                imagePDF.setFitWidth(docFile.getWidth());
-                imagePDF.setFitHeight(docFile.getHeight());
+                imagePDF.setFitWidth(bufferedImage.getWidth());
+                imagePDF.setFitHeight(bufferedImage.getHeight());
             } else {
-                imagePDF.setFitWidth(docFile.getHeight());
-                imagePDF.setFitHeight(docFile.getWidth());
+                imagePDF.setFitWidth(bufferedImage.getHeight());
+                imagePDF.setFitHeight(bufferedImage.getWidth());
             }
         } catch (IOException e) {
             System.out.println(e.toString());
@@ -190,7 +196,7 @@ public class PageDisplayer implements Config {
                 // Mise à jour du ratio du document ouvert
                 docFile.setWidth(docFile.getWidth() * factor);
                 docFile.setHeight(docFile.getHeight() * factor);
-                
+
                 TraceDisplayer.clearTrace();
             }
         });
@@ -239,13 +245,5 @@ public class PageDisplayer implements Config {
         ImageView imagePDF = (ImageView) tab.getContent().lookup("#imagePDF");
 
         return imagePDF;
-    }
-
-    public static float getScaleDifference() {
-        float scale = 0;
-        
-        
-
-        return scale;
     }
 }

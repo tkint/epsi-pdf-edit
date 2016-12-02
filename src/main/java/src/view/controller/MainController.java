@@ -14,6 +14,8 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
@@ -35,6 +37,9 @@ public class MainController implements Config, Initializable {
 
     @FXML
     public Menu menuFileOpenRecent;
+    
+    @FXML
+    public ChoiceBox zoomChoice;
 
     /**
      * Initializes the controller class.
@@ -45,13 +50,14 @@ public class MainController implements Config, Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         addMenuFileOpenRecent();
+        addZoomChoice();
     }
 
     /**
      * Ajoute les fichiers récents au menu Fichier Ouvrir...
      *
      */
-    public void addMenuFileOpenRecent() {
+    private void addMenuFileOpenRecent() {
         for (File file : INSTANCE.loadSaveFile(TRANSLATOR.getString("APP_NAME") + "_recent")) {
             if (file.exists()) {
                 MenuItem menuItem = new MenuItem(file.getName());
@@ -70,6 +76,13 @@ public class MainController implements Config, Initializable {
                 menuFileOpenRecent.getItems().add(menuItem);
             }
         }
+    }
+    
+    private void addZoomChoice() {
+        for (Integer zoom : ZOOMS) {
+            zoomChoice.getItems().add(Integer.toString(zoom));
+        }
+        zoomChoice.getSelectionModel().select(Integer.toString(100));
     }
 
     /**
@@ -163,6 +176,16 @@ public class MainController implements Config, Initializable {
 
     public void btnAddTable() {
         MenuEdit.btnAddTable();
+    }
+    //  </editor-fold>
+    
+    //  <editor-fold desc="View">
+    public void btnViewZoomIn() {
+        MenuView.btnZoomIn();
+    }
+    
+    public void btnViewZoomOut() {
+        MenuView.btnZoomOut();
     }
     //  </editor-fold>
 
