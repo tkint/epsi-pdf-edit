@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class Table extends TableObject {
 
+    private boolean inverted = false;
     private static int idStatus = 0;
 
     private List<Row> rows = new ArrayList<Row>();
@@ -22,6 +23,14 @@ public class Table extends TableObject {
     public Table(float posX, float posY, float width, float height) {
         super(idStatus, posX, posY, width, height);
         idStatus++;
+    }
+
+    public boolean isInverted() {
+        return inverted;
+    }
+
+    public void setInverted(boolean inverted) {
+        this.inverted = inverted;
     }
 
     public List<Row> getRows() {
@@ -84,7 +93,11 @@ public class Table extends TableObject {
                 posX += cellWidth;
             }
             this.rows.add(row);
-            posY += cellHeight;
+            if (inverted) {
+                posY -= cellHeight;
+            } else {
+                posY += cellHeight;
+            }
             posX = this.posX;
         }
         return this;
@@ -165,18 +178,26 @@ public class Table extends TableObject {
     /**
      * Met à jour la positions des éléments du tableau
      */
-    public void refreshPos() {
+    public void refresh() {
         float posX = this.posX;
         float posY = this.posY;
         for (Row row : this.rows) {
             row.posX = posX;
             row.posY = posY;
+            row.width = this.width;
+            row.height = this.height / this.rows.size();
             for (Cell cell : row.getCells()) {
                 cell.posX = posX;
                 cell.posY = posY;
+                cell.width = row.width / row.getCells().size();
+                cell.height = row.height;
                 posX += cell.width;
             }
-            posY += row.height;
+            if (inverted) {
+                posY -= row.height;
+            } else {
+                posY += row.height;
+            }
             posX = this.posX;
         }
     }

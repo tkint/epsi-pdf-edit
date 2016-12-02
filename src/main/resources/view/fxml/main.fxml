@@ -46,9 +46,9 @@
                 </Menu>
             <Menu mnemonicParsing="false" text="%MENU_VIEW">
               <items>
-                <MenuItem mnemonicParsing="false" text="%MENU_VIEW_ZOOM_IN" />
-                  <MenuItem mnemonicParsing="false" text="%MENU_VIEW_ZOOM_OUT" />
-                  <MenuItem mnemonicParsing="false" text="%MENU_VIEW_ZOOM_DEFAULT" />
+                <MenuItem mnemonicParsing="false" onAction="#btnViewZoomIn" text="%MENU_VIEW_ZOOM_IN" />
+                  <MenuItem mnemonicParsing="false" onAction="#btnViewZoomOut" text="%MENU_VIEW_ZOOM_OUT" />
+                  <MenuItem mnemonicParsing="false" onAction="#btnViewZoomDefault" text="%MENU_VIEW_ZOOM_DEFAULT" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="%MENU_DOCUMENT">

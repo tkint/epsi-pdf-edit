@@ -15,7 +15,6 @@ import javafx.scene.control.Pagination;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import src.model.DocFile;
 
 /**
@@ -60,6 +59,7 @@ public class TabDisplayer implements Config {
         });
 
         // Paramétrage de la pagination
+        pagination.setId("pagination");
         pagination.setStyle("-fx-background-color: white");
         pagination.setPadding(new Insets(0, 0, 0, 0));
         pagination.setCurrentPageIndex(docFile.getSelectedPage());
@@ -127,8 +127,8 @@ public class TabDisplayer implements Config {
      */
     public static String defineTabName(String tabName) {
         String name;
-        if (tabName.length() > TAB_TITLE_SIZE) {
-            name = tabName.substring(0, TAB_TITLE_SIZE) + "...";
+        if (tabName.length() > TAB_NAME_SIZE) {
+            name = tabName.substring(0, TAB_NAME_SIZE) + "...";
         } else {
             name = tabName;
         }
@@ -149,5 +149,19 @@ public class TabDisplayer implements Config {
             tab.setText(defineTabName(file.getName().substring(0, file.getName().length() - 4)));
             tabPane.getSelectionModel().select(tab);
         }
+    }
+    
+    /**
+     * Récupère la Pagination de la page en cours
+     * 
+     * @return 
+     */
+    public static Pagination getPagination() {
+        TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+
+        Pagination pagination = (Pagination) tab.getContent().lookup("#pagination");
+
+        return pagination;
     }
 }

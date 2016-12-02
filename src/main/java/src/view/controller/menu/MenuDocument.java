@@ -6,7 +6,6 @@
 package src.view.controller.menu;
 
 import app.Config;
-import static app.Config.BTN_OPEN_SAVE_DEFAULT_DIR;
 import static app.Config.TRANSLATOR;
 import app.Instance;
 import java.io.File;
@@ -18,6 +17,7 @@ import src.controller.DocumentController;
 import src.model.DocFile;
 import src.view.displayer.Displayer;
 import src.view.displayer.TabDisplayer;
+import static app.Config.DEFAULT_DIR;
 
 /**
  *
@@ -47,7 +47,7 @@ public class MenuDocument implements Config {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(TRANSLATOR.getString("FILE_OPEN"));
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
-            fileChooser.setInitialDirectory(new File(System.getProperty(BTN_OPEN_SAVE_DEFAULT_DIR)));
+            fileChooser.setInitialDirectory(new File(System.getProperty(DEFAULT_DIR)));
             File file = fileChooser.showOpenDialog(INSTANCE.stage);
             if (file != null) {
                 DocFile docFile = INSTANCE.getDocFileOpened();

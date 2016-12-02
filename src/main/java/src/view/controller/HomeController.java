@@ -5,7 +5,6 @@
  */
 package src.view.controller;
 
-import static app.Config.BTN_OPEN_SAVE_DEFAULT_DIR;
 import static app.Config.TRANSLATOR;
 import app.Instance;
 import java.io.File;
@@ -30,6 +29,7 @@ import src.model.DocFile;
 import src.view.displayer.Displayer;
 import src.view.displayer.TabDisplayer;
 import src.view.controller.menu.MenuFile;
+import static app.Config.DEFAULT_DIR;
 
 /**
  * FXML Controller class
@@ -194,7 +194,7 @@ public class HomeController implements Initializable {
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle(TRANSLATOR.getString("FILE_OPEN"));
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
-                fileChooser.setInitialDirectory(new File(System.getProperty(BTN_OPEN_SAVE_DEFAULT_DIR)));
+                fileChooser.setInitialDirectory(new File(System.getProperty(DEFAULT_DIR)));
                 File file = fileChooser.showOpenDialog(this.stage);
                 if (file != null) {
                     goToMainScene();

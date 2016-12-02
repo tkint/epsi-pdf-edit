@@ -20,9 +20,10 @@ public class MenuView implements Config {
 
     public static void btnZoomIn() {
         int currentZoom = getZoomChoice().getSelectionModel().getSelectedIndex();
-        if (currentZoom < ZOOMS.length) {
+        if (currentZoom < ZOOMS.length - 1) {
             getZoomChoice().getSelectionModel().select(currentZoom + 1);
             PageDisplayer.setZoom(ZOOMS[currentZoom + 1]);
+            INSTANCE.getDocFileOpened().setZoom(ZOOMS[currentZoom + 1]);
         }
     }
 
@@ -31,11 +32,29 @@ public class MenuView implements Config {
         if (currentZoom > 0) {
             getZoomChoice().getSelectionModel().select(currentZoom - 1);
             PageDisplayer.setZoom(ZOOMS[currentZoom - 1]);
+            INSTANCE.getDocFileOpened().setZoom(ZOOMS[currentZoom - 1]);
         }
     }
 
     public static void chooseZoom(int zoom) {
+        if (isZoomAvailable(zoom)) {
+            getZoomChoice().getSelectionModel().select(Integer.toString(zoom));
+            PageDisplayer.setZoom(zoom);
+            INSTANCE.getDocFileOpened().setZoom(zoom);
+        }
+        System.out.println(zoom);
+    }
 
+    private static boolean isZoomAvailable(int zoom) {
+        boolean available = false;
+        int i = 0;
+        while (i < ZOOMS.length && !available) {
+            if (ZOOMS[i] == zoom) {
+                available = true;
+            }
+            i++;
+        }
+        return available;
     }
 
     private static ChoiceBox getZoomChoice() {

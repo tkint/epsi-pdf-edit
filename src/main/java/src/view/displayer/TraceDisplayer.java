@@ -7,6 +7,7 @@ package src.view.displayer;
 
 import app.Config;
 import app.Instance;
+import java.io.IOException;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
@@ -30,40 +31,29 @@ public class TraceDisplayer implements Config {
         Pane pane = new Pane();
         pane.setId("trace");
         pane.setMouseTransparent(true);
-        pane.setStyle("-fx-border-color: red");
+        //pane.setStyle("-fx-border-color: red");
 
         return pane;
     }
 
-    public static void drawTable(double fromPosX, double fromPosY, double toPosX, double toPosY) {
+    public static void drawTable(double fromPosX, double fromPosY, double toPosX, double toPosY) throws IOException {
         ImageView imagePDF = PageDisplayer.getImagePDF();
 
-        if (toPosX > imagePDF.getFitWidth()) {
-            toPosX = imagePDF.getFitWidth();
-        } else if (toPosX < 0) {
-            toPosX = 0;
-        }
+        toPosX = limitX(toPosX);
+        toPosY = limitY(toPosY);
 
-        if (toPosY > imagePDF.getFitHeight()) {
-            toPosY = imagePDF.getFitHeight();
-        } else if (toPosY < 0) {
-            toPosY = 0;
-        }
+        float traceTablePosX = (float) fromPosX;
+        float traceTablePosY = (float) fromPosY;
+        float traceTableWidth = (float) toPosX - (float) fromPosX - 1;
+        float traceTableHeight = (float) toPosY - (float) fromPosY - 1;
 
-        float posX = (float) fromPosX;
-        float posY = (float) fromPosY;
-        float width = (float) toPosX - (float) fromPosX - 1;
-        float height = (float) toPosY - (float) fromPosY - 1;
-
-        Table table = new Table(posX, posY, width, height);
-        table.generateTable(3, 3);
-
-        INSTANCE.getDocFileOpened().setTempTable(table);
+        Table traceTable = new Table(traceTablePosX, traceTablePosY, traceTableWidth, traceTableHeight);
+        traceTable.generateTable(3, 3);
 
         Pane trace = getTrace();
         clearTrace();
 
-        for (Row row : table.getRows()) {
+        for (Row row : traceTable.getRows()) {
             for (Cell cell : row.getCells()) {
                 Rectangle rectangle = new Rectangle(cell.getPosX(), cell.getPosY(), cell.getWidth(), cell.getHeight());
                 rectangle.setFill(AREA_SELECT_BACKGROUND);
@@ -72,6 +62,17 @@ public class TraceDisplayer implements Config {
                 trace.getChildren().add(rectangle);
             }
         }
+
+        float tempTablePosX = (float) fromPosX;
+        float tempTablePosY = (float) imagePDF.getFitHeight() - (float) fromPosY;
+        float tempTableWidth = (float) toPosX - (float) fromPosX - 1;
+        float tempTableHeight = (float) toPosY - (float) fromPosY - 1;
+
+        Table tempTable = new Table(PageDisplayer.calculateXAxis(tempTablePosX), PageDisplayer.calculateYAxis(tempTablePosY), PageDisplayer.calculateXAxis(tempTableWidth), PageDisplayer.calculateYAxis(tempTableHeight));
+        tempTable.setInverted(true);
+        tempTable.generateTable(3, 3);
+
+        INSTANCE.getDocFileOpened().setTempTable(tempTable);
     }
 
     public static void drawAreaSelect(double fromPosX, double fromPosY, double toPosX, double toPosY) {
@@ -82,17 +83,8 @@ public class TraceDisplayer implements Config {
         Pane trace = getTrace();
         clearTrace();
 
-        if (toPosX > imagePDF.getFitWidth()) {
-            toPosX = imagePDF.getFitWidth();
-        } else if (toPosX < 0) {
-            toPosX = 0;
-        }
-
-        if (toPosY > imagePDF.getFitHeight()) {
-            toPosY = imagePDF.getFitHeight();
-        } else if (toPosY < 0) {
-            toPosY = 0;
-        }
+        toPosX = limitX(toPosX);
+        toPosY = limitY(toPosY);
 
         double posX = 0;
         double posY = 0;
@@ -144,5 +136,29 @@ public class TraceDisplayer implements Config {
         Pane trace = (Pane) tab.getContent().lookup("#trace");
 
         return trace;
+    }
+
+    private static double limitX(double x) {
+        ImageView imagePDF = PageDisplayer.getImagePDF();
+
+        if (x > imagePDF.getFitWidth()) {
+            x = imagePDF.getFitWidth();
+        } else if (x < 0) {
+            x = 0;
+        }
+
+        return x;
+    }
+
+    private static double limitY(double y) {
+        ImageView imagePDF = PageDisplayer.getImagePDF();
+
+        if (y > imagePDF.getFitHeight()) {
+            y = imagePDF.getFitHeight();
+        } else if (y < 0) {
+            y = 0;
+        }
+
+        return y;
     }
 }

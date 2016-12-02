@@ -22,10 +22,8 @@ public class DocFile implements Config {
     private File file;
     private boolean saved;
     private int selectedPage;
-    private float width;
-    private float height;
-
     private AreaSelect areaSelect;
+    private int zoom;
     private Table tempTable;
 
     public DocFile(int id, PDDocument document, File file) {
@@ -34,9 +32,8 @@ public class DocFile implements Config {
         this.file = file;
         this.saved = false;
         this.selectedPage = 0;
-        this.width = PDF_DISPLAY_INITIAL_RATIO.getWidth();
-        this.height = PDF_DISPLAY_INITIAL_RATIO.getHeight();
         this.areaSelect = new AreaSelect(0, 0, 0, 0);
+        this.zoom = 100;
     }
 
     public int getId() {
@@ -87,22 +84,6 @@ public class DocFile implements Config {
         this.selectedPage = selectedPage;
     }
 
-    public float getWidth() {
-        return width;
-    }
-
-    public void setWidth(float width) {
-        this.width = width;
-    }
-
-    public float getHeight() {
-        return height;
-    }
-
-    public void setHeight(float height) {
-        this.height = height;
-    }
-
     public PDPage getCurrentPage() {
         return this.document.getPage(this.selectedPage);
     }
@@ -136,6 +117,14 @@ public class DocFile implements Config {
         this.areaSelect.posY = posY;
         this.areaSelect.width = width;
         this.areaSelect.height = height;
+    }
+
+    public int getZoom() {
+        return zoom;
+    }
+
+    public void setZoom(int zoom) {
+        this.zoom = zoom;
     }
 
     public Table getTempTable() {

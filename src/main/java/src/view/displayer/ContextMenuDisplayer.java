@@ -5,6 +5,7 @@
  */
 package src.view.displayer;
 
+import app.Config;
 import app.Instance;
 import java.io.IOException;
 import javafx.scene.control.ContextMenu;
@@ -12,6 +13,7 @@ import javafx.scene.control.MenuItem;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import src.controller.TableController;
 import src.model.DocFile;
 
@@ -19,7 +21,7 @@ import src.model.DocFile;
  *
  * @author tkint
  */
-public class ContextMenuDisplayer {
+public class ContextMenuDisplayer implements Config {
 
     private static final Instance INSTANCE = Instance.getInstance();
 
@@ -35,39 +37,36 @@ public class ContextMenuDisplayer {
 
     private static void displayTableMenu(double posX, double posY) {
         ContextMenu contextMenu = setContextMenu(posX, posY);
-        MenuItem validate = new MenuItem("Valider");
+        MenuItem validate = new MenuItem(TRANSLATOR.getString("VALIDATE"));
         validate.setOnAction((event) -> {
             try {
                 DocFile docFile = INSTANCE.getDocFileOpened();
                 PDDocument document = docFile.getDocument();
                 PDPage page = docFile.getCurrentPage();
-                PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
+                PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, true);
 
-                docFile.getTempTable().setPosY(docFile.getHeight() - (float) posY);
-                docFile.getTempTable().refreshPos();
-                
                 TableController tc = new TableController();
                 tc.printTable(contentStream, docFile.getTempTable());
 
                 contentStream.close();
-
+                
                 TabDisplayer.refreshOpenedTab();
             } catch (IOException e) {
                 System.out.println(e.toString());
             }
         });
 
-        MenuItem addColumn = new MenuItem("Ajouter colonne");
+        MenuItem addColumn = new MenuItem(TRANSLATOR.getString("ADD_COLUMN"));
         addColumn.setOnAction((event) -> {
-
+            
         });
 
-        MenuItem addRow = new MenuItem("Ajouter ligne");
+        MenuItem addRow = new MenuItem(TRANSLATOR.getString("ADD_ROW"));
         addRow.setOnAction((event) -> {
 
         });
 
-        MenuItem cancel = new MenuItem("Annuler");
+        MenuItem cancel = new MenuItem(TRANSLATOR.getString("CANCEL"));
         cancel.setOnAction((event) -> {
             TraceDisplayer.clearTrace();
         });

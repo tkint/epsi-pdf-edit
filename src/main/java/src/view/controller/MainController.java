@@ -15,7 +15,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
@@ -37,7 +36,7 @@ public class MainController implements Config, Initializable {
 
     @FXML
     public Menu menuFileOpenRecent;
-    
+
     @FXML
     public ChoiceBox zoomChoice;
 
@@ -77,7 +76,7 @@ public class MainController implements Config, Initializable {
             }
         }
     }
-    
+
     private void addZoomChoice() {
         for (Integer zoom : ZOOMS) {
             zoomChoice.getItems().add(Integer.toString(zoom));
@@ -178,14 +177,18 @@ public class MainController implements Config, Initializable {
         MenuEdit.btnAddTable();
     }
     //  </editor-fold>
-    
+
     //  <editor-fold desc="View">
     public void btnViewZoomIn() {
         MenuView.btnZoomIn();
     }
-    
+
     public void btnViewZoomOut() {
         MenuView.btnZoomOut();
+    }
+
+    public void btnViewZoomDefault() {
+        MenuView.chooseZoom(100);
     }
     //  </editor-fold>
 
