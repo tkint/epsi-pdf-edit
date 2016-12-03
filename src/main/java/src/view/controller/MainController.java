@@ -82,6 +82,9 @@ public class MainController implements Config, Initializable {
             zoomChoice.getItems().add(Integer.toString(zoom));
         }
         zoomChoice.getSelectionModel().select(Integer.toString(100));
+        zoomChoice.setOnAction((event) -> {
+            MenuView.chooseZoom(Integer.parseInt(zoomChoice.getSelectionModel().getSelectedItem().toString()));
+        });
     }
 
     /**

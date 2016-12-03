@@ -137,6 +137,7 @@ public class PageDisplayer implements Config {
         ImageView imagePDF = getImagePDF();
         imagePDF.setFitWidth(imagePDF.getImage().getWidth() * zoom * INITIAL_SCALE / 100);
         imagePDF.setFitHeight(imagePDF.getImage().getHeight() * zoom * INITIAL_SCALE / 100);
+        TraceDisplayer.clearTrace();
     }
 
     /**
@@ -203,6 +204,8 @@ public class PageDisplayer implements Config {
     private static void setAreaSelectControl(ImageView imagePDF) {
         imagePDF.setOnMousePressed((pressEvent) -> {
             if (pressEvent.isPrimaryButtonDown()) {
+                INSTANCE.getDocFileOpened().setTempTable(null);
+                INSTANCE.getDocFileOpened().setTraceTable(null);
                 double fromPosX = pressEvent.getX();
                 double fromPosY = pressEvent.getY();
                 imagePDF.setOnMouseDragged((dragEvent) -> {
@@ -217,7 +220,7 @@ public class PageDisplayer implements Config {
                                     break;
                                 case ADDTABLE: {
                                     try {
-                                        TraceDisplayer.drawTable(fromPosX, fromPosY, toPosX, toPosY);
+                                        TraceDisplayer.drawTable(fromPosX, fromPosY, toPosX, toPosY, 3, 3);
                                     } catch (IOException ex) {
                                         System.out.println(ex.toString());
                                     }
@@ -253,28 +256,8 @@ public class PageDisplayer implements Config {
      * @param posX
      * @return
      */
-    public static float calculateXAxis(float posX) {
-        DocFile docFile = INSTANCE.getDocFileOpened();
-        PDPage page = docFile.getCurrentPage();
-
-        float x = 0;
-
-        switch (page.getRotation()) {
-            case 0:
-                x = (float) (posX * page.getMediaBox().getWidth() / getImagePDF().getFitWidth());
-                break;
-            case 90:
-                x = (float) (posX * page.getMediaBox().getWidth() / getImagePDF().getFitWidth());
-                break;
-            case 180:
-                x = (float) (posX * page.getMediaBox().getWidth() / getImagePDF().getFitWidth());
-                break;
-            case 270:
-                x = (float) (posX * page.getMediaBox().getWidth() / getImagePDF().getFitWidth());
-                break;
-        }
-
-        return x;
+    public static float convertXToPDF(float posX) {
+        return (float) (posX * INSTANCE.getDocFileOpened().getCurrentPage().getMediaBox().getWidth() / getImagePDF().getFitWidth());
     }
 
     /**
@@ -283,27 +266,7 @@ public class PageDisplayer implements Config {
      * @param posY
      * @return
      */
-    public static float calculateYAxis(float posY) {
-        DocFile docFile = INSTANCE.getDocFileOpened();
-        PDPage page = docFile.getCurrentPage();
-
-        float y = 0;
-
-        switch (page.getRotation()) {
-            case 0:
-                y = (float) (posY * page.getMediaBox().getHeight() / getImagePDF().getFitHeight());
-                break;
-            case 90:
-                y = (float) (posY * page.getMediaBox().getHeight() / getImagePDF().getFitHeight());
-                break;
-            case 180:
-                y = (float) (posY * page.getMediaBox().getHeight() / getImagePDF().getFitHeight());
-                break;
-            case 270:
-                y = (float) (posY * page.getMediaBox().getHeight() / getImagePDF().getFitHeight());
-                break;
-        }
-
-        return y;
+    public static float convertYToPDF(float posY) {
+        return (float) (posY * INSTANCE.getDocFileOpened().getCurrentPage().getMediaBox().getHeight() / getImagePDF().getFitHeight());
     }
 }

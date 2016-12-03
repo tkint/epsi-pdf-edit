@@ -6,6 +6,7 @@
 package src.controller;
 
 import java.io.IOException;
+import javafx.scene.paint.Color;
 import src.model.table.Cell;
 import src.model.table.Row;
 import src.model.table.Table;
@@ -81,7 +82,7 @@ public class TableController {
         try {
             for (Row row : table.getRows()) {
                 for (Cell cell : row.getCells()) {
-                    printRectangle(contentStream, cell.getPosX(), cell.getPosY(), cell.getWidth(), cell.getHeight());
+                    printRectangle(contentStream, cell.getPosX(), cell.getPosY(), cell.getWidth(), cell.getHeight(), cell.getBackgroundColor());
                 }
             }
         } catch (Exception e) {
@@ -98,12 +99,16 @@ public class TableController {
      * @param width
      * @param height
      */
-    private void printRectangle(PDPageContentStream contentStream, float posX, float posY, float width, float height) {
+    private void printRectangle(PDPageContentStream contentStream, float posX, float posY, float width, float height, Color backgroundColor) {
         try {
             printLine(contentStream, posX, posY, posX + width, posY);
             printLine(contentStream, posX, posY, posX, posY - height);
             printLine(contentStream, posX + width, posY, posX + width, posY - height);
             printLine(contentStream, posX, posY - height, posX + width, posY - height);
+            
+            contentStream.addRect(posX, posY - height, width, height);
+            contentStream.setNonStrokingColor(new java.awt.Color((float) backgroundColor.getRed(), (float) backgroundColor.getGreen(), (float) backgroundColor.getBlue(), (float) backgroundColor.getOpacity()));
+            contentStream.fill();
         } catch (Exception e) {
             System.out.println(e.toString());
         }

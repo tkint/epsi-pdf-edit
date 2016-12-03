@@ -36,7 +36,7 @@ public class TraceDisplayer implements Config {
         return pane;
     }
 
-    public static void drawTable(double fromPosX, double fromPosY, double toPosX, double toPosY) throws IOException {
+    public static void drawTable(double fromPosX, double fromPosY, double toPosX, double toPosY, int columns, int rows) throws IOException {
         ImageView imagePDF = PageDisplayer.getImagePDF();
 
         toPosX = limitX(toPosX);
@@ -47,8 +47,16 @@ public class TraceDisplayer implements Config {
         float traceTableWidth = (float) toPosX - (float) fromPosX - 1;
         float traceTableHeight = (float) toPosY - (float) fromPosY - 1;
 
-        Table traceTable = new Table(traceTablePosX, traceTablePosY, traceTableWidth, traceTableHeight);
-        traceTable.generateTable(3, 3);
+        Table traceTable;
+        if (INSTANCE.getDocFileOpened().getTraceTable() != null) {
+            traceTable = INSTANCE.getDocFileOpened().getTraceTable();
+            traceTable.refreshPos(traceTablePosX, traceTablePosY, traceTableWidth, traceTableHeight);
+        } else {
+            traceTable = new Table(traceTablePosX, traceTablePosY, traceTableWidth, traceTableHeight);
+            traceTable.generateTable(columns, rows);
+        }
+
+        INSTANCE.getDocFileOpened().setTraceTable(traceTable);
 
         Pane trace = getTrace();
         clearTrace();
@@ -56,21 +64,27 @@ public class TraceDisplayer implements Config {
         for (Row row : traceTable.getRows()) {
             for (Cell cell : row.getCells()) {
                 Rectangle rectangle = new Rectangle(cell.getPosX(), cell.getPosY(), cell.getWidth(), cell.getHeight());
-                rectangle.setFill(AREA_SELECT_BACKGROUND);
-                rectangle.setStroke(AREA_SELECT_BORDER);
+                rectangle.setFill(TABLE_DRAW_BACKGROUND);
+                rectangle.setStroke(TABLE_DRAW_BORDER);
 
                 trace.getChildren().add(rectangle);
             }
         }
 
-        float tempTablePosX = (float) fromPosX;
-        float tempTablePosY = (float) imagePDF.getFitHeight() - (float) fromPosY;
-        float tempTableWidth = (float) toPosX - (float) fromPosX - 1;
-        float tempTableHeight = (float) toPosY - (float) fromPosY - 1;
+        float tempTablePosX = PageDisplayer.convertXToPDF((float) fromPosX);
+        float tempTablePosY = PageDisplayer.convertYToPDF((float) imagePDF.getFitHeight() - (float) fromPosY);
+        float tempTableWidth = PageDisplayer.convertXToPDF((float) toPosX - (float) fromPosX - 1);
+        float tempTableHeight = PageDisplayer.convertYToPDF((float) toPosY - (float) fromPosY - 1);
 
-        Table tempTable = new Table(PageDisplayer.calculateXAxis(tempTablePosX), PageDisplayer.calculateYAxis(tempTablePosY), PageDisplayer.calculateXAxis(tempTableWidth), PageDisplayer.calculateYAxis(tempTableHeight));
-        tempTable.setInverted(true);
-        tempTable.generateTable(3, 3);
+        Table tempTable;
+        if (INSTANCE.getDocFileOpened().getTempTable() != null) {
+            tempTable = INSTANCE.getDocFileOpened().getTempTable();
+            tempTable.refreshPos(tempTablePosX, tempTablePosY, tempTableWidth, tempTableHeight);
+        } else {
+            tempTable = new Table(tempTablePosX, tempTablePosY, tempTableWidth, tempTableHeight);
+            tempTable.setInverted(true);
+            tempTable.generateTable(columns, rows);
+        }
 
         INSTANCE.getDocFileOpened().setTempTable(tempTable);
     }

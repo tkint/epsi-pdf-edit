@@ -175,6 +175,28 @@ public class Table extends TableObject {
         }
     }
 
+    public void removeLastRow() {
+        if (this.rows.size() > 1) {
+            this.height -= this.getLastRow().getHeight();
+            this.rows.remove(this.rows.size() - 1);
+        }
+    }
+
+    public void removeLastColumn() {
+        for (Row row : this.rows) {
+            row.removeLastCell();
+        }
+        this.width = getLastRow().getWidth();
+    }
+
+    public void refreshPos(float posX, float posY, float width, float height) {
+        this.posX = posX;
+        this.posY = posY;
+        this.width = width;
+        this.height = height;
+        refresh();
+    }
+
     /**
      * Met à jour la positions des éléments du tableau
      */

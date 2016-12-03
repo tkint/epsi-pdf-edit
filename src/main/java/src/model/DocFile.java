@@ -24,6 +24,7 @@ public class DocFile implements Config {
     private int selectedPage;
     private AreaSelect areaSelect;
     private int zoom;
+    private Table traceTable;
     private Table tempTable;
 
     public DocFile(int id, PDDocument document, File file) {
@@ -125,6 +126,14 @@ public class DocFile implements Config {
 
     public void setZoom(int zoom) {
         this.zoom = zoom;
+    }
+
+    public Table getTraceTable() {
+        return traceTable;
+    }
+
+    public void setTraceTable(Table traceTable) {
+        this.traceTable = traceTable;
     }
 
     public Table getTempTable() {

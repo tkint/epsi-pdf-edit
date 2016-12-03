@@ -8,6 +8,8 @@ package src.view.displayer;
 import app.Config;
 import app.Instance;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -16,6 +18,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import src.controller.TableController;
 import src.model.DocFile;
+import src.model.table.Table;
 
 /**
  *
@@ -36,11 +39,14 @@ public class ContextMenuDisplayer implements Config {
     }
 
     private static void displayTableMenu(double posX, double posY) {
+        DocFile docFile = INSTANCE.getDocFileOpened();
+        Table traceTable = docFile.getTraceTable();
+        Table tempTable = docFile.getTempTable();
+
         ContextMenu contextMenu = setContextMenu(posX, posY);
         MenuItem validate = new MenuItem(TRANSLATOR.getString("VALIDATE"));
         validate.setOnAction((event) -> {
             try {
-                DocFile docFile = INSTANCE.getDocFileOpened();
                 PDDocument document = docFile.getDocument();
                 PDPage page = docFile.getCurrentPage();
                 PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, true);
@@ -49,7 +55,7 @@ public class ContextMenuDisplayer implements Config {
                 tc.printTable(contentStream, docFile.getTempTable());
 
                 contentStream.close();
-                
+
                 TabDisplayer.refreshOpenedTab();
             } catch (IOException e) {
                 System.out.println(e.toString());
@@ -58,12 +64,30 @@ public class ContextMenuDisplayer implements Config {
 
         MenuItem addColumn = new MenuItem(TRANSLATOR.getString("ADD_COLUMN"));
         addColumn.setOnAction((event) -> {
-            
+            traceTable.addColumns(1);
+            tempTable.addColumns(1);
+            refreshTableTrace(traceTable, tempTable);
+        });
+
+        MenuItem removeColumn = new MenuItem(TRANSLATOR.getString("REMOVE_COLUMN"));
+        removeColumn.setOnAction((event) -> {
+            traceTable.removeLastColumn();
+            tempTable.removeLastColumn();
+            refreshTableTrace(traceTable, tempTable);
         });
 
         MenuItem addRow = new MenuItem(TRANSLATOR.getString("ADD_ROW"));
         addRow.setOnAction((event) -> {
+            traceTable.addRows(1);
+            tempTable.addRows(1);
+            refreshTableTrace(traceTable, tempTable);
+        });
 
+        MenuItem removeRow = new MenuItem(TRANSLATOR.getString("REMOVE_ROW"));
+        removeRow.setOnAction((event) -> {
+            traceTable.removeLastRow();
+            tempTable.removeLastRow();
+            refreshTableTrace(traceTable, tempTable);
         });
 
         MenuItem cancel = new MenuItem(TRANSLATOR.getString("CANCEL"));
@@ -71,7 +95,7 @@ public class ContextMenuDisplayer implements Config {
             TraceDisplayer.clearTrace();
         });
 
-        contextMenu.getItems().addAll(validate, addColumn, addRow, cancel);
+        contextMenu.getItems().addAll(validate, addColumn, removeColumn, addRow, removeRow, cancel);
         contextMenu.show(INSTANCE.stage);
     }
 
@@ -81,5 +105,13 @@ public class ContextMenuDisplayer implements Config {
         contextMenu.setAnchorY(posY + 60);
 
         return contextMenu;
+    }
+
+    private static void refreshTableTrace(Table traceTable, Table tempTable) {
+        try {
+            TraceDisplayer.drawTable(traceTable.getPosX(), traceTable.getPosY(), traceTable.getPosX() + traceTable.getWidth(), traceTable.getPosY() + traceTable.getHeight(), traceTable.getLastRow().getCells().size(), traceTable.getRows().size());
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
     }
 }
