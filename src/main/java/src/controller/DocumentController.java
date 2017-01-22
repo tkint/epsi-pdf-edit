@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.rendering.ImageType;
@@ -36,9 +37,8 @@ public class DocumentController {
             if (document != null && file.exists()) {
                 doc = PDDocument.load(file);
                 if (doc != null) {
-                    for (PDPage page : doc.getPages()) {
-                        document.importPage(page);
-                    }
+                    PDFMergerUtility merger = new PDFMergerUtility();
+                    merger.appendDocument(document, doc);
                 }
             }
         } catch (IOException e) {
@@ -49,7 +49,12 @@ public class DocumentController {
             }
         }
     }
-    
+
+    /**
+     * Supprime la page spécifiée d'un document
+     * @param document
+     * @param id 
+     */
     public void removePage(PDDocument document, int id) {
         if (document.getNumberOfPages() > 1) {
             document.removePage(id);
@@ -57,33 +62,30 @@ public class DocumentController {
             System.out.println(TRANSLATOR.getString("PAGE_DELETE_FAIL"));
         }
     }
-    
-     /**
-     * Conversion en image
+
+    /**
+     * Convertion en image
+     *
      * @param file
      * @param extension
      */
-    public void convertToImage( File file, String extension){
-        
+    public void convertToImage(File file, String extension) {
         PDDocument document;
         try {
             document = PDDocument.load(file);
             PDFRenderer pdfRenderer = new PDFRenderer(document);
             int pageCounter = 0;
-            
-            for (PDPage lapage : document.getPages())
-            {
-            // note that the page number parameter is zero based
-            BufferedImage bim = pdfRenderer.renderImageWithDPI(pageCounter, 300, ImageType.RGB);
 
-            // suffix in filename will be used as the file format
-            ImageIOUtil.writeImage(bim, file + "-" + (pageCounter++) + extension, 300);
+            for (PDPage lapage : document.getPages()) {
+                // note that the page number parameter is zero based
+                BufferedImage bim = pdfRenderer.renderImageWithDPI(pageCounter, 300, ImageType.RGB);
+
+                // suffix in filename will be used as the file format
+                ImageIOUtil.writeImage(bim, file + "-" + (pageCounter++) + extension, 300);
             }
             document.close();
         } catch (IOException ex) {
             Logger.getLogger(DocumentController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
     }
 }

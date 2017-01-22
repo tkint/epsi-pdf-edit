@@ -14,6 +14,12 @@ import org.apache.pdfbox.pdmodel.PDPage;
  */
 public class PageController {
 
+    /**
+     * Extrait la page spécifiée du document et la sauvegade dans le fichier donné
+     * @param document
+     * @param id
+     * @param filename 
+     */
     public void extractPage(PDDocument document, int id, String filename) {
         try {
             PDDocument doc = new PDDocument();
@@ -28,6 +34,12 @@ public class PageController {
         }
     }
     
+    /**
+     * Tourne la page spécifiée
+     * @param document
+     * @param id
+     * @param degree 
+     */
     public void rotatePage(PDDocument document, int id, int degree) {
         PDPage page = document.getPage(id);
         page.setRotation(page.getRotation() + degree);

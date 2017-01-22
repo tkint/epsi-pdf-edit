@@ -16,14 +16,30 @@ public class Row extends TableObject {
 
     private List<Cell> cells = new ArrayList<Cell>();
 
+    /**
+     * Constructeur de la ligne
+     * @param id
+     * @param posX
+     * @param posY
+     * @param width
+     * @param height 
+     */
     public Row(int id, float posX, float posY, float width, float height) {
         super(id, posX, posY, width, height);
     }
 
+    /**
+     * Récupère la liste de cellules
+     * @return 
+     */
     public List<Cell> getCells() {
         return cells;
     }
 
+    /**
+     * Défini la liste de celulles
+     * @param cells 
+     */
     public void setCells(List<Cell> cells) {
         this.cells = cells;
     }
@@ -37,6 +53,11 @@ public class Row extends TableObject {
         this.cells.add(cell);
     }
 
+    /**
+     * Retourne l'index d'une cellule par son id
+     * @param id
+     * @return 
+     */
     public int getCellIndex(int id) {
         int i = 0;
         boolean finished = false;
@@ -93,6 +114,9 @@ public class Row extends TableObject {
         }
     }
 
+    /**
+     * Supprime la dernière cellule de la ligne
+     */
     public void removeLastCell() {
         if (this.cells.size() > 1) {
             this.width -= this.getLastCell().width;
@@ -100,6 +124,10 @@ public class Row extends TableObject {
         }
     }
 
+    /**
+     * Retourne la ligne sous forme de string
+     * @return 
+     */
     @Override
     public String toString() {
         String s = "Row{" + "id=" + id + ", width=" + width + ", height=" + height + ", cells={";

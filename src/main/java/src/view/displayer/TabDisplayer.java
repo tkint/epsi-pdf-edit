@@ -90,6 +90,8 @@ public class TabDisplayer implements Config {
         PageDisplayer.setImage(imageView, INSTANCE.getDocFileOpened().getSelectedPage());
 
         TraceDisplayer.clearTrace();
+        
+        refreshTabName(INSTANCE.getDocFileOpened().getId());
     }
 
     /**

@@ -18,30 +18,51 @@ public class MenuEdit implements Config {
 
     private static final Instance INSTANCE = Instance.getInstance();
 
+    /**
+     * Bouton d'ajout de texte
+     */
     public static void btnAddText() {
         switchTool(Tool.ADDTEXT);
     }
 
+    /**
+     * Bouton d'édition de texte
+     */
     public static void btnEditText() {
         switchTool(Tool.EDITTEXT);
     }
 
+    /**
+     * Bouton d'ajout d'image
+     */
     public static void btnAddImage() {
         switchTool(Tool.ADDIMAGE);
     }
 
+    /**
+     * Bouton d'édition d'image
+     */
     public static void btnEditImage() {
         switchTool(Tool.EDITIMAGE);
     }
 
+    /**
+     * Bouton d'ajout de tableau
+     */
     public static void btnAddTable() {
         switchTool(Tool.ADDTABLE);
     }
 
+    /**
+     * Bouton d'édition de tableau
+     */
     public static void btnEditTable() {
         switchTool(Tool.EDITTABLE);
     }
 
+    /**
+     * Change l'outil actuellement sélectionné
+     */
     private static void switchTool(Tool tool) {
         if (INSTANCE.getCurrentTool() == tool) {
             TraceDisplayer.clearTrace();

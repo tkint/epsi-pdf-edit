@@ -20,6 +20,9 @@ public class MenuPage implements Config {
 
     private static final Instance INSTANCE = Instance.getInstance();
 
+    /**
+     * Bouton de rotation de la page sur la droite
+     */
     public static void btnPageRotateRight() throws IOException {
         PageController pageController = new PageController();
         DocFile docFile = null;
@@ -29,6 +32,9 @@ public class MenuPage implements Config {
         }
     }
 
+     /**
+     * Bouton de rotation de la page sur la gauche
+     */
     public static void btnPageRotateLeft() throws IOException {
         PageController pageController = new PageController();
         DocFile docFile = null;
@@ -38,10 +44,16 @@ public class MenuPage implements Config {
         }
     }
 
+     /**
+     * Bouton de rotation de la page sur l'horizontale
+     */
     public static void btnPageFlipHorizontal() {
 
     }
 
+     /**
+     * Bouton de rotation de la page sur la verticale
+     */
     public static void btnPageFlipVertical() {
 
     }

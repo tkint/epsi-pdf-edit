@@ -54,19 +54,34 @@ public class Instance implements Config {
         return INSTANCE;
     }
 
+    /**
+     * Récupération de l'outil actuellement sélectionné
+     * @return 
+     */
     public static Tool getCurrentTool() {
         return currentTool;
     }
 
+    /**
+     * Change l'outil sélectionné
+     * @param currentTool 
+     */
     public static void setCurrentTool(Tool currentTool) {
         getInstance().currentTool = currentTool;
         System.out.println(currentTool);
     }
 
+    /**
+     * Désélectionne l'outil sélectionné
+     */
     public static void setNoTool() {
         getInstance().currentTool = null;
     }
 
+    /**
+     * Retourne true si un outil est sélectionné
+     * @return 
+     */
     public static boolean hasToolActive() {
         return (getInstance().currentTool != null);
     }
@@ -338,6 +353,11 @@ public class Instance implements Config {
         return docFile;
     }
 
+    /**
+     * Retourne l'emplacement absolut du fichier spécifié
+     * @param file
+     * @return 
+     */
     private static String toSaveFile(File file) {
         return file.getAbsolutePath();
     }

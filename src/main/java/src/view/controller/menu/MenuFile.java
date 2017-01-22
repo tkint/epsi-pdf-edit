@@ -12,7 +12,6 @@ import java.io.IOException;
 import javafx.stage.FileChooser;
 import src.controller.DocumentController;
 import src.model.DocFile;
-import src.view.displayer.Displayer;
 import src.view.displayer.TabDisplayer;
 
 /**
@@ -51,6 +50,7 @@ public class MenuFile implements Config {
                 } else {
                     DocFile docFile = INSTANCE.addFile(file);
                     TabDisplayer.displayDocFileInNewTab(docFile, docFile.getShortFileName());
+                    MenuView.chooseZoom(100);
                 }
             }
         } catch (IOException e) {
@@ -113,6 +113,9 @@ public class MenuFile implements Config {
         }
     }
     
+    /**
+     * Bouton de conversion en PNG
+     */
     public static void btnConvertToPNG(){        
         
         
@@ -130,6 +133,9 @@ public class MenuFile implements Config {
         
     }
     
+    /**
+     * Bouton de conversion en JPEG
+     */
     public static void btnConvertToJPEG(){
         
         DocFile docFile = null;
@@ -146,6 +152,9 @@ public class MenuFile implements Config {
         
     }
     
+    /**
+     * Bouton de conversion en GIF
+     */
     public static void btnConvertToGIF(){
         
         DocFile docFile = null;

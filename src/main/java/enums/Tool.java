@@ -6,7 +6,7 @@
 package enums;
 
 /**
- *
+ * Enumère l'ensemble des outils disponibles
  * @author Thomas
  */
 public enum Tool {

@@ -18,6 +18,9 @@ public class MenuView implements Config {
 
     private static final Instance INSTANCE = Instance.getInstance();
 
+    /**
+     * Bouton d'augmentation du zoom
+     */
     public static void btnZoomIn() {
         int currentZoom = getZoomChoice().getSelectionModel().getSelectedIndex();
         if (currentZoom < ZOOMS.length - 1) {
@@ -27,6 +30,9 @@ public class MenuView implements Config {
         }
     }
 
+    /**
+     * Bouton de réduction du zoom
+     */
     public static void btnZoomOut() {
         int currentZoom = getZoomChoice().getSelectionModel().getSelectedIndex();
         if (currentZoom > 0) {
@@ -36,15 +42,22 @@ public class MenuView implements Config {
         }
     }
 
+    /**
+     * Bouton de choix du zoom
+     */
     public static void chooseZoom(int zoom) {
         if (isZoomAvailable(zoom)) {
             getZoomChoice().getSelectionModel().select(Integer.toString(zoom));
             PageDisplayer.setZoom(zoom);
             INSTANCE.getDocFileOpened().setZoom(zoom);
         }
-        System.out.println(zoom);
     }
 
+    /**
+     * Retourne true si le zoom est disponible pour le niveau défini
+     * @param zoom
+     * @return 
+     */
     private static boolean isZoomAvailable(int zoom) {
         boolean available = false;
         int i = 0;
@@ -57,6 +70,10 @@ public class MenuView implements Config {
         return available;
     }
 
+    /**
+     * Retourne la liste des zooms
+     * @return 
+     */
     private static ChoiceBox getZoomChoice() {
         return (ChoiceBox) INSTANCE.stage.getScene().lookup("#zoomChoice");
     }

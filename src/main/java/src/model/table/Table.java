@@ -20,23 +20,46 @@ public class Table extends TableObject {
 
     private List<Row> rows = new ArrayList<Row>();
 
+    /**
+     * Constructeur du tableau
+     * @param posX
+     * @param posY
+     * @param width
+     * @param height 
+     */
     public Table(float posX, float posY, float width, float height) {
         super(idStatus, posX, posY, width, height);
         idStatus++;
     }
 
+    /**
+     * Retourne true si le tableau est inversé, false sinon
+     * @return 
+     */
     public boolean isInverted() {
         return inverted;
     }
 
+    /**
+     * Défini si le tableau est inversé ou non
+     * @param inverted 
+     */
     public void setInverted(boolean inverted) {
         this.inverted = inverted;
     }
 
+    /**
+     * Retourne la liste des lignes
+     * @return 
+     */
     public List<Row> getRows() {
         return rows;
     }
 
+    /**
+     * Défini la liste des lignes
+     * @param rows 
+     */
     public void setRows(List<Row> rows) {
         this.rows = rows;
     }
@@ -60,6 +83,9 @@ public class Table extends TableObject {
         return cell;
     }
 
+    /**
+     * Met à jour les id de tous les éléments du tableau
+     */
     public void updateIds() {
         int i = 0;
         int id = 0;
@@ -175,6 +201,9 @@ public class Table extends TableObject {
         }
     }
 
+    /**
+     * Supprime la dernière ligne
+     */
     public void removeLastRow() {
         if (this.rows.size() > 1) {
             this.height -= this.getLastRow().getHeight();
@@ -182,6 +211,9 @@ public class Table extends TableObject {
         }
     }
 
+    /**
+     * Supprime la dernière colonne
+     */
     public void removeLastColumn() {
         for (Row row : this.rows) {
             row.removeLastCell();
@@ -189,6 +221,13 @@ public class Table extends TableObject {
         this.width = getLastRow().getWidth();
     }
 
+    /**
+     * Met à jour la position du tableau
+     * @param posX
+     * @param posY
+     * @param width
+     * @param height 
+     */
     public void refreshPos(float posX, float posY, float width, float height) {
         this.posX = posX;
         this.posY = posY;
@@ -224,6 +263,10 @@ public class Table extends TableObject {
         }
     }
 
+    /**
+     * Retourne le tableau sous forme de string
+     * @return 
+     */
     @Override
     public String toString() {
         String s = "Table{" + "id=" + id + ", width=" + width + ", height=" + height + ", rows={";

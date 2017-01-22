@@ -27,15 +27,16 @@ public class TraceDisplayer implements Config {
     public static float scale;
     private static final Instance INSTANCE = Instance.getInstance();
 
-    public static Pane setTrace() {
-        Pane pane = new Pane();
-        pane.setId("trace");
-        pane.setMouseTransparent(true);
-        //pane.setStyle("-fx-border-color: red");
-
-        return pane;
-    }
-
+    /**
+     * Dessine le tableau sur le calque
+     * @param fromPosX
+     * @param fromPosY
+     * @param toPosX
+     * @param toPosY
+     * @param columns
+     * @param rows
+     * @throws IOException 
+     */
     public static void drawTable(double fromPosX, double fromPosY, double toPosX, double toPosY, int columns, int rows) throws IOException {
         ImageView imagePDF = PageDisplayer.getImagePDF();
 
@@ -89,6 +90,13 @@ public class TraceDisplayer implements Config {
         INSTANCE.getDocFileOpened().setTempTable(tempTable);
     }
 
+    /**
+     * Dessine la zone de sélection sur le tableau
+     * @param fromPosX
+     * @param fromPosY
+     * @param toPosX
+     * @param toPosY 
+     */
     public static void drawAreaSelect(double fromPosX, double fromPosY, double toPosX, double toPosY) {
         DocFile docFile = INSTANCE.getDocFileOpened();
 
@@ -134,6 +142,9 @@ public class TraceDisplayer implements Config {
         trace.getChildren().add(selection);
     }
 
+    /**
+     * Nettoie tous les éléments du calque
+     */
     public static void clearTrace() {
         TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
@@ -143,6 +154,10 @@ public class TraceDisplayer implements Config {
         trace.getChildren().clear();
     }
 
+    /**
+     * Retourne le panneau de calque
+     * @return 
+     */
     public static Pane getTrace() {
         TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
@@ -151,7 +166,25 @@ public class TraceDisplayer implements Config {
 
         return trace;
     }
+    
+    /**
+     * Défini le panneau de calque
+     * @return 
+     */
+    public static Pane setTrace() {
+        Pane pane = new Pane();
+        pane.setId("trace");
+        pane.setMouseTransparent(true);
+        //pane.setStyle("-fx-border-color: red");
 
+        return pane;
+    }
+
+    /**
+     * Limite les coordonnées sur l'axe des X
+     * @param x
+     * @return 
+     */
     private static double limitX(double x) {
         ImageView imagePDF = PageDisplayer.getImagePDF();
 
@@ -164,6 +197,11 @@ public class TraceDisplayer implements Config {
         return x;
     }
 
+    /**
+     * Limite les coordonnées sur l'axe des Y
+     * @param y
+     * @return 
+     */
     private static double limitY(double y) {
         ImageView imagePDF = PageDisplayer.getImagePDF();
 

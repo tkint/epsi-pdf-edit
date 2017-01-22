@@ -80,4 +80,29 @@ public class Displayer implements Config {
             }
         }
     }
+    
+    /**
+     * Ajoute un document à l'onglet ouvert
+     *
+     * @param id Id de l'onglet
+     */
+    public static void addDocumentOpenedTab() {
+        if (INSTANCE.getDocFileOpened() != null) {
+            // Récupération du tableau d'onglets
+            TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
+            // Récupération de l'onglet
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            // Récupération de la pagination
+            Pagination pagination = (Pagination) tab.getContent();
+
+            if (INSTANCE.getDocFileOpened().getDocument().getNumberOfPages() > pagination.getPageCount()) {
+                pagination.setPageCount(INSTANCE.getDocFileOpened().getDocument().getNumberOfPages());
+                int pageSelected = pagination.getPageCount() - 1;
+                
+                pagination.getPageFactory().call(pageSelected);
+                pagination.setCurrentPageIndex(pageSelected);
+                INSTANCE.getDocFileOpened().setSelectedPage(pageSelected);
+            }
+        }
+    }
 }

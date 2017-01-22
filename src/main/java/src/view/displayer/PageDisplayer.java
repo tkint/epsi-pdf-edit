@@ -10,7 +10,6 @@ import app.Instance;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.control.ScrollPane;
@@ -18,14 +17,11 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import src.model.DocFile;
 import src.view.controller.menu.MenuView;
@@ -69,6 +65,10 @@ public class PageDisplayer implements Config {
         return scrollPane;
     }
 
+    /**
+     * Défini la grille d'alignement des éléments
+     * @return 
+     */
     private static GridPane setGridPane() {
         // Définition de la grille d'alignement
         GridPane gridPane = new GridPane();
@@ -90,6 +90,10 @@ public class PageDisplayer implements Config {
         return gridPane;
     }
 
+    /**
+     * Défini le panneau de scroll
+     * @return 
+     */
     private static ScrollPane setScrollPane() {
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setStyle("-fx-background: " + BACKGROUND_COLOR + "; -fx-background-color: " + BACKGROUND_COLOR + ";");
@@ -133,11 +137,17 @@ public class PageDisplayer implements Config {
         return imagePDF;
     }
 
+    /**
+     * Défini le zoom de la page
+     * @param zoom 
+     */
     public static void setZoom(int zoom) {
         ImageView imagePDF = getImagePDF();
-        imagePDF.setFitWidth(imagePDF.getImage().getWidth() * zoom * INITIAL_SCALE / 100);
-        imagePDF.setFitHeight(imagePDF.getImage().getHeight() * zoom * INITIAL_SCALE / 100);
-        TraceDisplayer.clearTrace();
+        if (imagePDF != null) {
+            imagePDF.setFitWidth(imagePDF.getImage().getWidth() * zoom * INITIAL_SCALE / 100);
+            imagePDF.setFitHeight(imagePDF.getImage().getHeight() * zoom * INITIAL_SCALE / 100);
+            TraceDisplayer.clearTrace();
+        }
     }
 
     /**

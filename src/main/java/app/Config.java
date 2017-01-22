@@ -7,7 +7,6 @@ package app;
 
 import java.util.ResourceBundle;
 import javafx.scene.paint.Color;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 /**
  *
@@ -22,7 +21,7 @@ public interface Config {
     final boolean TAB_CLOSE = true;
     final int TAB_NAME_SIZE = 10; // Longueur du titre des onglets
 
-    // 
+    // Répertoire de base des fichiers à ouvrir
     final String DEFAULT_DIR = "user.dir";
 
     // PDF SETTINGS

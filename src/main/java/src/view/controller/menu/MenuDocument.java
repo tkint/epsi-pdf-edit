@@ -16,7 +16,6 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import src.controller.DocumentController;
 import src.model.DocFile;
 import src.view.displayer.Displayer;
-import src.view.displayer.TabDisplayer;
 import static app.Config.DEFAULT_DIR;
 
 /**
@@ -27,6 +26,9 @@ public class MenuDocument implements Config {
 
     private static final Instance INSTANCE = Instance.getInstance();
 
+    /**
+     * Bouton d'ajout de page au document en cours
+     */
     public static void btnDocumentAddPage() {
         PDDocument document = INSTANCE.getDocFileOpened().getDocument();
         document.addPage(new PDPage());
@@ -34,6 +36,9 @@ public class MenuDocument implements Config {
         System.out.println(TRANSLATOR.getString("PAGE_ADD_SUCCESS"));
     }
 
+    /**
+     * Bouton de suppression de la page en cours du document en cours
+     */
     public static void btnDocumentRemovePage() {
         DocFile docFile = INSTANCE.getDocFileOpened();
         DocumentController documentController = new DocumentController();
@@ -42,6 +47,9 @@ public class MenuDocument implements Config {
         Displayer.removePageOpenedTab();
     }
 
+    /**
+     * Bouton d'ajout de document au document en cours
+     */
     public static void btnDocumentAddDocument() {
         try {
             FileChooser fileChooser = new FileChooser();
@@ -53,7 +61,7 @@ public class MenuDocument implements Config {
                 DocFile docFile = INSTANCE.getDocFileOpened();
                 DocumentController documentController = new DocumentController();
                 documentController.addPDFToDocument(docFile.getDocument(), file);
-                TabDisplayer.refreshOpenedTab();
+                Displayer.addDocumentOpenedTab();
                 System.out.println("Document " + file.getName() + " ajouté");
             }
         } catch (IOException e) {

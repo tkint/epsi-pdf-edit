@@ -8,8 +8,6 @@ package src.view.displayer;
 import app.Config;
 import app.Instance;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -28,6 +26,11 @@ public class ContextMenuDisplayer implements Config {
 
     private static final Instance INSTANCE = Instance.getInstance();
 
+    /**
+     * Affiche le menu contextuel en fonction de l'outil sélectionné
+     * @param posX
+     * @param posY 
+     */
     public static void displayContextMenu(double posX, double posY) {
         if (INSTANCE.hasToolActive()) {
             switch (INSTANCE.getCurrentTool()) {
@@ -38,12 +41,20 @@ public class ContextMenuDisplayer implements Config {
         }
     }
 
+    /**
+     * Affichage du menu contextuel de l'outil de tableau
+     * @param posX
+     * @param posY 
+     */
     private static void displayTableMenu(double posX, double posY) {
         DocFile docFile = INSTANCE.getDocFileOpened();
         Table traceTable = docFile.getTraceTable();
         Table tempTable = docFile.getTempTable();
 
+        // Initialisation du menu contextuel
         ContextMenu contextMenu = setContextMenu(posX, posY);
+        
+        // Choix VALIDER
         MenuItem validate = new MenuItem(TRANSLATOR.getString("VALIDATE"));
         validate.setOnAction((event) -> {
             try {
@@ -62,6 +73,7 @@ public class ContextMenuDisplayer implements Config {
             }
         });
 
+        // Choix AJOUT DE COLONNE
         MenuItem addColumn = new MenuItem(TRANSLATOR.getString("ADD_COLUMN"));
         addColumn.setOnAction((event) -> {
             traceTable.addColumns(1);
@@ -69,6 +81,7 @@ public class ContextMenuDisplayer implements Config {
             refreshTableTrace(traceTable, tempTable);
         });
 
+        // Choix SUPPRESSION DE COLONNE
         MenuItem removeColumn = new MenuItem(TRANSLATOR.getString("REMOVE_COLUMN"));
         removeColumn.setOnAction((event) -> {
             traceTable.removeLastColumn();
@@ -76,6 +89,7 @@ public class ContextMenuDisplayer implements Config {
             refreshTableTrace(traceTable, tempTable);
         });
 
+        // Choix AJOUT DE LIGNE
         MenuItem addRow = new MenuItem(TRANSLATOR.getString("ADD_ROW"));
         addRow.setOnAction((event) -> {
             traceTable.addRows(1);
@@ -83,6 +97,7 @@ public class ContextMenuDisplayer implements Config {
             refreshTableTrace(traceTable, tempTable);
         });
 
+        // Choix SUPPRESSION DE LIGNE
         MenuItem removeRow = new MenuItem(TRANSLATOR.getString("REMOVE_ROW"));
         removeRow.setOnAction((event) -> {
             traceTable.removeLastRow();
@@ -90,15 +105,25 @@ public class ContextMenuDisplayer implements Config {
             refreshTableTrace(traceTable, tempTable);
         });
 
+        // Choix ANNULER
         MenuItem cancel = new MenuItem(TRANSLATOR.getString("CANCEL"));
         cancel.setOnAction((event) -> {
             TraceDisplayer.clearTrace();
         });
 
+        // Ajout des choix au menu contextuel
         contextMenu.getItems().addAll(validate, addColumn, removeColumn, addRow, removeRow, cancel);
+        
+        // Affichage du menu contextuel
         contextMenu.show(INSTANCE.stage);
     }
 
+    /**
+     * Défini la position du menu contextuel
+     * @param posX
+     * @param posY
+     * @return 
+     */
     private static ContextMenu setContextMenu(double posX, double posY) {
         ContextMenu contextMenu = new ContextMenu();
         contextMenu.setAnchorX(posX);
@@ -107,6 +132,11 @@ public class ContextMenuDisplayer implements Config {
         return contextMenu;
     }
 
+    /**
+     * Met à jour le tableau affiché sur le calque
+     * @param traceTable
+     * @param tempTable 
+     */
     private static void refreshTableTrace(Table traceTable, Table tempTable) {
         try {
             TraceDisplayer.drawTable(traceTable.getPosX(), traceTable.getPosY(), traceTable.getPosX() + traceTable.getWidth(), traceTable.getPosY() + traceTable.getHeight(), traceTable.getLastRow().getCells().size(), traceTable.getRows().size());
