@@ -282,5 +282,6 @@ public class HomeController implements Initializable {
     public void setStage(Stage stage) {
         this.stage = stage;
         INSTANCE.stageName = "home";
+        INSTANCE.stage = stage;
     }
 }

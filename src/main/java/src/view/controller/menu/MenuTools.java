@@ -6,13 +6,18 @@
 package src.view.controller.menu;
 
 import app.Config;
+import static app.Config.TRANSLATOR;
 import app.Instance;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -20,8 +25,12 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 import src.controller.PageController;
+import src.view.controller.ExtractImageController;
+import src.view.controller.MainController;
 
 /**
  *
@@ -93,6 +102,29 @@ public class MenuTools implements Config {
             for (int i = 0; i < INSTANCE.getDocFileOpened().getDocument().getPages().getCount(); i++) {
                 pageController.extractPage(INSTANCE.getDocFileOpened().getDocument(), i, INSTANCE.getDocFileOpened().getShortFileName() + "_" + (i + 1));
             }
+        }
+    }
+
+    public void btnToolsExtractImage() throws IOException {
+        if (INSTANCE.getDocFileOpened() != null) {
+            Stage stage = new Stage();
+
+            FXMLLoader extractImageLoader = new FXMLLoader(getClass().getResource("/view/fxml/extractImage.fxml"));
+            extractImageLoader.setResources(TRANSLATOR);
+
+            Parent extractImageParent = (Parent) extractImageLoader.load();
+
+            ExtractImageController extractImageController = (ExtractImageController) extractImageLoader.getController();
+            extractImageController.setStage(stage);
+
+            Scene extractImageScene = new Scene(extractImageParent);
+
+            stage.setTitle(TRANSLATOR.getString("APP_NAME") + " - " + TRANSLATOR.getString("MENU_TOOLS_EXTRACT_IMAGE"));
+            stage.setResizable(false);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(INSTANCE.stage);
+            stage.setScene(extractImageScene);
+            stage.show();
         }
     }
 }

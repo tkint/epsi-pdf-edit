@@ -71,6 +71,7 @@
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#btnToolsExtractPage" text="%MENU_TOOLS_EXTRACT_PAGE" />
                         <MenuItem mnemonicParsing="false" onAction="#btnToolsExtractPages" text="%MENU_TOOLS_EXTRACT_PAGES" />
+                  <MenuItem mnemonicParsing="false" onAction="#btnToolsExtractImage" text="%MENU_TOOLS_EXTRACT_IMAGE" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="%MENU_HELP">

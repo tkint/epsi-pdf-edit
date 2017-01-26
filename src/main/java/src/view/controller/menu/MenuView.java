@@ -74,7 +74,7 @@ public class MenuView implements Config {
      * Retourne la liste des zooms
      * @return 
      */
-    private static ChoiceBox getZoomChoice() {
+    public static ChoiceBox getZoomChoice() {
         return (ChoiceBox) INSTANCE.stage.getScene().lookup("#zoomChoice");
     }
 }

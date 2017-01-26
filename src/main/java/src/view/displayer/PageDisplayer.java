@@ -46,7 +46,7 @@ public class PageDisplayer implements Config {
         Pane pane = TraceDisplayer.setTrace();
 
         // Conteneur de l'image
-        ImageView imageViewPDF = setImagePDF(pageIndex);
+        ImageView imageViewPDF = setImagePDF(pageIndex, docFile);
 
         // Création du panneau
         StackPane stackPane = new StackPane();
@@ -125,10 +125,10 @@ public class PageDisplayer implements Config {
      * @return ImageView
      * @throws IOException Exception
      */
-    private static ImageView setImagePDF(int pageIndex) {
+    private static ImageView setImagePDF(int pageIndex, DocFile docFile) {
         ImageView imagePDF = new ImageView();
 
-        setImage(imagePDF, pageIndex);
+        setImage(imagePDF, pageIndex, docFile);
 
         setScrollControl(imagePDF);
 
@@ -156,10 +156,8 @@ public class PageDisplayer implements Config {
      * @param imagePDF
      * @param pageIndex
      */
-    public static void setImage(ImageView imagePDF, int pageIndex) {
+    public static void setImage(ImageView imagePDF, int pageIndex, DocFile docFile) {
         try {
-            DocFile docFile = INSTANCE.getDocFileOpened();
-
             PDFRenderer renderer = new PDFRenderer(docFile.getDocument());
 
             // Transformation de la page en image

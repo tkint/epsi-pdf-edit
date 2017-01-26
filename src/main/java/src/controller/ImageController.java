@@ -3,6 +3,7 @@ package src.controller;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -34,6 +35,26 @@ public class ImageController {
         } catch(IOException e) {
             System.out.println(e.toString());
         }
+    }
+    
+    /**
+     * Retourne toutes les images du document
+     * @param document
+     * @return 
+     */
+    public HashMap<String, RenderedImage> getImages(PDDocument document) {
+        HashMap map = new HashMap();
+        try {
+            for (PDPage page : document.getPages()) {
+                PDResources resources = page.getResources();
+                for (COSName cosName : resources.getXObjectNames()) {
+                    map.put(cosName.getName(), ((PDImageXObject) resources.getXObject(cosName)).getImage());
+                }
+            }
+        } catch(IOException e) {
+            System.out.println(e.toString());
+        }
+        return map;
     }
     
     /**

@@ -16,6 +16,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import src.model.DocFile;
+import src.view.controller.menu.MenuView;
 
 /**
  *
@@ -48,6 +49,7 @@ public class TabDisplayer implements Config {
             if (obs != null) {
                 INSTANCE.opened = obs.getValue().intValue();
             }
+            //MenuView.getZoomChoice().getSelectionModel().select(String.valueOf(INSTANCE.getDocFileOpened().getZoom()));
         });
 
         // Paramétrage de l'onglet
@@ -87,7 +89,7 @@ public class TabDisplayer implements Config {
 
         ImageView imageView = (ImageView) tab.getContent().lookup("#imagePDF");
 
-        PageDisplayer.setImage(imageView, INSTANCE.getDocFileOpened().getSelectedPage());
+        PageDisplayer.setImage(imageView, INSTANCE.getDocFileOpened().getSelectedPage(), INSTANCE.getDocFileOpened());
 
         TraceDisplayer.clearTrace();
         
