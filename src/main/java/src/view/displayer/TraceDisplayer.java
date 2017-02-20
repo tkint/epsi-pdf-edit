@@ -8,12 +8,14 @@ package src.view.displayer;
 import app.Config;
 import app.Instance;
 import java.io.IOException;
+import javafx.scene.Cursor;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import src.model.DocFile;
+import src.model.ImagePDF;
 import src.model.table.Cell;
 import src.model.table.Row;
 import src.model.table.Table;
@@ -29,13 +31,14 @@ public class TraceDisplayer implements Config {
 
     /**
      * Dessine le tableau sur le calque
+     *
      * @param fromPosX
      * @param fromPosY
      * @param toPosX
      * @param toPosY
      * @param columns
      * @param rows
-     * @throws IOException 
+     * @throws IOException
      */
     public static void drawTable(double fromPosX, double fromPosY, double toPosX, double toPosY, int columns, int rows) throws IOException {
         ImageView imagePDF = PageDisplayer.getImagePDF();
@@ -92,10 +95,11 @@ public class TraceDisplayer implements Config {
 
     /**
      * Dessine la zone de sélection sur le tableau
+     *
      * @param fromPosX
      * @param fromPosY
      * @param toPosX
-     * @param toPosY 
+     * @param toPosY
      */
     public static void drawAreaSelect(double fromPosX, double fromPosY, double toPosX, double toPosY) {
         DocFile docFile = INSTANCE.getDocFileOpened();
@@ -143,6 +147,142 @@ public class TraceDisplayer implements Config {
     }
 
     /**
+     * Dessine l'image sur le calque
+     *
+     * @param posX
+     * @param posY
+     * @throws IOException
+     */
+    public static void drawImage(double posX, double posY) throws IOException {
+        ImageView imagePDF = PageDisplayer.getImagePDF();
+
+        float traceImagePDFPosX = (float) posX;
+        float traceImagePDFPosY = (float) posY;
+
+        ImagePDF traceImagePDF = INSTANCE.getDocFileOpened().getTraceImagePDF();
+        traceImagePDF.refreshPos(traceImagePDFPosX, traceImagePDFPosY, traceImagePDF.getWidth(), traceImagePDF.getHeight());
+
+        INSTANCE.getDocFileOpened().setTraceImagePDF(traceImagePDF);
+
+        Pane trace = getTrace();
+        trace.setMouseTransparent(false);
+        clearTrace();
+
+        ImageView imageView = new ImageView(traceImagePDF.getImage());
+        imageView.setFitWidth(traceImagePDF.getWidth());
+        imageView.setFitHeight(traceImagePDF.getHeight());
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 255, 1), 10, 0, 0, 0)");
+
+        imageView.setOnMouseMoved((event) -> {
+            boolean left = event.getX() <= imageView.getX() + MARGECURSOR;
+            boolean right = event.getX() >= imageView.getX() + imageView.getFitWidth() - MARGECURSOR;
+            boolean top = event.getY() <= imageView.getY() + MARGECURSOR;
+            boolean bot = event.getY() >= imageView.getY() + imageView.getFitHeight() - MARGECURSOR;
+
+            if (left) {
+                if (top) {
+                    INSTANCE.stage.getScene().setCursor(Cursor.NW_RESIZE);
+                } else if (bot) {
+                    INSTANCE.stage.getScene().setCursor(Cursor.SW_RESIZE);
+                } else {
+                    INSTANCE.stage.getScene().setCursor(Cursor.W_RESIZE);
+                }
+            } else if (right) {
+                if (top) {
+                    INSTANCE.stage.getScene().setCursor(Cursor.NE_RESIZE);
+                } else if (bot) {
+                    INSTANCE.stage.getScene().setCursor(Cursor.SE_RESIZE);
+                } else {
+                    INSTANCE.stage.getScene().setCursor(Cursor.E_RESIZE);
+                }
+            } else if (top) {
+                INSTANCE.stage.getScene().setCursor(Cursor.N_RESIZE);
+            } else if (bot) {
+                INSTANCE.stage.getScene().setCursor(Cursor.S_RESIZE);
+            } else {
+                INSTANCE.stage.getScene().setCursor(Cursor.DEFAULT);
+            }
+        });
+
+        imageView.setOnMouseExited((event) -> {
+            if (!event.isPrimaryButtonDown()) {
+                INSTANCE.stage.getScene().setCursor(Cursor.DEFAULT);
+            }
+        });
+
+        imageView.setOnMousePressed((pressEvent) -> {
+            if (pressEvent.isPrimaryButtonDown()) {
+                // Ajustement des coordonnées en fonction de la position de l'image dans son conteneur parent
+                double ajustX = pressEvent.getX() - imageView.getX();
+                double ajustY = pressEvent.getY() - imageView.getY();
+
+                // Définit la zone du curseur
+                boolean left = pressEvent.getX() <= imageView.getX() + MARGECURSOR;
+                boolean right = pressEvent.getX() >= imageView.getX() + imageView.getFitWidth() - MARGECURSOR;
+                boolean top = pressEvent.getY() <= imageView.getY() + MARGECURSOR;
+                boolean bot = pressEvent.getY() >= imageView.getY() + imageView.getFitHeight() - MARGECURSOR;
+
+                imageView.setOnMouseDragged((dragEvent) -> {
+                    boolean toLeft = dragEvent.getX() < pressEvent.getX();
+                    boolean toTop = dragEvent.getY() < pressEvent.getY();
+
+                    double moveX = dragEvent.getX() - ajustX;
+                    double moveY = dragEvent.getY() - ajustY;
+
+                    if (left) {
+                        imageView.setX(moveX);
+                        if (toLeft) {
+                            //imageView.setFitWidth(imageView.getFitWidth());
+                        } else {
+                            //imageView.setFitWidth(imageView.getFitWidth() - (dragEvent.getX() - pressEvent.getX()));
+                        }
+                    } else if (right) {
+                        imageView.setFitWidth(dragEvent.getX() - imageView.getX());
+                    }
+                    if (top) {
+                        imageView.setY(moveY);
+
+                    } else if (bot) {
+                        imageView.setFitHeight(dragEvent.getY() - imageView.getY());
+                    }
+
+                    // Déplacement de l'image si on est pas dans les zones de retaille                    
+                    if (!left && !right && !top && !bot) {
+                        if (dragEvent.getX() - ajustX > 0
+                                && moveX + imageView.getFitWidth() < PageDisplayer.getImagePDF().getFitWidth()) {
+                            imageView.setX(moveX);
+                        }
+                        if (moveY > 0
+                                && moveY + imageView.getFitHeight() < PageDisplayer.getImagePDF().getFitHeight()) {
+                            imageView.setY(moveY);
+                        }
+                    }
+                    dragEvent.consume();
+                });
+            } else if (pressEvent.isSecondaryButtonDown()) {
+                ContextMenuDisplayer.displayContextMenu(pressEvent.getSceneX() + 5, pressEvent.getSceneY() - 35);
+            }
+            pressEvent.consume();
+        });
+        trace.getChildren().add(imageView);
+
+        float tempImagePosX = PageDisplayer.convertXToPDF((float) posX);
+        float tempImagePosY = PageDisplayer.convertYToPDF((float) imagePDF.getFitHeight() - (float) posY);
+        float tempImageWidth = PageDisplayer.convertXToPDF((float) imageView.getFitWidth());
+        float tempImageHeight = PageDisplayer.convertYToPDF((float) imageView.getFitHeight());
+
+        ImagePDF tempImagePDF;
+        if (INSTANCE.getDocFileOpened().getTempImagePDF() != null) {
+            tempImagePDF = INSTANCE.getDocFileOpened().getTempImagePDF();
+            tempImagePDF.refreshPos(tempImagePosX, tempImagePosY, tempImageWidth, tempImageHeight);
+        } else {
+            tempImagePDF = new ImagePDF(0, traceImagePDF.getImage(), tempImagePosX, tempImagePosY, tempImageWidth, tempImageHeight, traceImagePDF.getPath());
+        }
+
+        INSTANCE.getDocFileOpened().setTempImagePDF(tempImagePDF);
+    }
+
+    /**
      * Nettoie tous les éléments du calque
      */
     public static void clearTrace() {
@@ -156,7 +296,8 @@ public class TraceDisplayer implements Config {
 
     /**
      * Retourne le panneau de calque
-     * @return 
+     *
+     * @return
      */
     public static Pane getTrace() {
         TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");
@@ -166,10 +307,11 @@ public class TraceDisplayer implements Config {
 
         return trace;
     }
-    
+
     /**
      * Défini le panneau de calque
-     * @return 
+     *
+     * @return
      */
     public static Pane setTrace() {
         Pane pane = new Pane();
@@ -182,10 +324,11 @@ public class TraceDisplayer implements Config {
 
     /**
      * Limite les coordonnées sur l'axe des X
+     *
      * @param x
-     * @return 
+     * @return
      */
-    private static double limitX(double x) {
+    public static double limitX(double x) {
         ImageView imagePDF = PageDisplayer.getImagePDF();
 
         if (x > imagePDF.getFitWidth()) {
@@ -199,10 +342,11 @@ public class TraceDisplayer implements Config {
 
     /**
      * Limite les coordonnées sur l'axe des Y
+     *
      * @param y
-     * @return 
+     * @return
      */
-    private static double limitY(double y) {
+    public static double limitY(double y) {
         ImageView imagePDF = PageDisplayer.getImagePDF();
 
         if (y > imagePDF.getFitHeight()) {

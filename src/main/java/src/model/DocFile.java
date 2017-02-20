@@ -26,6 +26,8 @@ public class DocFile implements Config {
     private int zoom;
     private Table traceTable;
     private Table tempTable;
+	private ImagePDF traceImagePDF;
+    private ImagePDF tempImagePDF;
 
     /**
      * Constructeur du DocFile
@@ -247,5 +249,22 @@ public class DocFile implements Config {
      */
     public void setTempTable(Table tempTable) {
         this.tempTable = tempTable;
+    }
+	
+	
+    public ImagePDF getTraceImagePDF() {
+        return traceImagePDF;
+    }
+
+    public void setTraceImagePDF(ImagePDF traceImagePDF) {
+        this.traceImagePDF = traceImagePDF;
+    }
+
+    public ImagePDF getTempImagePDF() {
+        return tempImagePDF;
+    }
+
+    public void setTempImagePDF(ImagePDF tempImagePDF) {
+        this.tempImagePDF = tempImagePDF;
     }
 }

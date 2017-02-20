@@ -12,11 +12,13 @@ import java.io.IOException;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.Cursor;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -67,7 +69,8 @@ public class PageDisplayer implements Config {
 
     /**
      * Défini la grille d'alignement des éléments
-     * @return 
+     *
+     * @return
      */
     private static GridPane setGridPane() {
         // Définition de la grille d'alignement
@@ -92,7 +95,8 @@ public class PageDisplayer implements Config {
 
     /**
      * Défini le panneau de scroll
-     * @return 
+     *
+     * @return
      */
     private static ScrollPane setScrollPane() {
         ScrollPane scrollPane = new ScrollPane();
@@ -100,19 +104,6 @@ public class PageDisplayer implements Config {
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
 
-//        scrollPane.vvalueProperty().addListener((observable, oldValue, newValue) -> {
-//            int direction = 0;
-//            if (scrollPane.getVvalue() >= scrollPane.getVmax()) {
-//                if (newValue.doubleValue() >= oldValue.doubleValue() || observable.getValue().doubleValue() >= oldValue.doubleValue()) {
-//                    direction = 1;
-//                } else {
-//                    direction = -1;
-//                }
-//            } else if (scrollPane.getVvalue() <= scrollPane.getVmin()) {
-//                direction = -1;
-//            }
-//            TabDisplayer.getPagination().setCurrentPageIndex(TabDisplayer.getPagination().getCurrentPageIndex() + direction);
-//        });
         return scrollPane;
     }
 
@@ -134,12 +125,35 @@ public class PageDisplayer implements Config {
 
         setAreaSelectControl(imagePDF);
 
+        imagePDF.setOnMouseMoved((mouseEvent) -> {
+            if (mouseEvent.getX() <= imagePDF.getX() + 10 || mouseEvent.getX() >= imagePDF.getX() + imagePDF.getFitWidth() - 10) {
+                INSTANCE.stage.getScene().setCursor(Cursor.H_RESIZE);
+            } else if (mouseEvent.getY() <= imagePDF.getY() + 10 || mouseEvent.getY() >= imagePDF.getY() + imagePDF.getFitHeight() - 10) {
+                INSTANCE.stage.getScene().setCursor(Cursor.V_RESIZE);
+            } else {
+                INSTANCE.stage.getScene().setCursor(Cursor.DEFAULT);
+            }
+        });
+
+        imagePDF.setOnMouseExited((mouseEvent) -> {
+            INSTANCE.stage.getScene().setCursor(Cursor.DEFAULT);
+        });
+
+        imagePDF.setOnMouseClicked((mouseEvent) -> {
+            PageDisplayer.isElementUnderMouse(mouseEvent);
+        });
+
         return imagePDF;
+    }
+
+    public static void isElementUnderMouse(MouseEvent mouseEvent) {
+        
     }
 
     /**
      * Défini le zoom de la page
-     * @param zoom 
+     *
+     * @param zoom
      */
     public static void setZoom(int zoom) {
         ImageView imagePDF = getImagePDF();

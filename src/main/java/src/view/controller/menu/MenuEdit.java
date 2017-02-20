@@ -8,6 +8,14 @@ package src.view.controller.menu;
 import app.Config;
 import app.Instance;
 import enums.Tool;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.WritableImage;
+import javafx.stage.FileChooser;
+import javax.imageio.ImageIO;
+import src.model.DocFile;
+import src.model.ImagePDF;
 import src.view.displayer.TraceDisplayer;
 
 /**
@@ -37,6 +45,35 @@ public class MenuEdit implements Config {
      */
     public static void btnAddImage() {
         switchTool(Tool.ADDIMAGE);
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle(TRANSLATOR.getString("FILE_OPEN"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"));
+            fileChooser.setInitialDirectory(new File(System.getProperty(DEFAULT_DIR)));
+
+            File file = fileChooser.showOpenDialog(INSTANCE.stage);
+
+            if (file != null) {
+                String fileName = file.getName();
+                //String fileExtension = fileName.substring(fileName.indexOf(".") + 1, fileName.length());
+                String fileExtension = "png";
+
+                DocFile docFile = INSTANCE.getDocFileOpened();
+                BufferedImage bufferedImage = ImageIO.read(file);
+                WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
+                ImagePDF imageTemporaire = new ImagePDF(1, image, 0, 0, bufferedImage.getHeight(), bufferedImage.getWidth(), file.getPath());
+                //imageTemporaire
+
+                imageTemporaire.setWidth((float) TraceDisplayer.limitX(bufferedImage.getWidth() * docFile.getZoom() * INITIAL_SCALE / 100));
+                imageTemporaire.setHeight((float) TraceDisplayer.limitY(bufferedImage.getHeight() * docFile.getZoom() * INITIAL_SCALE / 100));
+
+                docFile.setTempImagePDF(imageTemporaire);
+                docFile.setTraceImagePDF(imageTemporaire);
+                TraceDisplayer.drawImage(imageTemporaire.getPosX(), imageTemporaire.getPosY());
+            }
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
     }
 
     /**
