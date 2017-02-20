@@ -49,7 +49,7 @@ public class TabDisplayer implements Config {
             if (obs != null) {
                 INSTANCE.opened = obs.getValue().intValue();
             }
-            //MenuView.getZoomChoice().getSelectionModel().select(String.valueOf(INSTANCE.getDocFileOpened().getZoom()));
+            MenuView.getZoomChoice().getSelectionModel().select(Integer.toString(INSTANCE.getDocFileOpened().getZoom()));
         });
 
         // Paramétrage de l'onglet
@@ -92,7 +92,7 @@ public class TabDisplayer implements Config {
         PageDisplayer.setImage(imageView, INSTANCE.getDocFileOpened().getSelectedPage(), INSTANCE.getDocFileOpened());
 
         TraceDisplayer.clearTrace();
-        
+
         refreshTabName(INSTANCE.getDocFileOpened().getId());
     }
 
@@ -154,11 +154,11 @@ public class TabDisplayer implements Config {
             tabPane.getSelectionModel().select(tab);
         }
     }
-    
+
     /**
      * Récupère la Pagination de la page en cours
-     * 
-     * @return 
+     *
+     * @return
      */
     public static Pagination getPagination() {
         TabPane tabPane = (TabPane) INSTANCE.stage.getScene().lookup("#documents");

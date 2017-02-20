@@ -82,9 +82,12 @@ public class MainController implements Config, Initializable {
             zoomChoice.getItems().add(Integer.toString(zoom));
         }
         zoomChoice.getSelectionModel().select(Integer.toString(100));
-        zoomChoice.setOnAction((event) -> {
-            MenuView.chooseZoom(Integer.parseInt(zoomChoice.getSelectionModel().getSelectedItem().toString()));
+        zoomChoice.setOnAction((actionEvent) -> {
+            if (zoomChoice.isShowing()) {
+                MenuView.chooseZoom(Integer.parseInt(zoomChoice.getSelectionModel().getSelectedItem().toString()));
+            }
         });
+
     }
 
     /**
@@ -241,14 +244,13 @@ public class MainController implements Config, Initializable {
     public void btnToolsExtractPages() {
         MenuTools.btnToolsExtractPages();
     }
-    
+
     public void btnToolsExtractImage() throws IOException {
         MenuTools menuTools = new MenuTools();
         menuTools.btnToolsExtractImage();
     }
-    
-    //  </editor-fold>
 
+    //  </editor-fold>
     //  <editor-fold desc="Help">
     /**
      * Affiche une popup A propos

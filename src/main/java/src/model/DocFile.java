@@ -218,6 +218,18 @@ public class DocFile implements Config {
     public void setZoom(int zoom) {
         this.zoom = zoom;
     }
+    
+    public int getIdZoom() {
+        int i = 0;
+        int id = -1;
+        while (id == -1 && i < ZOOMS.length) {
+            if (ZOOMS[i] == this.zoom) {
+                id = i;
+            }
+            i++;
+        }
+        return id;
+    }
 
     /**
      * Retourne le tableau du calque
