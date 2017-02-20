@@ -156,13 +156,7 @@ public class TraceDisplayer implements Config {
     public static void drawImage(double posX, double posY) throws IOException {
         ImageView imagePDF = PageDisplayer.getImagePDF();
 
-        float traceImagePDFPosX = (float) posX;
-        float traceImagePDFPosY = (float) posY;
-
         ImagePDF traceImagePDF = INSTANCE.getDocFileOpened().getTraceImagePDF();
-        traceImagePDF.refreshPos(traceImagePDFPosX, traceImagePDFPosY, traceImagePDF.getWidth(), traceImagePDF.getHeight());
-
-        INSTANCE.getDocFileOpened().setTraceImagePDF(traceImagePDF);
 
         Pane trace = getTrace();
         trace.setMouseTransparent(false);
@@ -257,6 +251,14 @@ public class TraceDisplayer implements Config {
                             imageView.setY(moveY);
                         }
                     }
+
+                    float tempImageX = PageDisplayer.convertXToPDF((float) imageView.getX());
+                    float tempImageY = PageDisplayer.convertYToPDF((float) imagePDF.getFitHeight() - (float) imageView.getY());
+                    float tempImageWidth = PageDisplayer.convertXToPDF((float) imageView.getFitWidth() - 1);
+                    float tempImageHeight = PageDisplayer.convertYToPDF((float) imageView.getFitHeight() - 1);
+
+                    INSTANCE.getDocFileOpened().getTraceImagePDF().refreshPos(tempImageX, tempImageY, tempImageWidth, tempImageHeight);
+
                     dragEvent.consume();
                 });
             } else if (pressEvent.isSecondaryButtonDown()) {
@@ -265,21 +267,6 @@ public class TraceDisplayer implements Config {
             pressEvent.consume();
         });
         trace.getChildren().add(imageView);
-
-        float tempImagePosX = PageDisplayer.convertXToPDF((float) posX);
-        float tempImagePosY = PageDisplayer.convertYToPDF((float) imagePDF.getFitHeight() - (float) posY);
-        float tempImageWidth = PageDisplayer.convertXToPDF((float) imageView.getFitWidth());
-        float tempImageHeight = PageDisplayer.convertYToPDF((float) imageView.getFitHeight());
-
-        ImagePDF tempImagePDF;
-        if (INSTANCE.getDocFileOpened().getTempImagePDF() != null) {
-            tempImagePDF = INSTANCE.getDocFileOpened().getTempImagePDF();
-            tempImagePDF.refreshPos(tempImagePosX, tempImagePosY, tempImageWidth, tempImageHeight);
-        } else {
-            tempImagePDF = new ImagePDF(0, traceImagePDF.getImage(), tempImagePosX, tempImagePosY, tempImageWidth, tempImageHeight, traceImagePDF.getPath());
-        }
-
-        INSTANCE.getDocFileOpened().setTempImagePDF(tempImagePDF);
     }
 
     /**
