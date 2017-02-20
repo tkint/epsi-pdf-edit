@@ -7,6 +7,7 @@ package src.view.displayer;
 
 import app.Config;
 import app.Instance;
+import static java.awt.event.KeyEvent.VK_MINUS;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javafx.embed.swing.SwingFXUtils;
@@ -18,6 +19,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -26,6 +28,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import src.model.DocFile;
+import src.view.controller.menu.MenuTools;
 import src.view.controller.menu.MenuView;
 
 /**
@@ -103,7 +106,7 @@ public class PageDisplayer implements Config {
         scrollPane.setStyle("-fx-background: " + BACKGROUND_COLOR + "; -fx-background-color: " + BACKGROUND_COLOR + ";");
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
-
+        
         return scrollPane;
     }
 

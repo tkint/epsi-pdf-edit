@@ -69,7 +69,7 @@ public class MenuEdit implements Config {
 
                 docFile.setTempImagePDF(imageTemporaire);
                 docFile.setTraceImagePDF(imageTemporaire);
-                TraceDisplayer.drawImage(imageTemporaire.getPosX(), imageTemporaire.getPosY());
+                TraceDisplayer.drawImage(imageTemporaire.getPosX(), imageTemporaire.getPosY(), 0);
             }
         } catch (Exception e) {
             System.out.println(e.toString());

@@ -10,15 +10,10 @@ import app.Instance;
 import java.io.IOException;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
-import src.controller.ImageController;
-import src.controller.TableController;
 import src.model.DocFile;
 import src.model.ImagePDF;
 import src.model.table.Table;
+import src.view.controller.ContextMenuController;
 
 /**
  *
@@ -62,61 +57,22 @@ public class ContextMenuDisplayer implements Config {
         ContextMenu contextMenu = setContextMenu(posX, posY);
 
         // Choix VALIDER
-        MenuItem validate = new MenuItem(TRANSLATOR.getString("VALIDATE"));
-        validate.setOnAction((event) -> {
-            try {
-                PDDocument document = docFile.getDocument();
-                PDPage page = docFile.getCurrentPage();
-                PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, true);
-
-                TableController tc = new TableController();
-                tc.printTable(contentStream, docFile.getTempTable());
-
-                contentStream.close();
-
-                TabDisplayer.refreshOpenedTab();
-            } catch (IOException e) {
-                System.out.println(e.toString());
-            }
-        });
+        MenuItem validate = ContextMenuController.validateTable(docFile);
 
         // Choix AJOUT DE COLONNE
-        MenuItem addColumn = new MenuItem(TRANSLATOR.getString("ADD_COLUMN"));
-        addColumn.setOnAction((event) -> {
-            traceTable.addColumns(1);
-            tempTable.addColumns(1);
-            refreshTableTrace(traceTable, tempTable);
-        });
+        MenuItem addColumn = ContextMenuController.addColumn(traceTable, tempTable);
 
         // Choix SUPPRESSION DE COLONNE
-        MenuItem removeColumn = new MenuItem(TRANSLATOR.getString("REMOVE_COLUMN"));
-        removeColumn.setOnAction((event) -> {
-            traceTable.removeLastColumn();
-            tempTable.removeLastColumn();
-            refreshTableTrace(traceTable, tempTable);
-        });
+        MenuItem removeColumn = ContextMenuController.removeColumn(traceTable, tempTable);
 
         // Choix AJOUT DE LIGNE
-        MenuItem addRow = new MenuItem(TRANSLATOR.getString("ADD_ROW"));
-        addRow.setOnAction((event) -> {
-            traceTable.addRows(1);
-            tempTable.addRows(1);
-            refreshTableTrace(traceTable, tempTable);
-        });
+        MenuItem addRow = ContextMenuController.addRow(traceTable, tempTable);
 
         // Choix SUPPRESSION DE LIGNE
-        MenuItem removeRow = new MenuItem(TRANSLATOR.getString("REMOVE_ROW"));
-        removeRow.setOnAction((event) -> {
-            traceTable.removeLastRow();
-            tempTable.removeLastRow();
-            refreshTableTrace(traceTable, tempTable);
-        });
+        MenuItem removeRow = ContextMenuController.removeRow(traceTable, tempTable);
 
         // Choix ANNULER
-        MenuItem cancel = new MenuItem(TRANSLATOR.getString("CANCEL"));
-        cancel.setOnAction((event) -> {
-            TraceDisplayer.clearTrace();
-        });
+        MenuItem cancel = ContextMenuController.cancelTable();
 
         // Ajout des choix au menu contextuel
         contextMenu.getItems().addAll(validate, addColumn, removeColumn, addRow, removeRow, cancel);
@@ -139,34 +95,16 @@ public class ContextMenuDisplayer implements Config {
         ContextMenu contextMenu = setContextMenu(posX, posY);
 
         // Choix VALIDER
-        MenuItem validate = new MenuItem(TRANSLATOR.getString("VALIDATE"));
-        validate.setOnAction((event) -> {
-            try {
-                PDDocument document = docFile.getDocument();
-                PDPage page = docFile.getCurrentPage();
-                PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, true);
+        MenuItem validate = ContextMenuController.validateImage(docFile, tempImage);
 
-                ImageController ic = new ImageController();
-                ic.addImage(document, contentStream, tempImage);
-
-                contentStream.close();
-
-                TabDisplayer.refreshOpenedTab();
-
-                INSTANCE.setNoTool();
-                TraceDisplayer.getTrace().setMouseTransparent(true);
-            } catch (IOException e) {
-                System.out.println(e.toString());
-            }
-        });
+        // Choix PIVOTER GAUCHE
+        MenuItem rotateLeft = ContextMenuController.rotateImageLeft(tempImage);
+        
+        // Choix PIVOTER DROITE
+        MenuItem rotateRight = ContextMenuController.rotateImageRight(tempImage);
 
         // Choix ANNULER
-        MenuItem cancel = new MenuItem(TRANSLATOR.getString("CANCEL"));
-        cancel.setOnAction((event) -> {
-            TraceDisplayer.clearTrace();
-            INSTANCE.setNoTool();
-            TraceDisplayer.getTrace().setMouseTransparent(true);
-        });
+        MenuItem cancel = ContextMenuController.cancelImage();
 
         // Ajout des choix au menu contextuel
         contextMenu.getItems().addAll(validate, cancel);
@@ -196,9 +134,17 @@ public class ContextMenuDisplayer implements Config {
      * @param traceTable
      * @param tempTable
      */
-    private static void refreshTableTrace(Table traceTable, Table tempTable) {
+    public static void refreshTableTrace(Table traceTable, Table tempTable) {
         try {
             TraceDisplayer.drawTable(traceTable.getPosX(), traceTable.getPosY(), traceTable.getPosX() + traceTable.getWidth(), traceTable.getPosY() + traceTable.getHeight(), traceTable.getLastRow().getCells().size(), traceTable.getRows().size());
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+    }
+    
+    public static void refreshImageTrace(ImagePDF tempImage, double rotation) {
+        try {
+            TraceDisplayer.drawImage(tempImage.getPosX(), tempImage.getPosY(), rotation);
         } catch (IOException e) {
             System.out.println(e.toString());
         }

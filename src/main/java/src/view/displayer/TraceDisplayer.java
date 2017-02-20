@@ -153,7 +153,7 @@ public class TraceDisplayer implements Config {
      * @param posY
      * @throws IOException
      */
-    public static void drawImage(double posX, double posY) throws IOException {
+    public static void drawImage(double posX, double posY, double rotation) throws IOException {
         ImageView imagePDF = PageDisplayer.getImagePDF();
 
         ImagePDF traceImagePDF = INSTANCE.getDocFileOpened().getTraceImagePDF();
@@ -206,54 +206,60 @@ public class TraceDisplayer implements Config {
 
         imageView.setOnMousePressed((pressEvent) -> {
             if (pressEvent.isPrimaryButtonDown()) {
+                // Mise en mémoire des coordonnées d'origine de clic
+                double pressX = pressEvent.getX();
+                double pressY = pressEvent.getY();
+
+                // Mise en mémoire des coordonnées d'origine de l'image
+                double imageX = imageView.getX();
+                double imageY = imageView.getY();
+                double imageWidth = imageView.getFitWidth();
+                double imageHeight = imageView.getFitHeight();
+
                 // Ajustement des coordonnées en fonction de la position de l'image dans son conteneur parent
-                double ajustX = pressEvent.getX() - imageView.getX();
-                double ajustY = pressEvent.getY() - imageView.getY();
+                double ajustX = pressX - imageX;
+                double ajustY = pressY - imageY;
 
                 // Définit la zone du curseur
-                boolean left = pressEvent.getX() <= imageView.getX() + MARGECURSOR;
-                boolean right = pressEvent.getX() >= imageView.getX() + imageView.getFitWidth() - MARGECURSOR;
-                boolean top = pressEvent.getY() <= imageView.getY() + MARGECURSOR;
-                boolean bot = pressEvent.getY() >= imageView.getY() + imageView.getFitHeight() - MARGECURSOR;
+                boolean left = pressX <= imageX + MARGECURSOR;
+                boolean right = pressX >= imageX + imageWidth - MARGECURSOR;
+                boolean top = pressY <= imageY + MARGECURSOR;
+                boolean bot = pressY >= imageY + imageHeight - MARGECURSOR;
 
+                // Ecoute de l'évènement de glisser
                 imageView.setOnMouseDragged((dragEvent) -> {
-                    boolean toLeft = dragEvent.getX() < pressEvent.getX();
-                    boolean toTop = dragEvent.getY() < pressEvent.getY();
-
-                    double moveX = dragEvent.getX() - ajustX;
-                    double moveY = dragEvent.getY() - ajustY;
-
-                    if (left) {
-                        imageView.setX(moveX);
-                        if (toLeft) {
-                            //imageView.setFitWidth(imageView.getFitWidth());
-                        } else {
-                            //imageView.setFitWidth(imageView.getFitWidth() - (dragEvent.getX() - pressEvent.getX()));
+                    if (dragEvent.getX() > 0 && dragEvent.getX() < PageDisplayer.getImagePDF().getFitWidth()) {
+                        if (left) {
+                            imageView.setX(dragEvent.getX() - ajustX);
+                            imageView.setFitWidth(imageWidth + (imageX - dragEvent.getX()));
+                        } else if (right) {
+                            imageView.setFitWidth(dragEvent.getX() - imageX);
                         }
-                    } else if (right) {
-                        imageView.setFitWidth(dragEvent.getX() - imageView.getX());
                     }
-                    if (top) {
-                        imageView.setY(moveY);
+                    if (dragEvent.getY() > 0 && dragEvent.getY() < PageDisplayer.getImagePDF().getFitHeight()) {
+                        if (top) {
+                            imageView.setY(dragEvent.getY() - ajustY);
+                            imageView.setFitHeight(imageHeight + (imageY - dragEvent.getY()));
 
-                    } else if (bot) {
-                        imageView.setFitHeight(dragEvent.getY() - imageView.getY());
+                        } else if (bot) {
+                            imageView.setFitHeight(dragEvent.getY() - imageY);
+                        }
                     }
 
                     // Déplacement de l'image si on est pas dans les zones de retaille                    
                     if (!left && !right && !top && !bot) {
                         if (dragEvent.getX() - ajustX > 0
-                                && moveX + imageView.getFitWidth() < PageDisplayer.getImagePDF().getFitWidth()) {
-                            imageView.setX(moveX);
+                                && dragEvent.getX() - ajustX + imageView.getFitWidth() < PageDisplayer.getImagePDF().getFitWidth()) {
+                            imageView.setX(dragEvent.getX() - ajustX);
                         }
-                        if (moveY > 0
-                                && moveY + imageView.getFitHeight() < PageDisplayer.getImagePDF().getFitHeight()) {
-                            imageView.setY(moveY);
+                        if (dragEvent.getY() - ajustY > 0
+                                && dragEvent.getY() - ajustY + imageView.getFitHeight() < PageDisplayer.getImagePDF().getFitHeight()) {
+                            imageView.setY(dragEvent.getY() - ajustY);
                         }
                     }
 
                     float tempImageX = PageDisplayer.convertXToPDF((float) imageView.getX());
-                    float tempImageY = PageDisplayer.convertYToPDF((float) imagePDF.getFitHeight() - (float) imageView.getY());
+                    float tempImageY = PageDisplayer.convertYToPDF((float) imagePDF.getFitHeight() - (float) imageView.getFitHeight() - (float) imageView.getY());
                     float tempImageWidth = PageDisplayer.convertXToPDF((float) imageView.getFitWidth() - 1);
                     float tempImageHeight = PageDisplayer.convertYToPDF((float) imageView.getFitHeight() - 1);
 
