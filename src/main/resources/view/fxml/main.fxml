@@ -31,6 +31,7 @@
                       <MenuItem mnemonicParsing="false" onAction="#btnConvertToPNG" text="%MENU_CONVERT_TO_PNG" />
                         <MenuItem mnemonicParsing="false" onAction="#btnConvertToJPEG" text="%MENU_CONVERT_TO_JPEG" />
                         <MenuItem mnemonicParsing="false" onAction="#btnConvertToGIF" text="%MENU_CONVERT_TO_GIF" />
+                        <MenuItem mnemonicParsing="false"  onAction="#btnConvertToDocx" text="%MENU_CONVERT_TO_DOCX" />
                     </items>
                   </Menu>
                   <SeparatorMenuItem mnemonicParsing="false" />
@@ -119,7 +120,7 @@
                   </ImageView>
                </graphic></Button>
             <Separator orientation="VERTICAL" prefHeight="200.0" />
-          <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#btnAddText">
+          <Button fx:id="toolbarAddText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#btnAddText">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -127,7 +128,7 @@
                      </image>
                   </ImageView>
                </graphic></Button>
-            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#btnAddImage">
+            <Button fx:id="toolbarAddImage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#btnAddImage">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -135,7 +136,7 @@
                      </image>
                   </ImageView>
                </graphic></Button>
-            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#btnAddTable">
+            <Button fx:id="toolbarAddTable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#btnAddTable">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
