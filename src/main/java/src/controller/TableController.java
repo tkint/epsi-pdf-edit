@@ -66,7 +66,7 @@ public class TableController {
             }
 
             // Affichage du texte dans la cellule
-            textController.addText(contentStream, cell.getContent(), posX, posY, 12, PDType1Font.COURIER);
+            textController.addText(contentStream, cell.getContent(), posX, posY, 7, PDType1Font.COURIER);
         } catch (IOException e) {
             System.out.println(e.toString());
         }
@@ -78,11 +78,20 @@ public class TableController {
      * @param contentStream
      * @param table
      */
-    public void printTable(PDPageContentStream contentStream, Table table) {
+    public void printTable(PDPageContentStream contentStream, Table table, boolean printCellContent) {
         try {
             for (Row row : table.getRows()) {
                 for (Cell cell : row.getCells()) {
                     printRectangle(contentStream, cell.getPosX(), cell.getPosY(), cell.getWidth(), cell.getHeight(), cell.getBackgroundColor());
+                }
+            }
+            if (printCellContent) {
+                for (Row row : table.getRows()) {
+                    for (Cell cell : row.getCells()) {
+                        if (cell.getContent() != null) {
+                            printCellContent(contentStream, cell, "center", "middle");
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
@@ -105,7 +114,7 @@ public class TableController {
             printLine(contentStream, posX, posY, posX, posY - height);
             printLine(contentStream, posX + width, posY, posX + width, posY - height);
             printLine(contentStream, posX, posY - height, posX + width, posY - height);
-            
+
             contentStream.addRect(posX, posY - height, width, height);
             contentStream.setNonStrokingColor(new java.awt.Color((float) backgroundColor.getRed(), (float) backgroundColor.getGreen(), (float) backgroundColor.getBlue(), (float) backgroundColor.getOpacity()));
             contentStream.fill();

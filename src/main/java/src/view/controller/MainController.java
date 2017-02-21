@@ -358,7 +358,7 @@ public class MainController implements Config, Initializable {
             tableController.printCellContent(contentStream, cell, "center", "middle");
 
             // Ajout d'un tableau
-            tableController.printTable(contentStream, table);
+            tableController.printTable(contentStream, table, false);
 
             contentStream.close();
             document.save(TEST_DOC_TITLE + ".pdf");

@@ -128,8 +128,8 @@ public class MenuTools implements Config {
             stage.show();
         }
     }
-    
-    public void btnOpenTextArea () throws IOException {
+
+    public ViewTextAreaController btnOpenTextArea() throws IOException {
         if (INSTANCE.getDocFileOpened() != null) {
             Stage stage = new Stage();
 
@@ -149,6 +149,8 @@ public class MenuTools implements Config {
             stage.initOwner(INSTANCE.stage);
             stage.setScene(ViewTextAreaScene);
             stage.show();
+            return viewTextAreaController;
         }
+        return null;
     }
 }

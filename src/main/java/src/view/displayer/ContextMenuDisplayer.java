@@ -54,40 +54,32 @@ public class ContextMenuDisplayer implements Config {
      * @param posX
      * @param posY
      */
-    
     private static void displayTextMenu(double posX, double posY) {
-         DocFile docFile = INSTANCE.getDocFileOpened();
-         AreaSelect areaSelect = docFile.getAreaSelect ();
-         
-         
-         
-         ContextMenu contextMenu = setContextMenu(posX, posY);
-         MenuItem validate = new MenuItem(TRANSLATOR.getString("VALIDATE"));
-         validate.setOnAction((event) -> {
-             
-         });
-        
+        DocFile docFile = INSTANCE.getDocFileOpened();
+
+        ContextMenu contextMenu = setContextMenu(posX, posY);
+
         MenuItem addText = new MenuItem(TRANSLATOR.getString("ADD_TEXT"));
         addText.setOnAction((event) -> {
             try {
-                
+
                 MenuTools mt = new MenuTools();
                 mt.btnOpenTextArea();
-              
+
             } catch (IOException e) {
                 System.out.println(e.toString());
             }
         });
-        
+
         MenuItem cancel = new MenuItem(TRANSLATOR.getString("CANCEL"));
         cancel.setOnAction((event) -> {
             TraceDisplayer.clearTrace();
         });
-        
-        contextMenu.getItems().addAll(validate, addText, cancel);
+
+        contextMenu.getItems().addAll(addText, cancel);
         contextMenu.show(INSTANCE.stage);
-         
-     }
+
+    }
 
     /**
      * Affichage du menu contextuel de l'outil de tableau
@@ -146,7 +138,7 @@ public class ContextMenuDisplayer implements Config {
 
         // Choix PIVOTER GAUCHE
         MenuItem rotateLeft = ContextMenuController.rotateImageLeft(tempImage);
-        
+
         // Choix PIVOTER DROITE
         MenuItem rotateRight = ContextMenuController.rotateImageRight(tempImage);
 
@@ -188,7 +180,7 @@ public class ContextMenuDisplayer implements Config {
             System.out.println(e.toString());
         }
     }
-    
+
     public static void refreshImageTrace(ImagePDF tempImage, double rotation) {
         try {
             TraceDisplayer.drawImage(tempImage.getPosX(), tempImage.getPosY(), rotation);

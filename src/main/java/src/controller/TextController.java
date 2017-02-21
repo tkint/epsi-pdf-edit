@@ -5,6 +5,7 @@
  */
 package src.controller;
 
+import java.awt.Color;
 import java.io.IOException;
 import javafx.scene.control.TextArea;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -34,9 +35,9 @@ public class TextController {
         try {
             String[] lines = text.split("\n");
             for (int i = 0; i < lines.length; i++) {
-                System.out.println(lines[i]);
                 contentStream.beginText();
                 contentStream.setFont(font, fontSize);
+                contentStream.setNonStrokingColor(Color.BLACK);
                 contentStream.newLineAtOffset(posX, posY - (fontSize * i + 5));
                 contentStream.showText(lines[i]);
                 contentStream.endText();

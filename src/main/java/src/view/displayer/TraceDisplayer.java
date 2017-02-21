@@ -10,18 +10,27 @@ import static app.Config.AREA_SELECT_BACKGROUND;
 import static app.Config.AREA_SELECT_BORDER;
 import app.Instance;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.event.Event;
 import javafx.scene.Cursor;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import static javafx.scene.input.MouseButton.PRIMARY;
+import static javafx.scene.input.MouseButton.SECONDARY;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import src.model.AreaSelect;
 import src.model.DocFile;
 import src.model.ImagePDF;
 import src.model.table.Cell;
 import src.model.table.Row;
 import src.model.table.Table;
+import src.view.controller.ViewTextAreaController;
+import src.view.controller.menu.MenuTools;
 
 /**
  *
@@ -67,6 +76,7 @@ public class TraceDisplayer implements Config {
 
         Pane trace = getTrace();
         clearTrace();
+        trace.setMouseTransparent(false);
 
         for (Row row : traceTable.getRows()) {
             for (Cell cell : row.getCells()) {
@@ -74,6 +84,21 @@ public class TraceDisplayer implements Config {
                 rectangle.setFill(TABLE_DRAW_BACKGROUND);
                 rectangle.setStroke(TABLE_DRAW_BORDER);
 
+                rectangle.setOnMouseClicked((event) -> {
+                    if (event.getButton().equals(PRIMARY)) {
+                        try {
+                            MenuTools menuTools = new MenuTools();
+                            ViewTextAreaController controller = menuTools.btnOpenTextArea();
+                            if (controller != null) {
+                                controller.setCellId(cell.getId());
+                            }
+                        } catch (IOException ex) {
+                            System.out.println(ex.toString());
+                        }
+                    } else if (event.getButton().equals(SECONDARY)) {
+                        ContextMenuDisplayer.displayContextMenu(event.getSceneX() + 5, event.getSceneY() - 35);
+                    }
+                });
                 trace.getChildren().add(rectangle);
             }
         }
@@ -144,14 +169,14 @@ public class TraceDisplayer implements Config {
         } else {
             areaSelect = new AreaSelect((float) posX, (float) posY, (float) width, (float) height);
         }
-        
+
         INSTANCE.getDocFileOpened().setAreaSelect(areaSelect);
-        
+
         float tempAreaPosX = PageDisplayer.convertXToPDF((float) posX);
         float tempAreaPosY = PageDisplayer.convertXToPDF((float) imagePDF.getFitHeight() - (float) posY);
         float tempAreaWidth = PageDisplayer.convertXToPDF((float) width);
         float tempAreaHeight = PageDisplayer.convertXToPDF((float) height);
-        
+
         AreaSelect tempAreaSelect;
         if (INSTANCE.getDocFileOpened().getTempAreaSelect() != null) {
             tempAreaSelect = INSTANCE.getDocFileOpened().getTempAreaSelect();
@@ -159,7 +184,7 @@ public class TraceDisplayer implements Config {
         } else {
             tempAreaSelect = new AreaSelect((float) tempAreaPosX, (float) tempAreaPosY, (float) tempAreaWidth, (float) tempAreaHeight);
         }
-        
+
         INSTANCE.getDocFileOpened().setTempAreaSelect(areaSelect);
 
         // Définition du rectangle de sélection
@@ -308,8 +333,19 @@ public class TraceDisplayer implements Config {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
 
         Pane trace = (Pane) tab.getContent().lookup("#trace");
-
+        trace.setMouseTransparent(true);
+        
         trace.getChildren().clear();
+    }
+    
+    public static void addText(float posX, float posY, String text) {
+        Pane trace = getTrace();
+        
+        Text t = new Text(text);
+        t.setX(posX);
+        t.setY(posY);
+        
+        trace.getChildren().add(t);
     }
 
     /**

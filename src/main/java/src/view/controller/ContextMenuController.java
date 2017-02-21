@@ -45,7 +45,7 @@ public class ContextMenuController implements Config {
                 PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
 
                 TableController tc = new TableController();
-                tc.printTable(contentStream, docFile.getTempTable());
+                tc.printTable(contentStream, docFile.getTempTable(), true);
 
                 contentStream.close();
 
@@ -163,10 +163,11 @@ public class ContextMenuController implements Config {
         });
         return validate;
     }
-    
+
     /**
      * Bouton de pivot de l'image
-     * @return 
+     *
+     * @return
      */
     public static MenuItem rotateImageLeft(ImagePDF tempImage) {
         MenuItem rotateLeft = new MenuItem("Tourner à gauche");
@@ -175,10 +176,11 @@ public class ContextMenuController implements Config {
         });
         return rotateLeft;
     }
-    
+
     /**
      * Bouton de pivot de l'image à droite
-     * @return 
+     *
+     * @return
      */
     public static MenuItem rotateImageRight(ImagePDF tempImage) {
         MenuItem rotateRight = new MenuItem("Tourner à droite");
