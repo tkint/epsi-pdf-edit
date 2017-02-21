@@ -209,8 +209,8 @@ public class TraceDisplayer implements Config {
         ImagePDF traceImagePDF = INSTANCE.getDocFileOpened().getTraceImagePDF();
 
         Pane trace = getTrace();
-        trace.setMouseTransparent(false);
         clearTrace();
+        trace.setMouseTransparent(false);
 
         ImageView imageView = new ImageView(traceImagePDF.getImage());
         imageView.setFitWidth(traceImagePDF.getWidth());
@@ -334,17 +334,17 @@ public class TraceDisplayer implements Config {
 
         Pane trace = (Pane) tab.getContent().lookup("#trace");
         trace.setMouseTransparent(true);
-        
+
         trace.getChildren().clear();
     }
-    
+
     public static void addText(float posX, float posY, String text) {
         Pane trace = getTrace();
-        
+
         Text t = new Text(text);
         t.setX(posX);
         t.setY(posY);
-        
+
         trace.getChildren().add(t);
     }
 

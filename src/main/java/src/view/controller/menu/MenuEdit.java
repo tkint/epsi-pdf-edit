@@ -8,6 +8,7 @@ package src.view.controller.menu;
 import app.Config;
 import app.Instance;
 import enums.Tool;
+import static enums.Tool.ADDIMAGE;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.embed.swing.SwingFXUtils;
@@ -104,7 +105,7 @@ public class MenuEdit implements Config {
      * Change l'outil actuellement sélectionné
      */
     private static void switchTool(Tool tool, Button button) {
-        if (INSTANCE.getCurrentTool() == tool) {
+        if (INSTANCE.getCurrentTool() == tool && tool != ADDIMAGE) {
             TraceDisplayer.clearTrace();
             INSTANCE.setNoTool();
         } else {
