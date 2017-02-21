@@ -6,14 +6,17 @@
 package src.view.displayer;
 
 import app.Config;
+import static app.Config.TRANSLATOR;
 import app.Instance;
 import java.io.IOException;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import src.model.AreaSelect;
 import src.model.DocFile;
 import src.model.ImagePDF;
 import src.model.table.Table;
 import src.view.controller.ContextMenuController;
+import src.view.controller.menu.MenuTools;
 
 /**
  *
@@ -38,9 +41,53 @@ public class ContextMenuDisplayer implements Config {
                 case ADDIMAGE:
                     displayImageMenu(posX, posY);
                     break;
+                case ADDTEXT:
+                    displayTextMenu(posX, posY);
+                    break;
             }
         }
     }
+
+    /**
+     * Affichage du menu contextuel de l'outil de tableau
+     *
+     * @param posX
+     * @param posY
+     */
+    
+    private static void displayTextMenu(double posX, double posY) {
+         DocFile docFile = INSTANCE.getDocFileOpened();
+         AreaSelect areaSelect = docFile.getAreaSelect ();
+         
+         
+         
+         ContextMenu contextMenu = setContextMenu(posX, posY);
+         MenuItem validate = new MenuItem(TRANSLATOR.getString("VALIDATE"));
+         validate.setOnAction((event) -> {
+             
+         });
+        
+        MenuItem addText = new MenuItem(TRANSLATOR.getString("ADD_TEXT"));
+        addText.setOnAction((event) -> {
+            try {
+                
+                MenuTools mt = new MenuTools();
+                mt.btnOpenTextArea();
+              
+            } catch (IOException e) {
+                System.out.println(e.toString());
+            }
+        });
+        
+        MenuItem cancel = new MenuItem(TRANSLATOR.getString("CANCEL"));
+        cancel.setOnAction((event) -> {
+            TraceDisplayer.clearTrace();
+        });
+        
+        contextMenu.getItems().addAll(validate, addText, cancel);
+        contextMenu.show(INSTANCE.stage);
+         
+     }
 
     /**
      * Affichage du menu contextuel de l'outil de tableau

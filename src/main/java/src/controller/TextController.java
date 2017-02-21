@@ -6,33 +6,56 @@
 package src.controller;
 
 import java.io.IOException;
+import javafx.scene.control.TextArea;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import src.model.AreaSelect;
+import src.view.displayer.PageDisplayer;
+import src.view.displayer.TraceDisplayer;
 
 /**
  * Created by Thomas on 21/10/2016.
+ *
  * @author Thomas Kint
  */
 public class TextController {
+
     /**
      * Ajoute du texte dans le contentStream spécifié
+     *
      * @param contentStream
      * @param text
      * @param posX
      * @param posY
      * @param fontSize
-     * @param font 
+     * @param font
      */
     public void addText(PDPageContentStream contentStream, String text, float posX, float posY, int fontSize, PDType1Font font) {
-        try
-        {
-            contentStream.beginText();
-            contentStream.setFont(font, fontSize);
-            contentStream.newLineAtOffset(posX, posY);
-            contentStream.showText(text);
-            contentStream.endText();
-        } catch(IOException e) {
+        try {
+            String[] lines = text.split("\n");
+            for (int i = 0; i < lines.length; i++) {
+                System.out.println(lines[i]);
+                contentStream.beginText();
+                contentStream.setFont(font, fontSize);
+                contentStream.newLineAtOffset(posX, posY - (fontSize * i + 5));
+                contentStream.showText(lines[i]);
+                contentStream.endText();
+            }
+        } catch (IOException e) {
             System.out.println(e.toString());
         }
+    }
+
+    public void drawArea(PDPageContentStream contentStream, AreaSelect area, String text) {
+
+        //try {
+        float posX = (float) area.getPosX();
+        float posY = (float) area.getPosY();
+
+        addText(contentStream, text, posX, posY, 12, PDType1Font.COURIER);
+
+        /*} catch (IOException e) {
+            System.out.println(e.toString());
+        }*/
     }
 }
