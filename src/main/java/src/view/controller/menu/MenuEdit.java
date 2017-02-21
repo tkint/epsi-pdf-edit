@@ -11,6 +11,7 @@ import enums.Tool;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.Button;
 import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
@@ -29,22 +30,22 @@ public class MenuEdit implements Config {
     /**
      * Bouton d'ajout de texte
      */
-    public static void btnAddText() {
-        switchTool(Tool.ADDTEXT);
+    public static void btnAddText(Button button) {
+        switchTool(Tool.ADDTEXT, button);
     }
 
     /**
      * Bouton d'édition de texte
      */
     public static void btnEditText() {
-        switchTool(Tool.EDITTEXT);
+        //switchTool(Tool.EDITTEXT);
     }
 
     /**
      * Bouton d'ajout d'image
      */
-    public static void btnAddImage() {
-        switchTool(Tool.ADDIMAGE);
+    public static void btnAddImage(Button button) {
+        switchTool(Tool.ADDIMAGE, button);
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(TRANSLATOR.getString("FILE_OPEN"));
@@ -52,7 +53,7 @@ public class MenuEdit implements Config {
             fileChooser.setInitialDirectory(new File(System.getProperty(DEFAULT_DIR)));
 
             File file = fileChooser.showOpenDialog(INSTANCE.stage);
-
+            
             if (file != null) {
                 String fileName = file.getName();
                 //String fileExtension = fileName.substring(fileName.indexOf(".") + 1, fileName.length());
@@ -70,6 +71,8 @@ public class MenuEdit implements Config {
                 docFile.setTempImagePDF(imageTemporaire);
                 docFile.setTraceImagePDF(imageTemporaire);
                 TraceDisplayer.drawImage(imageTemporaire.getPosX(), imageTemporaire.getPosY(), 0);
+            } else {
+                INSTANCE.setNoTool();
             }
         } catch (Exception e) {
             System.out.println(e.toString());
@@ -80,32 +83,32 @@ public class MenuEdit implements Config {
      * Bouton d'édition d'image
      */
     public static void btnEditImage() {
-        switchTool(Tool.EDITIMAGE);
+        //switchTool(Tool.EDITIMAGE);
     }
 
     /**
      * Bouton d'ajout de tableau
      */
-    public static void btnAddTable() {
-        switchTool(Tool.ADDTABLE);
+    public static void btnAddTable(Button button) {
+        switchTool(Tool.ADDTABLE, button);
     }
 
     /**
      * Bouton d'édition de tableau
      */
     public static void btnEditTable() {
-        switchTool(Tool.EDITTABLE);
+        //switchTool(Tool.EDITTABLE);
     }
 
     /**
      * Change l'outil actuellement sélectionné
      */
-    private static void switchTool(Tool tool) {
+    private static void switchTool(Tool tool, Button button) {
         if (INSTANCE.getCurrentTool() == tool) {
             TraceDisplayer.clearTrace();
             INSTANCE.setNoTool();
         } else {
-            INSTANCE.setCurrentTool(tool);
+            INSTANCE.setCurrentTool(tool, button);
         }
     }
 }

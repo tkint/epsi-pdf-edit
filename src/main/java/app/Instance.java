@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -28,6 +29,7 @@ public class Instance implements Config {
     private static Instance INSTANCE = new Instance();
 
     public static Tool currentTool = null;
+    public static Button currentToolButton = null;
 
     public static int opened;
     public static List<DocFile> docFiles = new ArrayList<>();
@@ -56,7 +58,8 @@ public class Instance implements Config {
 
     /**
      * Récupération de l'outil actuellement sélectionné
-     * @return 
+     *
+     * @return
      */
     public static Tool getCurrentTool() {
         return currentTool;
@@ -64,11 +67,21 @@ public class Instance implements Config {
 
     /**
      * Change l'outil sélectionné
-     * @param currentTool 
+     *
+     * @param currentTool
      */
-    public static void setCurrentTool(Tool currentTool) {
+    public static void setCurrentTool(Tool currentTool, Button button) {
+        if (getInstance().currentToolButton != null) {
+            getInstance().currentToolButton.setOpacity(1.0);
+        }
+
         getInstance().currentTool = currentTool;
-        System.out.println(currentTool);
+        getInstance().currentToolButton = button;
+        if (button.getOpacity() == 1.0) {
+            button.setOpacity(0.5);
+        } else {
+            button.setOpacity(1.0);
+        }
     }
 
     /**
@@ -76,11 +89,14 @@ public class Instance implements Config {
      */
     public static void setNoTool() {
         getInstance().currentTool = null;
+        getInstance().currentToolButton.setOpacity(1.0);
+        getInstance().currentToolButton = null;
     }
 
     /**
      * Retourne true si un outil est sélectionné
-     * @return 
+     *
+     * @return
      */
     public static boolean hasToolActive() {
         return (getInstance().currentTool != null);
@@ -355,8 +371,9 @@ public class Instance implements Config {
 
     /**
      * Retourne l'emplacement absolut du fichier spécifié
+     *
      * @param file
-     * @return 
+     * @return
      */
     private static String toSaveFile(File file) {
         return file.getAbsolutePath();

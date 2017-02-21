@@ -7,13 +7,25 @@ package enums;
 
 /**
  * Enumère l'ensemble des outils disponibles
+ *
  * @author Thomas
  */
 public enum Tool {
-    ADDTEXT,
-    EDITTEXT,
-    ADDIMAGE,
-    EDITIMAGE,
-    ADDTABLE,
-    EDITTABLE;
+    ADDTEXT("toolbarAddText"),
+    ADDIMAGE("toolbarAddImage"),
+    ADDTABLE("toolbarAddTable");
+
+    private String toolbarId;
+
+    Tool(String toolbarId) {
+        this.toolbarId = toolbarId;
+    }
+
+    public String getToolbarId() {
+        return toolbarId;
+    }
+
+    public void setToolbarId(String toolbarId) {
+        this.toolbarId = toolbarId;
+    }
 }

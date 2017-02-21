@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -39,6 +40,15 @@ public class MainController implements Config, Initializable {
 
     @FXML
     public ChoiceBox zoomChoice;
+
+    @FXML
+    public Button toolbarAddText;
+
+    @FXML
+    public Button toolbarAddImage;
+
+    @FXML
+    public Button toolbarAddTable;
 
     /**
      * Initializes the controller class.
@@ -160,7 +170,7 @@ public class MainController implements Config, Initializable {
 
     //  <editor-fold desc="Edit">
     public void btnAddText() {
-        MenuEdit.btnAddText();
+        MenuEdit.btnAddText(toolbarAddText);
     }
 
     public void btnEditText() {
@@ -172,7 +182,7 @@ public class MainController implements Config, Initializable {
     }
 
     public void btnAddImage() {
-        MenuEdit.btnAddImage();
+        MenuEdit.btnAddImage(toolbarAddImage);
     }
 
     public void btnEditTable() {
@@ -180,7 +190,7 @@ public class MainController implements Config, Initializable {
     }
 
     public void btnAddTable() {
-        MenuEdit.btnAddTable();
+        MenuEdit.btnAddTable(toolbarAddTable);
     }
     //  </editor-fold>
 
