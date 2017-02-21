@@ -170,7 +170,29 @@ public class MenuFile implements Config {
         }
         
     }
+    
+    
+     /**
+     * Bouton de conversion en DocX 
+     */
+    
+    public static void btnConvertToDocx(){
+        
+        DocFile docFile = null;
+        
+        DocumentController documentController = new DocumentController();
+        if ((docFile = INSTANCE.getDocFileOpened()) != null) {
+          
+            File filePath = new File(docFile.getFile().getAbsolutePath());
+            File fileName = new File(docFile.getShortFileName());
+            documentController.convertToDocX(filePath, fileName);
+   
+        }
+        else {
+            System.out.println(TRANSLATOR.getString("CONVERT_FAIL"));
+        }
 
+     }
     /**
      * Quitte l'application
      */
