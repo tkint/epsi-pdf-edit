@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.Pane?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.view.controller.ViewTextAreaController">
    <children>
-      <TextArea fx:id="jTextArea" layoutX="14.0" layoutY="14.0" prefHeight="339.0" prefWidth="573.0" promptText="Entrer votre texte ici..." />
+      <TextArea fx:id="jTextArea" layoutX="14.0" layoutY="43.0" prefHeight="310.0" prefWidth="564.0" promptText="Entrer votre texte ici..." />
       <Button fx:id="buttonAreaValider" layoutX="466.0" layoutY="361.0" mnemonicParsing="false" onAction="#btnValider" prefHeight="32.0" prefWidth="121.0" text="Valider" />
       <Button fx:id="buttonAreaAnnuler" layoutX="327.0" layoutY="361.0" mnemonicParsing="false" onAction="#btnAnnuler" prefHeight="32.0" prefWidth="121.0" text="Annuler" />
+      <ComboBox fx:id="comboBoxTailleTextArea" layoutX="22.0" layoutY="14.0" prefHeight="25.0" prefWidth="74.0" promptText="Taille" />
+      <ComboBox fx:id="comboBoxPoliceTextArea" layoutX="428.0" layoutY="14.0" prefWidth="150.0" promptText="Police" />
+      <ColorPicker fx:id="colorPickerTextArea" layoutX="108.0" layoutY="14.0" prefHeight="25.0" prefWidth="104.0" promptText="Couleur" />
    </children>
 </Pane>

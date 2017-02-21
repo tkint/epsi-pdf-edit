@@ -13,11 +13,16 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import src.controller.TextController;
 import src.view.displayer.TabDisplayer;
@@ -40,10 +45,21 @@ public class ViewTextAreaController implements Initializable {
 
     @FXML
     public Button buttonAreaAnnuler;
+    
+    @FXML
+    public ComboBox comboBoxPoliceTextArea;
+    
+    @FXML
+    public ComboBox comboBoxTailleTextArea;
+    
+    @FXML
+    public ColorPicker colorPickerTextArea;
+    
+    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        fillComboBoxTailleAndPolice();
     }
 
     public Stage getStage() {
@@ -67,7 +83,7 @@ public class ViewTextAreaController implements Initializable {
             PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
             TextController tc = new TextController();
 
-            tc.drawArea(contentStream, docFile.getTempAreaSelect(), jTextArea.getText());
+            tc.drawArea(contentStream, docFile.getTempAreaSelect(), jTextArea.getText(), (int) comboBoxTailleTextArea.getValue(), (PDType1Font) comboBoxPoliceTextArea.getValue());
 
             contentStream.close();
             TabDisplayer.refreshOpenedTab();
@@ -80,5 +96,28 @@ public class ViewTextAreaController implements Initializable {
 
     public void btnAnnuler() {
         exit();
+    }
+    
+    public void fillComboBoxTailleAndPolice () {
+        for (int i = 5; i < 51; i++) {
+            comboBoxTailleTextArea.getItems().add(i);
+        }
+        
+        comboBoxPoliceTextArea.getItems().addAll(
+            PDType1Font.COURIER,
+            PDType1Font.COURIER_BOLD,
+            PDType1Font.COURIER_BOLD_OBLIQUE,
+            PDType1Font.COURIER_OBLIQUE,
+            PDType1Font.HELVETICA,
+            PDType1Font.HELVETICA_BOLD,
+            PDType1Font.HELVETICA_BOLD_OBLIQUE,
+            PDType1Font.HELVETICA_OBLIQUE,
+            PDType1Font.SYMBOL,
+            PDType1Font.TIMES_BOLD,
+            PDType1Font.TIMES_BOLD_ITALIC,
+            PDType1Font.TIMES_ROMAN,
+            PDType1Font.ZAPF_DINGBATS
+        );
+            
     }
 }

@@ -46,13 +46,13 @@ public class TextController {
         }
     }
 
-    public void drawArea(PDPageContentStream contentStream, AreaSelect area, String text) {
+    public void drawArea(PDPageContentStream contentStream, AreaSelect area, String text, int taille, PDType1Font font) {
 
         //try {
         float posX = (float) area.getPosX();
         float posY = (float) area.getPosY();
 
-        addText(contentStream, text, posX, posY, 12, PDType1Font.COURIER);
+        addText(contentStream, text, posX, posY, taille, font);
 
         /*} catch (IOException e) {
             System.out.println(e.toString());
