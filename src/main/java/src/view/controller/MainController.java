@@ -159,6 +159,10 @@ public class MainController implements Config, Initializable {
     public void btnConvertToGIF() {
         MenuFile.btnConvertToGIF();
     }
+    
+    public void btnConvertToDocx() {
+        MenuFile.btnConvertToDocx();
+    }
 
     /**
      * Quitte l'application
