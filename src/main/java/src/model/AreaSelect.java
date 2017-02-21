@@ -93,6 +93,13 @@ public class AreaSelect {
     public void setHeight(double height) {
         this.height = height;
     }
+    
+    public void refreshPos(float posX, float posY, float width, float height) {
+        this.posX = posX;
+        this.posY = posY;
+        this.width = width;
+        this.height = height;
+    }
 
     /**
      * Retourne la zone sous forme de string

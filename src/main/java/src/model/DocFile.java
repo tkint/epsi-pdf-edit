@@ -23,17 +23,19 @@ public class DocFile implements Config {
     private boolean saved;
     private int selectedPage;
     private AreaSelect areaSelect;
+    private AreaSelect tempAreaSelect;
     private int zoom;
     private Table traceTable;
     private Table tempTable;
-	private ImagePDF traceImagePDF;
+    private ImagePDF traceImagePDF;
     private ImagePDF tempImagePDF;
 
     /**
      * Constructeur du DocFile
+     *
      * @param id
      * @param document
-     * @param file 
+     * @param file
      */
     public DocFile(int id, PDDocument document, File file) {
         this.id = id;
@@ -41,13 +43,13 @@ public class DocFile implements Config {
         this.file = file;
         this.saved = false;
         this.selectedPage = 0;
-        this.areaSelect = new AreaSelect(0, 0, 0, 0);
         this.zoom = 100;
     }
 
     /**
      * Retourne l'id du DocFile
-     * @return 
+     *
+     * @return
      */
     public int getId() {
         return id;
@@ -55,7 +57,8 @@ public class DocFile implements Config {
 
     /**
      * Défini l'id du DocFile
-     * @param id 
+     *
+     * @param id
      */
     public void setId(int id) {
         this.id = id;
@@ -63,7 +66,8 @@ public class DocFile implements Config {
 
     /**
      * Retourne le document PDF du DocFile
-     * @return 
+     *
+     * @return
      */
     public PDDocument getDocument() {
         return document;
@@ -71,7 +75,8 @@ public class DocFile implements Config {
 
     /**
      * Défini le document PDF du DocFile
-     * @param document 
+     *
+     * @param document
      */
     public void setDocument(PDDocument document) {
         this.document = document;
@@ -79,7 +84,8 @@ public class DocFile implements Config {
 
     /**
      * Retourne le fichier du DocFile
-     * @return 
+     *
+     * @return
      */
     public File getFile() {
         return file;
@@ -87,15 +93,17 @@ public class DocFile implements Config {
 
     /**
      * Défini le fichier du DocFile
-     * @param file 
+     *
+     * @param file
      */
     public void setFile(File file) {
         this.file = file;
     }
-    
+
     /**
      * Retourne le nom du fichier
-     * @return 
+     *
+     * @return
      */
     public String getFileName() {
         return file.getName();
@@ -103,7 +111,8 @@ public class DocFile implements Config {
 
     /**
      * Retourne le nom du fichier sans l'extension
-     * @return 
+     *
+     * @return
      */
     public String getShortFileName() {
         return file.getName().substring(0, file.getName().length() - 4);
@@ -111,7 +120,8 @@ public class DocFile implements Config {
 
     /**
      * Retourne true si le DocFile est sauvegardé
-     * @return 
+     *
+     * @return
      */
     public boolean isSaved() {
         return saved;
@@ -119,7 +129,8 @@ public class DocFile implements Config {
 
     /**
      * Défini si le DocFile est sauvegardé
-     * @param saved 
+     *
+     * @param saved
      */
     public void setSaved(boolean saved) {
         this.saved = saved;
@@ -127,7 +138,8 @@ public class DocFile implements Config {
 
     /**
      * Retourne le numéro de la page actuellement sélectionnée
-     * @return 
+     *
+     * @return
      */
     public int getSelectedPage() {
         return selectedPage;
@@ -135,7 +147,8 @@ public class DocFile implements Config {
 
     /**
      * Défini la numéro de la page à sélectionner
-     * @param selectedPage 
+     *
+     * @param selectedPage
      */
     public void setSelectedPage(int selectedPage) {
         this.selectedPage = selectedPage;
@@ -143,7 +156,8 @@ public class DocFile implements Config {
 
     /**
      * Retourne la page actuellement sélectionnée
-     * @return 
+     *
+     * @return
      */
     public PDPage getCurrentPage() {
         return this.document.getPage(this.selectedPage);
@@ -151,7 +165,8 @@ public class DocFile implements Config {
 
     /**
      * Retourne la page précédente à celle sélectionnée
-     * @return 
+     *
+     * @return
      */
     public PDPage getPreviousPage() {
         PDPage page = null;
@@ -163,7 +178,8 @@ public class DocFile implements Config {
 
     /**
      * Retourne la page suivant à celle sélectionnée
-     * @return 
+     *
+     * @return
      */
     public PDPage getNextPage() {
         PDPage page = null;
@@ -175,7 +191,8 @@ public class DocFile implements Config {
 
     /**
      * Retourne la zone de sélection
-     * @return 
+     *
+     * @return
      */
     public AreaSelect getAreaSelect() {
         return areaSelect;
@@ -183,29 +200,25 @@ public class DocFile implements Config {
 
     /**
      * Défini la zone de sélection
-     * @param areaSelect 
+     *
+     * @param areaSelect
      */
     public void setAreaSelect(AreaSelect areaSelect) {
         this.areaSelect = areaSelect;
     }
 
-    /**
-     * Met à jour les coordonnées de la zone de sélection
-     * @param posX
-     * @param posY
-     * @param width
-     * @param height 
-     */
-    public void updateAreaSelect(double posX, double posY, double width, double height) {
-        this.areaSelect.posX = posX;
-        this.areaSelect.posY = posY;
-        this.areaSelect.width = width;
-        this.areaSelect.height = height;
+    public AreaSelect getTempAreaSelect() {
+        return tempAreaSelect;
+    }
+
+    public void setTempAreaSelect(AreaSelect tempAreaSelect) {
+        this.tempAreaSelect = tempAreaSelect;
     }
 
     /**
      * Retourne le niveau de zoom
-     * @return 
+     *
+     * @return
      */
     public int getZoom() {
         return zoom;
@@ -213,27 +226,17 @@ public class DocFile implements Config {
 
     /**
      * Défini le niveau de zoom
-     * @param zoom 
+     *
+     * @param zoom
      */
     public void setZoom(int zoom) {
         this.zoom = zoom;
     }
-    
-    public int getIdZoom() {
-        int i = 0;
-        int id = -1;
-        while (id == -1 && i < ZOOMS.length) {
-            if (ZOOMS[i] == this.zoom) {
-                id = i;
-            }
-            i++;
-        }
-        return id;
-    }
 
     /**
      * Retourne le tableau du calque
-     * @return 
+     *
+     * @return
      */
     public Table getTraceTable() {
         return traceTable;
@@ -241,7 +244,8 @@ public class DocFile implements Config {
 
     /**
      * Défini le tableau du calque
-     * @param traceTable 
+     *
+     * @param traceTable
      */
     public void setTraceTable(Table traceTable) {
         this.traceTable = traceTable;
@@ -249,7 +253,8 @@ public class DocFile implements Config {
 
     /**
      * Retourne le tableau temporaire du document
-     * @return 
+     *
+     * @return
      */
     public Table getTempTable() {
         return tempTable;
@@ -257,13 +262,13 @@ public class DocFile implements Config {
 
     /**
      * Défini le tableau temporaire du document
-     * @param tempTable 
+     *
+     * @param tempTable
      */
     public void setTempTable(Table tempTable) {
         this.tempTable = tempTable;
     }
-	
-	
+
     public ImagePDF getTraceImagePDF() {
         return traceImagePDF;
     }

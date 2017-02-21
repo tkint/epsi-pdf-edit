@@ -31,6 +31,7 @@ import javafx.util.Pair;
 import src.controller.PageController;
 import src.view.controller.ExtractImageController;
 import src.view.controller.MainController;
+import src.view.controller.ViewTextAreaController;
 
 /**
  *
@@ -124,6 +125,29 @@ public class MenuTools implements Config {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(INSTANCE.stage);
             stage.setScene(extractImageScene);
+            stage.show();
+        }
+    }
+    
+    public void btnOpenTextArea () throws IOException {
+        if (INSTANCE.getDocFileOpened() != null) {
+            Stage stage = new Stage();
+
+            FXMLLoader textAreaLoader = new FXMLLoader(getClass().getResource("/view/fxml/ViewTextArea.fxml"));
+            textAreaLoader.setResources(TRANSLATOR);
+
+            Parent textAreaParent = (Parent) textAreaLoader.load();
+
+            ViewTextAreaController viewTextAreaController = (ViewTextAreaController) textAreaLoader.getController();
+            viewTextAreaController.setStage(stage);
+
+            Scene ViewTextAreaScene = new Scene(textAreaParent);
+
+            stage.setTitle(TRANSLATOR.getString("APP_NAME") + " - " + TRANSLATOR.getString("MENU_TOOLS_TEXT_AREA"));
+            stage.setResizable(false);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(INSTANCE.stage);
+            stage.setScene(ViewTextAreaScene);
             stage.show();
         }
     }

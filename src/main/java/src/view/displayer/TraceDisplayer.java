@@ -6,6 +6,8 @@
 package src.view.displayer;
 
 import app.Config;
+import static app.Config.AREA_SELECT_BACKGROUND;
+import static app.Config.AREA_SELECT_BORDER;
 import app.Instance;
 import java.io.IOException;
 import javafx.scene.Cursor;
@@ -14,6 +16,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
+import src.model.AreaSelect;
 import src.model.DocFile;
 import src.model.ImagePDF;
 import src.model.table.Cell;
@@ -134,8 +137,30 @@ public class TraceDisplayer implements Config {
             height = fromPosY - toPosY;
         }
 
-        // Application de la zone de sélection sur le document
-        docFile.updateAreaSelect(posX, posY, width, height);
+        AreaSelect areaSelect;
+        if (INSTANCE.getDocFileOpened().getAreaSelect() != null) {
+            areaSelect = INSTANCE.getDocFileOpened().getAreaSelect();
+            areaSelect.refreshPos((float) posX, (float) posY, (float) width, (float) height);
+        } else {
+            areaSelect = new AreaSelect((float) posX, (float) posY, (float) width, (float) height);
+        }
+        
+        INSTANCE.getDocFileOpened().setAreaSelect(areaSelect);
+        
+        float tempAreaPosX = PageDisplayer.convertXToPDF((float) posX);
+        float tempAreaPosY = PageDisplayer.convertXToPDF((float) imagePDF.getFitHeight() - (float) posY);
+        float tempAreaWidth = PageDisplayer.convertXToPDF((float) width);
+        float tempAreaHeight = PageDisplayer.convertXToPDF((float) height);
+        
+        AreaSelect tempAreaSelect;
+        if (INSTANCE.getDocFileOpened().getTempAreaSelect() != null) {
+            tempAreaSelect = INSTANCE.getDocFileOpened().getTempAreaSelect();
+            tempAreaSelect.refreshPos((float) tempAreaPosX, (float) tempAreaPosY, (float) tempAreaWidth, (float) tempAreaHeight);
+        } else {
+            tempAreaSelect = new AreaSelect((float) tempAreaPosX, (float) tempAreaPosY, (float) tempAreaWidth, (float) tempAreaHeight);
+        }
+        
+        INSTANCE.getDocFileOpened().setTempAreaSelect(areaSelect);
 
         // Définition du rectangle de sélection
         Rectangle selection = new Rectangle(posX, posY, width, height);
